@@ -1,17 +1,14 @@
-.eunit
-*.o
-*.beam
-*.plt
-erl_crash.dump
-.concrete/DEV_MODE
+#
+# .gitignore
+# =============================================================================
+# Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.1
+# =============================================================================
+# A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
+# to be run as a microservice, implementing a special Customers API prototype
+# with a smart yet simplified data scheme.
+#
+# This is the configuration of the project Git ignorables,
+# i.e. objects that should not be put into the repository.
+#
 
-# rebar 2.x
-.rebar
-rel/example_project
-ebin/*.beam
-deps
-
-# rebar 3
-.rebar3
-_build/
-_checkouts/
+# vim:set nu et ts=4 sw=4:
