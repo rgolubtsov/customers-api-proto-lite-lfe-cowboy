@@ -11,4 +11,7 @@
 # i.e. objects that should not be put into the repository.
 #
 
+# === Rebar3 intermediates ====================================================
+_build/
+
 # vim:set nu et ts=4 sw=4:
