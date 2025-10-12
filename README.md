@@ -34,6 +34,30 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
+The microservice might be built and run under **Arch Linux**. &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker`):
+
+```
+$ sudo pacman -Syu rebar3 make docker
+...
+```
+
+---
+
+Then pull and install all the necessary plugins and third-party libraries:
+
+```
+$ rebar3
+===> Fetching rebar3_lfe v0.4.11
+===> Fetching lfe v2.2.0
+===> Analyzing applications...
+===> Compiling lfe
+===> Compiling rebar3_lfe
+...
+$ rebar3 tree
+===> Verifying dependencies...
+===> Fetching cowboy v2.14.2
+```
+
 **TBD** :cd:
 
 ## Running
