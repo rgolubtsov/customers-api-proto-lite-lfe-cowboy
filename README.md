@@ -52,10 +52,15 @@ $ rebar3 tree
 ===> Analyzing applications...
 ===> Compiling lfe
 ===> Compiling rebar3_lfe
-...
+src/cl.lfe:472: Warning: redefining core function car/1
+src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
-===> Dep cowlib has invalid version >= 2.16.0 and < 3.0.0
+===> Fetching cowlib v2.16.0
+===> Fetching ranch v2.2.0
+   └─ cowboy─2.14.2 (hex package)
+      ├─ cowlib─2.16.0 (hex package)
+      └─ ranch─2.2.0 (hex package)
 ```
 
 **TBD** :cd:
