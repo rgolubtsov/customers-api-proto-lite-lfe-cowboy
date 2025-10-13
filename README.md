@@ -46,16 +46,16 @@ $ sudo pacman -Syu rebar3 make docker
 Then pull and install all the necessary plugins and third-party libraries:
 
 ```
-$ rebar3
+$ rebar3 tree
 ===> Fetching rebar3_lfe v0.4.11
 ===> Fetching lfe v2.2.0
 ===> Analyzing applications...
 ===> Compiling lfe
 ===> Compiling rebar3_lfe
 ...
-$ rebar3 tree
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
+===> Dep cowlib has invalid version >= 2.16.0 and < 3.0.0
 ```
 
 **TBD** :cd:
