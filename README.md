@@ -93,6 +93,26 @@ $ rebar3 lfe release
 
 ## Running
 
+**Run** the microservice using **Rebar3**/LFE plugin (recompiling sources on-the-fly, if required):
+
+```
+$ rebar3 lfe run-release daemon
+===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling api-lite
+<empty_line>
+```
+
+It will be launched in the background as a daemon but also can be started up as a regular app: `$ rebar3 lfe run-release foreground`. The daemonized microservice then can be stopped at any time by issuing the following command:
+
+```
+$ rebar3 lfe run-release stop
+===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling api-lite
+<empty_line>
+```
+
 **TBD** :cd:
 
 ## Consuming
