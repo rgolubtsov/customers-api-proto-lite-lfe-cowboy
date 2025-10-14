@@ -63,6 +63,32 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
       └─ ranch─2.2.0 (hex package)
 ```
 
+---
+
+**Build** the microservice using **Rebar3** (and the LFE plugin):
+
+```
+$ rebar3 lfe clean
+===> Cleaning out api-lite...
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite.app
+$
+$ rebar3 lfe compile
+===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling api-lite
+$
+$ rebar3 lfe release
+===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling api-lite
+===> Assembling release 'api-lited'-0.0.1...
+===> Warnings generating release:
+*WARNING* Missing application sasl. Can not upgrade with this release
+===> Release successfully assembled: _build/default/rel/api-lited
+```
+
 **TBD** :cd:
 
 ## Running
