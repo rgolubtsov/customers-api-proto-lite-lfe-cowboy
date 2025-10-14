@@ -14,7 +14,7 @@
     (behavior application)
     (export (start 2) (stop 1)))
 
-(defun start (-start-type, -start-args)
+(defun start (-start-type -start-args)
     (api-lite-sup:start-link)
 )
 

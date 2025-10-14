@@ -15,7 +15,7 @@
     (export (start-link 0) (init 1)))
 
 (defun start-link()
-    (supervisor:start-link `#(local ,(MODULE)) (MODULE) ())
+    (supervisor:start_link `#(local ,(MODULE)) (MODULE) ())
 )
 
 (defun init (_)
@@ -27,7 +27,7 @@
 
     (let ((child-specs ()))
 
-    `#(ok, #(
+    `#(ok #(
         ,sup-flags
         ,child-specs
     ))))
