@@ -11,14 +11,28 @@
 ;
 
 (defmodule api-lite-sup
+    "The supervisor module of the daemon.
+    (A top level supervisor in Erlang/OTP terms.)"
     (behavior supervisor)
     (export (start-link 0) (init 1)))
 
 (defun start-link()
+    "Creates a supervisor process as part of a supervision tree.
+
+    Returns:
+        The `ok` tuple containing a Pid of a supervisor created."
+
     (supervisor:start_link `#(local ,(MODULE)) (MODULE) ())
 )
 
 (defun init (_)
+    "The callback function of a supervisor process.
+    Gets called just after a supervisor is started.
+
+    Returns:
+        The `ok` tuple containing configuration for a supervisor
+        and child processes specifications."
+
     (let ((sup-flags `#M(
         strategy  one_for_all
         intensity 0

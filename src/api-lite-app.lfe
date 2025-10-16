@@ -11,6 +11,7 @@
 ;
 
 (defmodule api-lite-app
+    "The main module of the daemon. (The callback module in Erlang/OTP terms.)"
     (behavior application)
     (export (start 2) (stop 1)))
 
