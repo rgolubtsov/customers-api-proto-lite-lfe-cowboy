@@ -14,9 +14,13 @@
     "The supervisor module of the daemon.
     (A top level supervisor in Erlang/OTP terms.)"
     (behavior supervisor)
-    (export (start-link 0) (init 1)))
+    (export
+        (start-link 0)   ; ( ) -> {ok, pid()}
+        (init       1))) ; (_) -> {ok, {#{strategy  => ...,
+                         ;                intensity => ...,
+                         ;                period    => ...}, []}}
 
-(defun start-link()
+(defun start-link ()
     "Creates a supervisor process as part of a supervision tree.
 
     Returns:

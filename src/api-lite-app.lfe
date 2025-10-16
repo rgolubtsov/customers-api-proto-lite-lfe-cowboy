@@ -13,7 +13,9 @@
 (defmodule api-lite-app
     "The main module of the daemon. (The callback module in Erlang/OTP terms.)"
     (behavior application)
-    (export (start 2) (stop 1)))
+    (export
+        (start 2)   ; (-start-type -start-args) -> {ok, pid()}
+        (stop  1))) ; (-state) -> ok
 
 (defun start (-start-type -start-args)
     "The microservice entry point callback. Gets called when starting
