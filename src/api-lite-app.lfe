@@ -16,10 +16,33 @@
     (export (start 2) (stop 1)))
 
 (defun start (-start-type -start-args)
+    "The microservice entry point callback. Gets called when starting
+    the daemon and is to create the supervision tree by starting
+    the top level supervisor.
+
+    Args:
+        -start-type: The atom `normal` (usually).
+        -start-args: A list of start arguments defined in the resource file
+                     `api-lite.app.src` in the key `mod`.
+
+    Returns:
+        The `ok` tuple containing a Pid of the top level supervisor created
+        and the `State` indicator (defaults to an empty list)."
+
     (api-lite-sup:start-link)
 )
 
 (defun stop (-state)
+    "The microservice termination callback. Gets called after the daemon
+    has been stopped.
+
+    Args:
+        -state: A value of the `State` indicator as returned
+                from the `start/2` callback.
+
+    Returns:
+        The `ok` atom."
+
     'ok
 )
 
