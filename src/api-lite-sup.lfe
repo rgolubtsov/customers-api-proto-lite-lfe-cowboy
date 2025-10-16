@@ -38,17 +38,15 @@
         and child processes specifications."
 
     (let ((sup-flags `#M(
-        strategy  one_for_all
-        intensity 0
-        period    1
+        strategy  one_for_all ; Defaults to `one_for_one`.
+        intensity 0           ; Defaults to 1 restart.
+        period    1           ; Defaults to 5 seconds.
     )))
 
+    ; No any particular child specs defined (empty list) - relying on defaults.
     (let ((child-specs ()))
 
-    `#(ok #(
-        ,sup-flags
-        ,child-specs
-    ))))
+    `#(ok #(,sup-flags ,child-specs))))
 )
 
 ; vim:set nu et ts=4 sw=4:
