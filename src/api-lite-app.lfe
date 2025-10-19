@@ -31,6 +31,8 @@
         The `ok` tuple containing a Pid of the top level supervisor created
         and the `State` indicator (defaults to an empty list)."
 
+    (io:format (FUNCTION_NAME)) (io:nl)
+
     (api-lite-sup:start-link)
 )
 
