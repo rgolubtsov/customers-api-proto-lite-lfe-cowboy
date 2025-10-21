@@ -34,7 +34,7 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run under **Arch Linux**. &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker`):
+The microservice might be built and run under **Arch Linux** (proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker`):
 
 ```
 $ sudo pacman -Syu rebar3 make docker
@@ -91,7 +91,16 @@ $ rebar3 lfe release
 
 **Beware:** Executing the `lfe clean` task for the first time (when there is no subdirectory `_build/default/lib/api-lite/ebin/` yet exist) will probably lead to the error from Rebar3: `===> Uncaught error in rebar_core. Run with DIAGNOSTIC=1 to see stacktrace or consult rebar3.crashdump` and the appropriate crash report `rebar3.crashdump` will be generated in the current working directory. This can simply be ignored because after executing either `lfe compile` or `lfe release` tasks, any consequent `lfe clean` task will succeed.
 
-**TBD** :cd:
+One can also **build** the microservice using **GNU Make** (optional, but for convenience &mdash; it covers the same **Rebar3** build workflow under the hood):
+
+```
+$ make clean
+...
+$ make      # <== Compilation only phase (Erlang BEAMs).
+...
+$ make all  # <== Building the daemon (OTP release).
+...
+```
 
 ## Running
 
