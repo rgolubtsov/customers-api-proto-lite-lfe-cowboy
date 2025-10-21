@@ -17,6 +17,8 @@
         (start 2)   ; (-start-type -start-args) -> {ok, pid()}
         (stop  1))) ; (-state) -> ok
 
+(include-file "api-lite-helper.lfe")
+
 (defun start (-start-type -start-args)
     "The microservice entry point callback. Gets called when starting
     the daemon and is to create the supervision tree by starting
@@ -31,7 +33,8 @@
         The `ok` tuple containing a Pid of the top level supervisor created
         and the `State` indicator (defaults to an empty list)."
 
-    (io:format (FUNCTION_NAME)) (io:nl)
+    (let ((daemon-name (DAEMON-NAME)))
+    (io:format (++ (O-BRACKET) daemon-name (C-BRACKET)))) (io:nl)
 
     (api-lite-sup:start-link)
 )
