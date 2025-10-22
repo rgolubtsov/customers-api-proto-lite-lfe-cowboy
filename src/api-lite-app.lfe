@@ -17,7 +17,7 @@
         (start 2)   ; (-start-type -start-args) -> {ok, pid()}
         (stop  1))) ; (-state) -> ok
 
-(include-file "api-lite-helper.lfe")
+(include-file "api-lite-constants.lfe")
 
 (defun start (-start-type -start-args)
     "The microservice entry point callback. Gets called when starting
