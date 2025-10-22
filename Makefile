@@ -19,10 +19,12 @@ SRC_DIR = src
 
 BEAM = $(BIN_DIR)/$(PREF)-app.beam \
        $(BIN_DIR)/$(PREF)-sup.beam \
+       $(BIN_DIR)/$(PREF)-helper.beam \
        $(BIN_DIR)/$(PREF).app
 
 DEPS = $(SRC_DIR)/$(PREF)-app.lfe \
        $(SRC_DIR)/$(PREF)-sup.lfe \
+       $(SRC_DIR)/$(PREF)-helper.lfe \
        $(SRC_DIR)/$(PREF).app.src
 
 # Specify flags and other vars here.
