@@ -85,8 +85,6 @@ $ rebar3 lfe release
 ===> Analyzing applications...
 ===> Compiling api-lite
 ===> Assembling release 'api-lited'-0.0.1...
-===> Warnings generating release:
-*WARNING* Missing application sasl. Can not upgrade with this release
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 
