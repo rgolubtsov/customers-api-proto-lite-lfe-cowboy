@@ -14,8 +14,9 @@
     "The main module of the daemon. (The callback module in Erlang/OTP terms.)"
     (behavior application)
     (export
-        (start 2)   ; (-start-type -start-args) -> {ok, pid()}
-        (stop  1))) ; (-state) -> ok
+        (start 2)  ; (-start-type -start-args) -> {ok, pid()}
+        (stop  1)) ; (-state) -> ok
+  #|(import (from logger (notice 1)))|#)
 
 (include-file "api-lite-constants.lfe")
 
@@ -34,7 +35,9 @@
         and the `State` indicator (defaults to an empty list)."
 
     (let ((daemon-name (DAEMON-NAME)))
-    (io:format (++ (O-BRACKET) daemon-name (C-BRACKET)))) (io:nl)
+    (io:format (++ (O-BRACKET) daemon-name (C-BRACKET))))    (io:nl)
+;   (io:format (element 2 (application:get_env 'b-o-o-o-m))) (io:nl)
+;   (notice (++ (O-BRACKET) daemon-name (C-BRACKET)))
 
     (api-lite-sup:start-link)
 )
