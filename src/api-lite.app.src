@@ -19,7 +19,8 @@
     {registered,          []},
     {applications,        [
         kernel,
-        stdlib
+        stdlib,
+        syslog
     ]},
     {mod, {'api-lite-app', []}},
     {env, []}
