@@ -56,11 +56,17 @@ src/cl.lfe:472: Warning: redefining core function car/1
 src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
+===> Fetching syslog v1.1.0
+===> Fetching pc v1.15.0
+===> Analyzing applications...
+===> Compiling pc
 ===> Fetching cowlib v2.16.0
 ===> Fetching ranch v2.2.0
-   └─ cowboy─2.14.2 (hex package)
-      ├─ cowlib─2.16.0 (hex package)
-      └─ ranch─2.2.0 (hex package)
+└─ api-lite─0.0.3 (project app)
+   ├─ cowboy─2.14.2 (hex package)
+   │  ├─ cowlib─2.16.0 (hex package)
+   │  └─ ranch─2.2.0 (hex package)
+   └─ syslog─1.1.0 (hex package)
 ```
 
 ---
@@ -77,6 +83,13 @@ $ rebar3 lfe clean
 $
 $ rebar3 lfe compile
 ===> Verifying dependencies...
+===> Analyzing applications...
+===> Compiling syslog
+===> Compiling ranch
+===> Compiling cowlib
+===> Compiling cowboy
+===> Compiling c_src/syslog_drv.c
+===> Linking priv/syslog_drv.so
 ===> Analyzing applications...
 ===> Compiling api-lite
 $
