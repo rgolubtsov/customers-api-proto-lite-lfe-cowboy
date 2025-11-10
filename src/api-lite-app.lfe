@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-app.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.3
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.4
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -16,7 +16,10 @@
     (export
         (start 2)  ; (-start-type -start-args) -> {ok, pid()}
         (stop  1)) ; (-state) -> ok
-    (import (from logger (debug 1))))
+    (import (from logger (debug 1))
+            (from syslog (open  3)
+                         (log   3)
+                         (close 1))))
 
 (include-file "api-lite-constants.lfe")
 
@@ -34,10 +37,24 @@
         The `ok` tuple containing a Pid of the top level supervisor created
         and the `State` indicator (defaults to an empty list)."
 
-    (let ((daemon-name (DAEMON-NAME)))
-    (debug (++ (O-BRACKET) daemon-name (C-BRACKET))))
+    (let ((daemon-exec
+          (++ (atom_to_list (element 2 (application:get_application))) "d")))
 
-    (api-lite-sup:start-link)
+    ; Opening the system logger.
+    ; Calling <syslog.h> openlog(NULL, LOG_CONS | LOG_PID, LOG_DAEMON);
+    (syslog:start) (let ((`#(ok ,s) (open daemon-exec `(cons pid) 'daemon)))
+
+    (let ((daemon-name (DAEMON-NAME)))
+    (       debug (++ (O-BRACKET) daemon-name (C-BRACKET)))
+    (log s 'debug (++ (O-BRACKET) daemon-name (C-BRACKET))))
+
+    (let ((`#(ok ,pid) (api-lite-sup:start-link)))
+
+    ; Closing the system logger.
+    ; Calling <syslog.h> closelog();
+    (close s)
+
+    `#(ok ,pid))))
 )
 
 (defun stop (-state)

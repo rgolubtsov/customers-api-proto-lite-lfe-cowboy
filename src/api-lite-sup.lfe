@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-sup.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.3
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.4
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
