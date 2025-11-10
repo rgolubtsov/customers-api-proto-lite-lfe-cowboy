@@ -136,6 +136,38 @@ $ rebar3 lfe run-release stop
 <empty_line>
 ```
 
+**Run** the microservice using its startup script along with the `foreground` command, that is meant "*Start release with output to stdout*":
+
+```
+$ ./_build/default/rel/api-lited/bin/api-lited foreground; echo $?
+...
+```
+
+The microservice then can be stopped, again by using its startup script but along with the `stop` command, that is meant "*Stop the running node*". It should be issued in another terminal session, not the current one of course:
+
+```
+$ ./_build/default/rel/api-lited/bin/api-lited stop; echo $?
+0
+```
+
+To identify, which particular commands are available and what they mean, the startup script can be run without specifying any command at all:
+
+```
+$ ./_build/default/rel/api-lited/bin/api-lited
+Usage: api-lited [COMMAND] [ARGS]
+
+Commands:
+
+  foreground              Start release with output to stdout
+...
+  stop                    Stop the running node
+  restart                 Restart the applications but not the VM
+  reboot                  Reboot the entire VM
+...
+  daemon                  Start release in the background with run_erl (named pipes)
+...
+```
+
 **TBD** :cd:
 
 ## Consuming
