@@ -168,7 +168,14 @@ Commands:
 ...
 ```
 
-**TBD** :cd:
+Thus, to run the microservice as a daemon, i.e. in the background, the `daemon` command should be used instead:
+
+```
+$ ./_build/default/rel/api-lited/bin/api-lited daemon; echo $?
+0
+```
+
+Note that the startup script will become available and might be used only after building a complete OTP release of the microservice.
 
 ## Consuming
 
