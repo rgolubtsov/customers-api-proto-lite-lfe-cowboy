@@ -14,8 +14,9 @@
     "The main module of the daemon. (The callback module in Erlang/OTP terms.)"
     (behavior application)
     (export
-        (start 2)  ; (-start-type -start-args) -> {ok, pid()}
-        (stop  1)) ; (-state) -> ok
+        (start     2)  ; (-start-type -start-args) -> {ok, pid(), State}
+        (prep_stop 1)  ; (-state) -> ok
+        (stop      1)) ; (-state) -> ok
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3)
@@ -50,11 +51,27 @@
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
+    `#(ok ,pid ,s)))) ; <== Syslog handle will be returned as the `State` val.
+)
+
+(defun prep_stop (-state)
+    "The microservice preparing-to-termination callback. Gets called just
+    before the daemon is about to be stopped.
+
+    Args:
+        -state: A value of the `State` indicator as returned
+                from the `start/2` callback.
+
+    Returns:
+        The `ok` atom."
+
+    (let ((s -state)) ; <== Syslog handle.
+
     ; Closing the system logger.
     ; Calling <syslog.h> closelog();
-    (close s)
+    (close s))
 
-    `#(ok ,pid))))
+    'ok
 )
 
 (defun stop (-state)
@@ -63,7 +80,7 @@
 
     Args:
         -state: A value of the `State` indicator as returned
-                from the `start/2` callback.
+                from the `prep_stop/1` callback.
 
     Returns:
         The `ok` atom."
