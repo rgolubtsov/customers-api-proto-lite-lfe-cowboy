@@ -11,9 +11,24 @@
 ;
 
 (defmodule api-lite-helper "The helper module for the daemon."
-    (export (-cleanup 1)) ; (s) -> ok
+    (export (-dbg     3)  ; (dbg s message) -> ok
+            (-cleanup 1)) ; (s) -> ok
     (import (from logger (debug 1))
-            (from syslog (close 1))))
+            (from syslog (log   3)
+                         (close 1))))
+
+; Helper function. Used to log messages for debugging aims in a free form.
+(defun -dbg (dbg s message)
+    (debug (atom_to_list dbg))
+    (debug (port_to_list s))
+
+    (cond (dbg
+        (       debug message)
+        (log s 'debug message)
+    ))
+
+    'ok
+)
 
 ; Helper function. Makes final cleanups, closes streams, etc.
 (defun -cleanup (s)
