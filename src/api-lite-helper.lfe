@@ -19,9 +19,6 @@
 
 ; Helper function. Used to log messages for debugging aims in a free form.
 (defun -dbg (dbg s message)
-    (debug (atom_to_list dbg))
-    (debug (port_to_list s))
-
     (cond (dbg
         (       debug message)
         (log s 'debug message)
@@ -32,8 +29,6 @@
 
 ; Helper function. Makes final cleanups, closes streams, etc.
 (defun -cleanup (s)
-    (debug (port_to_list s))
-
     ; Closing the system logger.
     ; Calling <syslog.h> closelog();
     (close s)
