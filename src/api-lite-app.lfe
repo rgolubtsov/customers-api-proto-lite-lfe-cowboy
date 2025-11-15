@@ -20,7 +20,8 @@
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3))
-            (from api-lite-helper (-cleanup 1))))
+            (from api-lite-helper (-dbg     3)
+                                  (-cleanup 1))))
 
 (include-file "api-lite-constants.lfe")
 
@@ -45,9 +46,11 @@
     ; Calling <syslog.h> openlog(NULL, LOG_CONS | LOG_PID, LOG_DAEMON);
     (syslog:start) (let ((`#(ok ,s) (open daemon-exec `(cons pid) 'daemon)))
 
+    ; Identifying whether debug logging is enabled. TODO: Call a special func.
+    (let ((dbg 'true))
+
     (let ((daemon-name (DAEMON-NAME)))
-    (       debug (++ (O-BRACKET) daemon-name (C-BRACKET)))
-    (log s 'debug (++ (O-BRACKET) daemon-name (C-BRACKET))))
+    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET)))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
