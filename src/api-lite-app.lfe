@@ -19,8 +19,8 @@
         (stop      1)) ; (-state) -> ok
     (import (from logger (debug 1))
             (from syslog (open  3)
-                         (log   3)
-                         (close 1))))
+                         (log   3))
+            (from api-lite-helper (-cleanup 1))))
 
 (include-file "api-lite-constants.lfe")
 
@@ -67,9 +67,7 @@
 
     (let ((s -state)) ; <== Syslog handle.
 
-    ; Closing the system logger.
-    ; Calling <syslog.h> closelog();
-    (close s))
+    (-cleanup s))
 
     'ok
 )
