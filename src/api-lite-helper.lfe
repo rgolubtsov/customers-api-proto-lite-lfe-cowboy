@@ -11,11 +11,19 @@
 ;
 
 (defmodule api-lite-helper "The helper module for the daemon."
-    (export (-dbg     3)  ; (dbg s message) -> ok
-            (-cleanup 1)) ; (s) -> ok
+    (export (-get-settings 0)  ; ( ) -> [{...}, ...]
+            (-dbg          3)  ; (dbg s message) -> ok
+            (-cleanup      1)) ; (s) -> ok
     (import (from logger (debug 1))
             (from syslog (log   3)
                          (close 1))))
+
+(include-file "api-lite-constants.lfe")
+
+; Helper function. Used to get the daemon settings.
+(defun -get-settings ()
+    (let ((`#(ok ,settings) (file:consult (SETTINGS)))) settings)
+)
 
 ; Helper function. Used to log messages for debugging aims in a free form.
 (defun -dbg (dbg s message)

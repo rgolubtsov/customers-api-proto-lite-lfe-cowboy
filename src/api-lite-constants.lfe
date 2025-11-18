@@ -19,4 +19,7 @@
 
 (defmacro DAEMON-NAME _ "Customers API Lite")
 
+; The filename of the daemon settings (as a series of Erlang terms).
+(defmacro SETTINGS _ "../../../../etc/settings.conf")
+
 ; vim:set nu et ts=4 sw=4:
