@@ -20,9 +20,10 @@
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3))
-            (from api-lite-helper (-get-settings 0)
-                                  (-dbg          3)
-                                  (-cleanup      1))))
+            (from api-lite-helper (-get-settings         0)
+                                  (-is-debug-log-enabled 1)
+                                  (-dbg                  3)
+                                  (-cleanup              1))))
 
 (include-file "api-lite-constants.lfe")
 
@@ -50,13 +51,11 @@
     ; Getting the daemon settings.
     (let ((settings (-get-settings)))
 
-    (debug settings))
-
-    ; Identifying whether debug logging is enabled. TODO: Call a special func.
-    (let ((dbg 'true))
+    ; Identifying whether debug logging is enabled.
+    (let ((dbg (-is-debug-log-enabled settings)))
 
     (let ((daemon-name (DAEMON-NAME)))
-    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET)))))
+    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
