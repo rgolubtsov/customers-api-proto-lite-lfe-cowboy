@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-app.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.4
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.5
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -20,8 +20,10 @@
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3))
-            (from api-lite-helper (-dbg     3)
-                                  (-cleanup 1))))
+            (from api-lite-helper (-get-settings         0)
+                                  (-is-debug-log-enabled 1)
+                                  (-dbg                  3)
+                                  (-cleanup              1))))
 
 (include-file "api-lite-constants.lfe")
 
@@ -46,11 +48,23 @@
     ; Calling <syslog.h> openlog(NULL, LOG_CONS | LOG_PID, LOG_DAEMON);
     (syslog:start) (let ((`#(ok ,s) (open daemon-exec `(cons pid) 'daemon)))
 
-    ; Identifying whether debug logging is enabled. TODO: Call a special func.
-    (let ((dbg 'true))
+    ; Getting the daemon settings.
+    (let ((settings (-get-settings)))
 
-    (let ((daemon-name (DAEMON-NAME)))
-    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET)))))
+    ; Identifying whether debug logging is enabled.
+    (let ((dbg (-is-debug-log-enabled settings)))
+
+    (let ((daemon-name (element 2 (lists:keyfind 'daemon-name 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))
+
+    ; Getting the SQLite database path.
+    (let ((database_path
+          (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) database_path (C-BRACKET))))
+
+    ; Getting the port number used to run the Cowboy web server.
+    (let ((server-port (element 2 (lists:keyfind 'server-port 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
