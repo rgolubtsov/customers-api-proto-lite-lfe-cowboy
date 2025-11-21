@@ -54,8 +54,17 @@
     ; Identifying whether debug logging is enabled.
     (let ((dbg (-is-debug-log-enabled settings)))
 
-    (let ((daemon-name (DAEMON-NAME)))
-    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))))
+    (let ((daemon-name (element 2 (lists:keyfind 'daemon-name 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))
+
+    ; Getting the SQLite database path.
+    (let ((database_path
+          (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) database_path (C-BRACKET))))
+
+    ; Getting the port number used to run the Cowboy web server.
+    (let ((server-port (element 2 (lists:keyfind 'server-port 1 settings))))
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
