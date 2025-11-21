@@ -17,8 +17,6 @@
 (defmacro O-BRACKET _ "[")
 (defmacro C-BRACKET _ "]")
 
-(defmacro DAEMON-NAME _ "Customers API Lite")
-
 ; The filename of the daemon settings (as a series of Erlang terms).
 (defmacro SETTINGS _ "../../../../etc/settings.conf")
 
