@@ -200,7 +200,7 @@ No. | Endpoint name                                      | Request method and RE
 
 ### Logging
 
-The microservice has the ability to log messages to a logfile and to the Unix syslog facility.
+The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*.
 
 **TBD** :cd:
 
