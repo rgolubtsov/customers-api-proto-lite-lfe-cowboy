@@ -13,9 +13,11 @@
 (defmodule api-lite-helper "The helper module for the daemon."
     (export (-get-settings         0)  ; ( ) -> [{...}, ...]
             (-is-debug-log-enabled 1)  ; (settings) -> true | false
+            (-get-server-port      1)  ; (settings) -> pos_integer()
             (-dbg                  3)  ; (dbg s message) -> ok
             (-cleanup              1)) ; (s) -> ok
-    (import (from logger (debug 1))
+    (import (from logger (debug 1)
+                         (error 1))
             (from syslog (log   3)
                          (close 1))))
 
@@ -32,6 +34,26 @@
     (let ((dbg (lists:keyfind 'logger-debug-enabled 1 settings)))
 
     (if (is_boolean dbg) dbg (element 2 dbg)))
+)
+
+; Helper function. Retrieves the port number used to run the Cowboy web server,
+; from daemon settings.
+(defun -get-server-port (settings)
+    (let ((server-port- (lists:keyfind 'server-port 1 settings)))
+    (let ((server-port
+        (if (not (is_boolean server-port-)) (element 2 server-port-) 0)))
+
+    (cond
+        ((/= server-port 0)
+            (cond
+                ((and (>= server-port (MIN-PORT)) (=< server-port (MAX-PORT)))
+                    server-port)
+                (else
+                    (error (ERR-PORT-VALID-MUST-BE-POSITIVE-INT)) (DEF-PORT))
+            ))
+        (else
+            (error (ERR-PORT-VALID-MUST-BE-POSITIVE-INT)) (DEF-PORT))
+    )))
 )
 
 ; Helper function. Used to log messages for debugging aims in a free form.
