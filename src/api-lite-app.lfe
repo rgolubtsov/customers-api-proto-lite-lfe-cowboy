@@ -22,6 +22,7 @@
                          (log   3))
             (from api-lite-helper (-get-settings         0)
                                   (-is-debug-log-enabled 1)
+                                  (-get-server-port      1)
                                   (-dbg                  3)
                                   (-cleanup              1))))
 
@@ -63,7 +64,7 @@
     (-dbg dbg s (++ (O-BRACKET) database_path (C-BRACKET))))
 
     ; Getting the port number used to run the Cowboy web server.
-    (let ((server-port (element 2 (lists:keyfind 'server-port 1 settings))))
+    (let ((server-port (-get-server-port settings)))
     (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
