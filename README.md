@@ -64,7 +64,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Fetching syslog v1.1.0
 ===> Fetching cowlib v2.16.0
 ===> Fetching ranch v2.2.0
-└─ api-lite─0.0.5 (project app)
+└─ api-lite─0.0.6 (project app)
    ├─ cowboy─2.14.2 (hex package)
    │  ├─ cowlib─2.16.0 (hex package)
    │  └─ ranch─2.2.0 (hex package)
@@ -103,7 +103,7 @@ $ rebar3 lfe release
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
-===> Assembling release 'api-lited'-0.0.5...
+===> Assembling release 'api-lited'-0.0.6...
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 
