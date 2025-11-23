@@ -27,9 +27,14 @@ DEPS = $(SRC_DIR)/$(PREF)-app.lfe \
        $(SRC_DIR)/$(PREF)-helper.lfe \
        $(SRC_DIR)/$(PREF).app.src
 
+DB_PATH = data/db
+DB_FILE = customers-api-lite.db.xz
+
 # Specify flags and other vars here.
 REBAR3 = rebar3
 LFE    = lfe
+
+UNXZ = unxz
 
 # Making the first target (Erlang BEAMs).
 $(BEAM): $(DEPS)
@@ -37,7 +42,10 @@ $(BEAM): $(DEPS)
 
 # Making the second target (OTP release).
 $(REL_DIR): $(BEAM)
-	$(REBAR3) $(LFE) release
+	$(REBAR3) $(LFE) release && \
+	if [ -f $(DB_PATH)/$(DB_FILE) ]; then \
+	    $(UNXZ) $(DB_PATH)/$(DB_FILE); \
+	fi
 
 .PHONY: all clean
 
