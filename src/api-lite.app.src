@@ -20,7 +20,8 @@
     {applications,        [
         kernel,
         stdlib,
-        syslog
+        syslog,
+        sqlite3
     ]},
     {mod, {'api-lite-app', []}},
     {env, []}
