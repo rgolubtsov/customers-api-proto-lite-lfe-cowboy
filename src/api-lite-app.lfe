@@ -20,7 +20,8 @@
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3))
-            (from sqlite3 (open 2))
+            (from sqlite3 (open  2)
+                          (close 1))
             (from api-lite-helper (-get-settings         0)
                                   (-is-debug-log-enabled 1)
                                   (-get-server-port      1)
@@ -62,10 +63,12 @@
     ; Getting the SQLite database path.
     (let ((database-path
           (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
-    (-dbg dbg s (++ (O-BRACKET) database-path (C-BRACKET)))
 
     ; Connecting to the database.
-    (let ((cnx (open 'anonymous `#(file ,database-path))))))
+    (let ((cnx- (open 'anonymous (list `#(file ,database-path)))))
+    (let ((cnx  (element 2 cnx-)))
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET)))
+    (close cnx)))) ; <== FIXME: Bring out it to -cleanup/1.
 
     ; Getting the port number used to run the Cowboy web server.
     (let ((server-port (-get-server-port settings)))
