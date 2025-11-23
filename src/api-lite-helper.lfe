@@ -15,7 +15,7 @@
             (-is-debug-log-enabled 1)  ; (settings) -> true | false
             (-get-server-port      1)  ; (settings) -> pos_integer()
             (-dbg                  3)  ; (dbg s message) -> ok
-            (-cleanup              1)) ; (s) -> ok
+            (-cleanup              1)) ; (state) -> ok
     (import (from logger (debug 1)
                          (error 1))
             (from syslog (log   3)
@@ -67,10 +67,14 @@
 )
 
 ; Helper function. Makes final cleanups, closes streams, etc.
-(defun -cleanup (s)
+(defun -cleanup (state)
+    (let (((cons cnx s) state))
+
+    (sqlite3:close cnx)
+
     ; Closing the system logger.
     ; Calling <syslog.h> closelog();
-    (close s)
+    (close (lists:last s)))
 
     'ok
 )
