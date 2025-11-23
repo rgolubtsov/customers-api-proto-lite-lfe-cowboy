@@ -62,7 +62,7 @@
 
     ; Getting the SQLite database path.
     (let ((database-path
-          (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
+          (element 2 (lists:keyfind 'sqlite-database-path 1 settings))))
 
     ; Connecting to the database.
     (let ((cnx- (open 'anonymous (list `#(file ,database-path)))))
