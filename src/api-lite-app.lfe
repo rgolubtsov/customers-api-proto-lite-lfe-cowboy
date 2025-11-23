@@ -60,12 +60,12 @@
     (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))
 
     ; Getting the SQLite database path.
-    (let ((database_path
+    (let ((database-path
           (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
-    (-dbg dbg s (++ (O-BRACKET) database_path (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) database-path (C-BRACKET)))
 
     ; Connecting to the database.
-    (let ((cnx (open 'anonymous `#(file ,database_path))))))
+    (let ((cnx (open 'anonymous `#(file ,database-path))))))
 
     ; Getting the port number used to run the Cowboy web server.
     (let ((server-port (-get-server-port settings)))
