@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-app.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.5
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.6
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -20,6 +20,7 @@
     (import (from logger (debug 1))
             (from syslog (open  3)
                          (log   3))
+            (from sqlite3 (open 2))
             (from api-lite-helper (-get-settings         0)
                                   (-is-debug-log-enabled 1)
                                   (-get-server-port      1)
@@ -59,17 +60,22 @@
     (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))
 
     ; Getting the SQLite database path.
-    (let ((database_path
-          (element 2 (lists:keyfind 'sqlite-datasource-url 1 settings))))
-    (-dbg dbg s (++ (O-BRACKET) database_path (C-BRACKET))))
+    (let ((database-path
+          (element 2 (lists:keyfind 'sqlite-database-path 1 settings))))
+
+    ; Connecting to the database.
+    (let ((cnx- (open 'anonymous (list `#(file ,database-path)))))
+    (let ((cnx  (element 2 cnx-)))
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET)))
 
     ; Getting the port number used to run the Cowboy web server.
     (let ((server-port (-get-server-port settings)))
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))))
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 
-    `#(ok ,pid ,s)))) ; <== Syslog handle will be returned as the `State` val.
+    `#(ok ,pid (,cnx ,s)))))))))) ; <== SQLite DB "connection" + Syslog handle
+                                  ;     will be returned as the `State` value.
 )
 
 (defun prep_stop (-state)
@@ -83,9 +89,7 @@
     Returns:
         The `ok` atom."
 
-    (let ((s -state)) ; <== Syslog handle.
-
-    (-cleanup s))
+    (-cleanup -state)
 
     'ok
 )

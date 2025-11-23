@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-helper.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.5
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.6
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -15,7 +15,7 @@
             (-is-debug-log-enabled 1)  ; (settings) -> true | false
             (-get-server-port      1)  ; (settings) -> pos_integer()
             (-dbg                  3)  ; (dbg s message) -> ok
-            (-cleanup              1)) ; (s) -> ok
+            (-cleanup              1)) ; (state) -> ok
     (import (from logger (debug 1)
                          (error 1))
             (from syslog (log   3)
@@ -67,10 +67,14 @@
 )
 
 ; Helper function. Makes final cleanups, closes streams, etc.
-(defun -cleanup (s)
+(defun -cleanup (state)
+    (let (((cons cnx s) state))
+
+    (sqlite3:close cnx)
+
     ; Closing the system logger.
     ; Calling <syslog.h> closelog();
-    (close s)
+    (close (lists:last s)))
 
     'ok
 )

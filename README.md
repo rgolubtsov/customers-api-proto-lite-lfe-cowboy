@@ -57,16 +57,18 @@ src/cl.lfe:472: Warning: redefining core function car/1
 src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
-===> Fetching syslog v1.1.0
+===> Fetching sqlite3 v1.1.15
 ===> Fetching pc v1.15.0
 ===> Analyzing applications...
 ===> Compiling pc
+===> Fetching syslog v1.1.0
 ===> Fetching cowlib v2.16.0
 ===> Fetching ranch v2.2.0
-└─ api-lite─0.0.5 (project app)
+└─ api-lite─0.0.6 (project app)
    ├─ cowboy─2.14.2 (hex package)
    │  ├─ cowlib─2.16.0 (hex package)
    │  └─ ranch─2.2.0 (hex package)
+   ├─ sqlite3─1.1.15 (hex package)
    └─ syslog─1.1.0 (hex package)
 ```
 
@@ -84,7 +86,10 @@ $ rebar3 lfe clean
 $
 $ rebar3 lfe compile
 ===> Verifying dependencies...
+===> Compiling c_src/sqlite3_drv.c
+===> Linking $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/sqlite3/priv/sqlite3_drv.so
 ===> Analyzing applications...
+===> Compiling sqlite3
 ===> Compiling syslog
 ===> Compiling ranch
 ===> Compiling cowlib
@@ -98,7 +103,7 @@ $ rebar3 lfe release
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
-===> Assembling release 'api-lited'-0.0.5...
+===> Assembling release 'api-lited'-0.0.6...
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 
