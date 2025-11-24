@@ -74,6 +74,7 @@
     (let ((server-port (-get-server-port settings)))
 
     ; Starting up the Cowboy web server.
+    (application:ensure_all_started 'cowboy)
     (let ((dispatch (compile `(#(_ (#(,(SLASH) api-lite-handler ())))))))
     (let ((status (start_clear 'api-lite-listener
         `(#(port ,server-port))
