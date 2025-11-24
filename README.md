@@ -99,7 +99,12 @@ $ rebar3 lfe compile
 ===> Analyzing applications...
 ===> Compiling api-lite
 $
-$ rebar3 lfe release
+$ rebar3 lfe release && \
+  DB_PATH="data/db"; \
+  DB_FILE="customers-api-lite.db.xz"; \
+  if [ -f ${DB_PATH}/${DB_FILE} ]; then \
+     unxz ${DB_PATH}/${DB_FILE}; \
+  fi
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
