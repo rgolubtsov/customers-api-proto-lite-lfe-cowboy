@@ -44,7 +44,7 @@ $(BEAM): $(DEPS)
 $(REL_DIR): $(BEAM)
 	$(REBAR3) $(LFE) release && \
 	if [ -f $(DB_PATH)/$(DB_FILE) ]; then \
-	    $(UNXZ) $(DB_PATH)/$(DB_FILE); \
+	   $(UNXZ) $(DB_PATH)/$(DB_FILE); \
 	fi
 
 .PHONY: all clean
