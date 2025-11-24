@@ -21,6 +21,8 @@
             (from syslog (open  3)
                          (log   3))
             (from sqlite3 (open 2))
+            (from cowboy_router (compile     1))
+            (from cowboy        (start_clear 3))
             (from api-lite-helper (-get-settings         0)
                                   (-is-debug-log-enabled 1)
                                   (-get-server-port      1)
@@ -70,7 +72,18 @@
 
     ; Getting the port number used to run the Cowboy web server.
     (let ((server-port (-get-server-port settings)))
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list server-port) (C-BRACKET))))
+
+    ; Starting up the Cowboy web server.
+    (let ((dispatch (compile `(#(_ (#(,(SLASH) api-lite-handler ())))))))
+    (let ((status (start_clear 'api-lite-listener
+        `(#(port ,server-port))
+        `#M(env #M(dispatch ,dispatch))
+    )))
+
+    (if (== (element 1 status) 'ok)
+        (debug (pid_to_list (element 2 status)))
+        (debug (integer_to_list (B-O-O-O-M)))
+    ))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
 

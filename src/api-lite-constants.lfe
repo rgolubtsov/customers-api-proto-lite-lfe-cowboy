@@ -14,6 +14,7 @@
 
 ; Helper constants.
 (defmacro B-O-O-O-M _ 000)
+(defmacro SLASH     _ "/")
 (defmacro O-BRACKET _ "[")
 (defmacro C-BRACKET _ "]")
 
