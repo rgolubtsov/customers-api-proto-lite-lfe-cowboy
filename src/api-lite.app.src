@@ -1,7 +1,7 @@
 %
 % src/api-lite.app.src
 % =============================================================================
-% Customers API Lite microservice prototype (LFE/OTP port). Version 0.0.6
+% Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.0
 % =============================================================================
 % A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 % to be run as a microservice, implementing a special Customers API prototype
@@ -12,7 +12,7 @@
 
 {application, 'api-lite', [
     {description,         "A daemon written in LFE (Lisp Flavoured Erlang), designed and intended to be run as a microservice, implementing a special Customers API prototype with a smart yet simplified data scheme."},
-    {vsn,                 "0.0.6"},
+    {vsn,                 "0.1.0"},
     {licenses,            ["MIT License"]},
     {links,               []},
     {modules,             []},
@@ -21,7 +21,8 @@
         kernel,
         stdlib,
         syslog,
-        sqlite3
+        sqlite3,
+        cowboy
     ]},
     {mod, {'api-lite-app', []}},
     {env, []}
