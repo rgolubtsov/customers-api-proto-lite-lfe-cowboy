@@ -12,19 +12,31 @@
 
 (defmodule api-lite-handler "The request handler module of the daemon."
     (export (init 2)) ; (req state) -> {ok, Req, State}
-    (import (from logger (debug 1))))
+    (import (from logger (debug 1))
+            (from api-lite-helper (-dbg 3))))
+
+(include-file "api-lite-constants.lfe")
 
 (defun init (req state)
     "The request handler callback. Gets called on each incoming HTTP request.
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request.
+        state: An initial state of the request (arbitrary data passed
+               with dispatch rules of the `cowboy_router` middleware).
 
     Returns:
         The `ok` tuple containing a new request object and its state."
 
     (debug req)
+
+    (let (((cons dbg t) state))
+    (let (((cons s cnx) t))
+
+    (let ((method (maps:get 'method req)))
+    (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list method) (C-BRACKET))))
+
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))))
 
     `#(ok ,req ,state)
 )
