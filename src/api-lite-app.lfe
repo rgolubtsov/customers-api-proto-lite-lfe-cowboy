@@ -75,7 +75,12 @@
 
     ; Starting up the Cowboy web server.
     (application:ensure_all_started 'cowboy)
-    (let ((dispatch (compile `(#(_ (#(,(SLASH) api-lite-handler ())))))))
+    (let ((dispatch (compile `(#(_ (#(
+        ,(SLASH) api-lite-handler (,dbg ,s ,cnx)
+;       ,(...  ) api-lite-handler (,dbg ,s ,cnx)
+;       ,( ... ) api-lite-handler (,dbg ,s ,cnx)
+;       ,(  ...) api-lite-handler (,dbg ,s ,cnx)
+    )))))))
     (let ((status (start_clear 'api-lite-listener
         `(#(port ,server-port))
         `#M(env #M(dispatch ,dispatch))
