@@ -64,7 +64,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Fetching syslog v1.1.0
 ===> Fetching cowlib v2.16.0
 ===> Fetching ranch v2.2.0
-└─ api-lite─0.1.0 (project app)
+└─ api-lite─0.1.5 (project app)
    ├─ cowboy─2.14.2 (hex package)
    │  ├─ cowlib─2.16.0 (hex package)
    │  └─ ranch─2.2.0 (hex package)
@@ -82,6 +82,7 @@ $ rebar3 lfe clean
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-helper.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-handler.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite.app
 $
 $ rebar3 lfe compile
@@ -108,7 +109,7 @@ $ rebar3 lfe release && \
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
-===> Assembling release 'api-lited'-0.1.0...
+===> Assembling release 'api-lited'-0.1.5...
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 
@@ -210,7 +211,34 @@ No. | Endpoint name                                      | Request method and RE
 
 ### Logging
 
-The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*.
+The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*. When running under Arch Linux (not in a Docker container), logs can be seen and analyzed in an ordinary fashion, by `tail`ing the `log/customers-api-lite.log` logfile:
+
+```
+$ tail -f log/customers-api-lite.log
+...
+[2025-11-28|00:50:10.067037+03:00] [debug] [Customers API Lite]
+[2025-11-28|00:50:10.068187+03:00] [debug] [<0.533.0>]
+...
+[2025-11-28|00:50:10.074812+03:00] [info] Server started on port 8765
+...
+[2025-11-28|00:50:20.586236+03:00] [debug] pid: <0.572.0>, port: 8765, scheme: <<"http">>, version: 'HTTP/1.1', path: <<"/">>, host: <<"localhost">>, peer: {{127,0,0,1},39228}, bindings: #{}, sock: {{127,0,0,1},8765}, ref: 'api-lite-listener', headers: #{<<"accept">> => <<"*/*">>,<<"host">> => <<"localhost:8765">>,<<"user-agent">> => <<"curl/8.13.0">>}, method: <<"GET">>, qs: <<>>, cert: undefined, body_length: 0, has_body: false, streamid: 1, host_info: undefined, path_info: undefined
+[2025-11-28|00:50:20.587355+03:00] [debug] [GET]
+[2025-11-28|00:50:20.587574+03:00] [debug] [<0.533.0>]
+[2025-11-28|00:50:30.289570+03:00] [info] Server stopped
+```
+
+Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
+
+```
+$ journalctl -f
+...
+Nov 28 00:50:10 <hostname> api-lited[<pid>]: [Customers API Lite]
+Nov 28 00:50:10 <hostname> api-lited[<pid>]: [<0.533.0>]
+Nov 28 00:50:10 <hostname> api-lited[<pid>]: Server started on port 8765
+Nov 28 00:50:20 <hostname> api-lited[<pid>]: [GET]
+Nov 28 00:50:20 <hostname> api-lited[<pid>]: [<0.533.0>]
+Nov 28 00:50:30 <hostname> api-lited[<pid>]: Server stopped
+```
 
 **TBD** :cd:
 

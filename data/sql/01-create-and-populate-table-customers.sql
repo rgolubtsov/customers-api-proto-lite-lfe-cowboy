@@ -1,7 +1,7 @@
 --
 -- data/sql/01-create-and-populate-table-customers.sql
 -- ============================================================================
--- Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.0
+-- Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.5
 -- ============================================================================
 -- A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 -- to be run as a microservice, implementing a special Customers API prototype
