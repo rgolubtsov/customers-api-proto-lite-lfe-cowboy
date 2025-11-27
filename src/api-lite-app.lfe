@@ -17,7 +17,8 @@
         (start     2)  ; (-start-type -start-args) -> {ok, pid(), State}
         (prep_stop 1)  ; (-state) -> ok
         (stop      1)) ; (-state) -> ok
-    (import (from logger (debug 1))
+    (import (from logger (error 1)
+                         (info  1))
             (from syslog (open  3)
                          (log   3))
             (from sqlite3 (open 2))
@@ -86,9 +87,16 @@
         `#M(env #M(dispatch ,dispatch))
     )))
 
-    (if (== (element 1 status) 'ok)
-        (debug (pid_to_list (element 2 status)))
-        (debug (integer_to_list (B-O-O-O-M)))
+    (cond
+        ((== (element 1 status) 'error)
+            (if (== (element 2 status) 'eaddrinuse)
+                (error (++ (ERR-CANNOT-START-SERVER)(ERR-ADDR-ALREADY-IN-USE)))
+                (error (++ (ERR-CANNOT-START-SERVER)(ERR-SERV-UNKNOWN-REASON)))
+            ) (init:stop (EXIT-FAILURE)))
+        ((== (element 1 status) 'ok)
+            (let ((server-port- (integer_to_list  server-port)))
+            (       info (++ (MSG-SERVER-STARTED) server-port-))
+            (log s 'info (++ (MSG-SERVER-STARTED) server-port-))))
     ))))
 
     (let ((`#(ok ,pid) (api-lite-sup:start-link)))
@@ -107,6 +115,11 @@
 
     Returns:
         The `ok` atom."
+
+    (let ((s (lists:last -state)))
+
+    (       info (MSG-SERVER-STOPPED))
+    (log s 'info (MSG-SERVER-STOPPED)))
 
     (-cleanup -state)
 
