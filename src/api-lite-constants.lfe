@@ -13,15 +13,26 @@
 ; (defmodule api-lite-constants "The pseudo-module containing only constants.")
 
 ; Helper constants.
-(defmacro B-O-O-O-M _ 000)
-(defmacro SLASH     _ "/")
-(defmacro O-BRACKET _ "[")
-(defmacro C-BRACKET _ "]")
+(defmacro EXIT-FAILURE _   1) ;    Failing exit status.
+(defmacro EXIT-SUCCESS _   0) ; Successful exit status.
+(defmacro SLASH        _ "/")
+(defmacro O-BRACKET    _ "[")
+(defmacro C-BRACKET    _ "]")
+
+; Common notification messages.
+(defmacro MSG-SERVER-STARTED _ "Server started on port ")
+(defmacro MSG-SERVER-STOPPED _ "Server stopped")
 
 ; Common error messages.
 (defmacro ERR-PORT-VALID-MUST-BE-POSITIVE-INT _ (++
     "Valid server port must be a positive integer value, in the range "
     "1024 .. 49151. The default value of 8080 will be used instead."))
+(defmacro ERR-CANNOT-START-SERVER _
+    "FATAL: Cannot start server ")
+(defmacro ERR-ADDR-ALREADY-IN-USE _
+    "due to address requested already in use. Quitting...")
+(defmacro ERR-SERV-UNKNOWN-REASON _
+    "for an unknown reason. Quitting...")
 
 ; The filename of the daemon settings (as a series of Erlang terms).
 (defmacro SETTINGS _ "../../../../etc/settings.conf")
