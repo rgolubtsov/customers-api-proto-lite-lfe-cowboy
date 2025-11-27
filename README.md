@@ -210,7 +210,31 @@ No. | Endpoint name                                      | Request method and RE
 
 ### Logging
 
-The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*.
+The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*. When running under Arch Linux (not in a Docker container), logs can be seen and analyzed in an ordinary fashion, by `tail`ing the `log/customers-api-lite.log` logfile:
+
+```
+$ tail -f log/customers-api-lite.log
+...
+[2025-11-27|19:30:10.437089+03:00] [debug] [Customers API Lite]
+[2025-11-27|19:30:10.438274+03:00] [debug] [<0.533.0>]
+...
+[2025-11-27|19:30:10.444160+03:00] [debug] <0.534.0>
+...
+[2025-11-27|19:30:20.499202+03:00] [debug] pid: <0.572.0>, port: 8765, scheme: <<"http">>, version: 'HTTP/1.1', path: <<"/">>, host: <<"localhost">>, peer: {{127,0,0,1},55020}, bindings: #{}, sock: {{127,0,0,1},8765}, ref: 'api-lite-listener', headers: #{<<"accept">> => <<"*/*">>,<<"host">> => <<"localhost:8765">>,<<"user-agent">> => <<"curl/8.13.0">>}, method: <<"GET">>, qs: <<>>, cert: undefined, streamid: 1, body_length: 0, has_body: false, host_info: undefined, path_info: undefined
+[2025-11-27|19:30:20.500422+03:00] [debug] [GET]
+[2025-11-27|19:30:20.500826+03:00] [debug] [<0.533.0>]
+```
+
+Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
+
+```
+$ journalctl -f
+...
+Nov 27 19:30:10 <hostname> api-lited[<pid>]: [Customers API Lite]
+Nov 27 19:30:10 <hostname> api-lited[<pid>]: [<0.533.0>]
+Nov 27 19:30:20 <hostname> api-lited[<pid>]: [GET]
+Nov 27 19:30:20 <hostname> api-lited[<pid>]: [<0.533.0>]
+```
 
 **TBD** :cd:
 
