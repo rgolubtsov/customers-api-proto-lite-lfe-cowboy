@@ -59,16 +59,6 @@
     ; Identifying whether debug logging is enabled.
     (let ((dbg (-is-debug-log-enabled settings)))
 
-    ; -------------------------------------------------------------------------
-    (logger:update_formatter_config 'default 'time_designator #\*)
-    (let ((dflt-hndlr-config (element 2 (logger:get_handler_config 'default))))
-    (let ((dflt-frmttr          (maps:get 'formatter dflt-hndlr-config)))
-    (let ((dflt-frmttr-config   (element 2 dflt-frmttr)))
-    (let ((dflt-frmttr-template (maps:get 'template dflt-frmttr-config)))
-    (logger:update_formatter_config 'default 'template
-    (++ (lists:nth 5 dflt-frmttr-template) (SLASH)))))))
-    ; -------------------------------------------------------------------------
-
     (let ((daemon-name (element 2 (lists:keyfind 'daemon-name 1 settings))))
     (-dbg dbg s (++ (O-BRACKET) daemon-name (C-BRACKET))))
 
