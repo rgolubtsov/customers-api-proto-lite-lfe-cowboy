@@ -48,7 +48,7 @@ Then pull and install all the necessary plugins and third-party libraries:
 
 ```
 $ rebar3 tree
-===> Fetching rebar3_lfe v0.4.11
+===> Fetching rebar3_lfe v0.4.12
 ===> Fetching lfe v2.2.0
 ===> Analyzing applications...
 ===> Compiling lfe
@@ -58,7 +58,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
 ===> Fetching sqlite3 v1.1.15
-===> Fetching pc v1.15.0
+===> Fetching pc v1.14.0
 ===> Analyzing applications...
 ===> Compiling pc
 ===> Fetching syslog v1.1.0
