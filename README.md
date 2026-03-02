@@ -35,12 +35,24 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run successfully under **Arch Linux** (proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker`):
+The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`erlang-nox`, `erlang-dev`, `rebar3`, `make`, `docker.io`):
+
+* In Ubuntu Server:
+
+```
+$ sudo apt-get update && \
+  sudo apt-get install erlang-nox erlang-dev make docker.io -y
+...
+```
+
+* In Arch Linux:
 
 ```
 $ sudo pacman -Syu rebar3 make docker
 ...
 ```
+
+**TBD** :cd:
 
 ---
 
@@ -58,7 +70,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
 ===> Fetching cowboy v2.14.2
 ===> Fetching sqlite3 v1.1.15
-===> Fetching pc v1.14.0
+===> Fetching pc v1.15.0
 ===> Analyzing applications...
 ===> Compiling pc
 ===> Fetching syslog v1.1.0
@@ -79,11 +91,11 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ```
 $ rebar3 lfe clean
 ===> Cleaning out api-lite...
-===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-helper.beam
-===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-handler.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite.app
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
 $
 $ rebar3 lfe compile
 ===> Verifying dependencies...
@@ -91,9 +103,9 @@ $ rebar3 lfe compile
 ===> Linking $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/sqlite3/priv/sqlite3_drv.so
 ===> Analyzing applications...
 ===> Compiling sqlite3
+===> Compiling cowlib
 ===> Compiling syslog
 ===> Compiling ranch
-===> Compiling cowlib
 ===> Compiling cowboy
 ===> Compiling c_src/syslog_drv.c
 ===> Linking priv/syslog_drv.so
@@ -240,7 +252,7 @@ $ curl -v http://localhost:8765
 
 ### Logging
 
-The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*. When running under Arch Linux (not in a Docker container), logs can be seen and analyzed in an ordinary fashion, by `tail`ing the `log/customers-api-lite.log` logfile:
+The microservice has the ability to log messages to a logfile and to the Unix syslog facility. To enable debug logging, the `logger-debug-enabled` setting in the microservice main config file `etc/settings.conf` should be set to `true` *before starting up the microservice*. When running under Ubuntu Server or Arch Linux (not in a Docker container), logs can be seen and analyzed in an ordinary fashion, by `tail`ing the `log/customers-api-lite.log` logfile:
 
 ```
 $ tail -f log/customers-api-lite.log
