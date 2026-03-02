@@ -256,11 +256,11 @@ The microservice has the ability to log messages to a logfile and to the Unix sy
 
 ```
 $ tail -f log/customers-api-lite.log
-[2025-12-02|01:10:30.702582+03:00] [debug] [Customers API Lite]
-[2025-12-02|01:10:30.704056+03:00] [debug] [<0.533.0>]
-[2025-12-02|01:10:30.705462+03:00] [info] Server started on port 8765
-[2025-12-02|01:10:40.932777+03:00] [debug] [GET]
-[2025-12-02|01:10:50.118555+03:00] [info] Server stopped
+[2026-03-02|21:10:30.114202+01:00] [debug] [Customers API Lite]
+[2026-03-02|21:10:30.115814+01:00] [debug] [<0.500.0>]
+[2026-03-02|21:10:30.117465+01:00] [info] Server started on port 8765
+[2026-03-02|21:10:40.073591+01:00] [debug] [GET]
+[2026-03-02|21:10:50.506359+01:00] [info] Server stopped
 ```
 
 Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
@@ -268,11 +268,11 @@ Messages registered by the Unix system logger can be seen and analyzed using the
 ```
 $ journalctl -f
 ...
-Dec 02 01:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
-Dec 02 01:10:30 <hostname> api-lited[<pid>]: [<0.533.0>]
-Dec 02 01:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
-Dec 02 01:10:40 <hostname> api-lited[<pid>]: [GET]
-Dec 02 01:10:50 <hostname> api-lited[<pid>]: Server stopped
+Mar 02 21:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
+Mar 02 21:10:30 <hostname> api-lited[<pid>]: [<0.500.0>]
+Mar 02 21:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
+Mar 02 21:10:40 <hostname> api-lited[<pid>]: [GET]
+Mar 02 21:10:50 <hostname> api-lited[<pid>]: Server stopped
 ```
 
 **TBD** :cd:
