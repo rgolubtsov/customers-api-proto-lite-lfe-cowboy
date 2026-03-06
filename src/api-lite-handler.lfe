@@ -28,16 +28,16 @@
     Returns:
         The `ok` tuple containing a new request object and its state."
 
-;   (debug req)
+    (debug req);
 
     (let (((cons dbg t) state))
     (let (((cons s cnx) t))
 
     (let ((method- (maps:get 'method req)))
     (let ((method  (binary:bin_to_list method-)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))))))
+    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))))
 
-;   (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))));
 
     `#(ok ,req ,state)
 )
