@@ -95,7 +95,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Fetching syslog v1.1.0
 ===> Fetching cowlib v2.16.0
 ===> Fetching ranch v2.2.0
-└─ api-lite─0.1.6 (project app)
+└─ api-lite─0.1.7 (project app)
    ├─ cowboy─2.14.2 (hex package)
    │  ├─ cowlib─2.16.0 (hex package)
    │  └─ ranch─2.2.0 (hex package)
@@ -140,7 +140,7 @@ $ rebar3 lfe release && \
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
-===> Assembling release 'api-lited'-0.1.6...
+===> Assembling release 'api-lited'-0.1.7...
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 
@@ -238,36 +238,112 @@ No. | Endpoint name                                      | Request method and RE
 * The `{customer_contact}` placeholder is a string &mdash; it denotes a newly created customer contact (phone or email).
 * The `{contact_type}` placeholder is a string and can take one of two possible values, case-insensitive: `phone` or `email`.
 
-The following command-line snippets display the exact usage for these endpoints (the **cURL** utility is used as an example to access them):
+The following command-line snippets display the exact usage for these endpoints (the **cURL** utility is used as an example to access them)^:
 
 1. **Create customer**
 
-**TBD** :cd:
+```
+$ curl -vXPUT http://localhost:8765/v1/customers \
+       -H 'content-type: application/json' \
+       -d '{"name":"Jamison Palmer"}'
+...
+> PUT /v1/customers HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 25
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 2. **Create contact**
 
-**TBD** :cd:
+```
+$ curl -vXPUT http://localhost:8765/v1/customers/contacts \
+       -H 'content-type: application/json' \
+       -d '{"customer_id":"3","contact":"+12197654320"}'
+...
+> PUT /v1/customers/contacts HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 44
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+Or create **email** contact:
+
+```
+$ curl -vXPUT http://localhost:8765/v1/customers/contacts \
+       -H 'content-type: application/json' \
+       -d '{"customer_id":"3","contact":"jamison.palmer@example.com"}'
+...
+> PUT /v1/customers/contacts HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 58
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 3. **List customers**
 
 ```
-$ curl -v http://localhost:8765
+$ curl -v http://localhost:8765/v1/customers
+...
+> GET /v1/customers HTTP/1.1
+...
+< HTTP/1.1 204 No Content
 ...
 ```
 
-**TBD** :cd:
-
 4. **Retrieve customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3
+...
+> GET /v1/customers/3 HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 5. **List contacts for a given customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts
+...
+> GET /v1/customers/3/contacts HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 6. **List contacts of a given type for a given customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts/phone
+...
+> GET /v1/customers/3/contacts/phone HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+Or list **email** contacts:
+
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts/email
+...
+> GET /v1/customers/3/contacts/email HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+> ^ The given names in customer accounts and in email contacts (in samples above) are for demonstrational purposes only. They have nothing common WRT any actual, ever really encountered names elsewhere.
 
 ### Logging
 
@@ -275,11 +351,18 @@ The microservice has the ability to log messages to a logfile and to the Unix sy
 
 ```
 $ tail -f log/customers-api-lite.log
-[2026-03-02|21:10:30.114202+01:00] [debug] [Customers API Lite]
-[2026-03-02|21:10:30.115814+01:00] [debug] [<0.500.0>]
-[2026-03-02|21:10:30.117465+01:00] [info] Server started on port 8765
-[2026-03-02|21:10:40.073591+01:00] [debug] [GET]
-[2026-03-02|21:10:50.506359+01:00] [info] Server stopped
+[2026-03-07|23:10:30.463233+03:00] [debug] [Customers API Lite]
+[2026-03-07|23:10:30.464462+03:00] [debug] [<0.535.0>]
+[2026-03-07|23:10:30.465942+03:00] [info] Server started on port 8765
+[2026-03-07|23:10:40.750431+03:00] [debug] [PUT]
+[2026-03-07|23:10:50.820568+03:00] [debug] [PUT]
+[2026-03-07|23:11:10.972327+03:00] [debug] [PUT]
+[2026-03-07|23:11:20.931319+03:00] [debug] [GET]
+[2026-03-07|23:11:30.815741+03:00] [debug] [GET]
+[2026-03-07|23:11:40.364391+03:00] [debug] [GET]
+[2026-03-07|23:11:50.833794+03:00] [debug] [GET]
+[2026-03-07|23:12:10.700103+03:00] [debug] [GET]
+[2026-03-07|23:12:20.441257+03:00] [info] Server stopped
 ```
 
 Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
@@ -287,11 +370,18 @@ Messages registered by the Unix system logger can be seen and analyzed using the
 ```
 $ journalctl -f
 ...
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: [<0.500.0>]
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
-Mar 02 21:10:40 <hostname> api-lited[<pid>]: [GET]
-Mar 02 21:10:50 <hostname> api-lited[<pid>]: Server stopped
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: [<0.535.0>]
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
+Mar 07 23:10:40 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:10:50 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:11:10 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:11:20 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:30 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:40 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:50 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:12:10 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:12:20 <hostname> api-lited[<pid>]: Server stopped
 ```
 
 **TBD** :cd:
