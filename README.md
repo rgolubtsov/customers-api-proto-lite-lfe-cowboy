@@ -351,11 +351,18 @@ The microservice has the ability to log messages to a logfile and to the Unix sy
 
 ```
 $ tail -f log/customers-api-lite.log
-[2026-03-02|21:10:30.114202+01:00] [debug] [Customers API Lite]
-[2026-03-02|21:10:30.115814+01:00] [debug] [<0.500.0>]
-[2026-03-02|21:10:30.117465+01:00] [info] Server started on port 8765
-[2026-03-02|21:10:40.073591+01:00] [debug] [GET]
-[2026-03-02|21:10:50.506359+01:00] [info] Server stopped
+[2026-03-07|23:10:30.463233+03:00] [debug] [Customers API Lite]
+[2026-03-07|23:10:30.464462+03:00] [debug] [<0.535.0>]
+[2026-03-07|23:10:30.465942+03:00] [info] Server started on port 8765
+[2026-03-07|23:10:40.750431+03:00] [debug] [PUT]
+[2026-03-07|23:10:50.820568+03:00] [debug] [PUT]
+[2026-03-07|23:11:10.972327+03:00] [debug] [PUT]
+[2026-03-07|23:11:20.931319+03:00] [debug] [GET]
+[2026-03-07|23:11:30.815741+03:00] [debug] [GET]
+[2026-03-07|23:11:40.364391+03:00] [debug] [GET]
+[2026-03-07|23:11:50.833794+03:00] [debug] [GET]
+[2026-03-07|23:12:10.700103+03:00] [debug] [GET]
+[2026-03-07|23:12:20.441257+03:00] [info] Server stopped
 ```
 
 Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
@@ -363,11 +370,18 @@ Messages registered by the Unix system logger can be seen and analyzed using the
 ```
 $ journalctl -f
 ...
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: [<0.500.0>]
-Mar 02 21:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
-Mar 02 21:10:40 <hostname> api-lited[<pid>]: [GET]
-Mar 02 21:10:50 <hostname> api-lited[<pid>]: Server stopped
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: [<0.535.0>]
+Mar 07 23:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
+Mar 07 23:10:40 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:10:50 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:11:10 <hostname> api-lited[<pid>]: [PUT]
+Mar 07 23:11:20 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:30 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:40 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:11:50 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:12:10 <hostname> api-lited[<pid>]: [GET]
+Mar 07 23:12:20 <hostname> api-lited[<pid>]: Server stopped
 ```
 
 **TBD** :cd:
