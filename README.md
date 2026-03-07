@@ -238,36 +238,112 @@ No. | Endpoint name                                      | Request method and RE
 * The `{customer_contact}` placeholder is a string &mdash; it denotes a newly created customer contact (phone or email).
 * The `{contact_type}` placeholder is a string and can take one of two possible values, case-insensitive: `phone` or `email`.
 
-The following command-line snippets display the exact usage for these endpoints (the **cURL** utility is used as an example to access them):
+The following command-line snippets display the exact usage for these endpoints (the **cURL** utility is used as an example to access them)^:
 
 1. **Create customer**
 
-**TBD** :cd:
+```
+$ curl -vXPUT http://localhost:8765/v1/customers \
+       -H 'content-type: application/json' \
+       -d '{"name":"Jamison Palmer"}'
+...
+> PUT /v1/customers HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 25
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 2. **Create contact**
 
-**TBD** :cd:
+```
+$ curl -vXPUT http://localhost:8765/v1/customers/contacts \
+       -H 'content-type: application/json' \
+       -d '{"customer_id":"3","contact":"+12197654320"}'
+...
+> PUT /v1/customers/contacts HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 44
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+Or create **email** contact:
+
+```
+$ curl -vXPUT http://localhost:8765/v1/customers/contacts \
+       -H 'content-type: application/json' \
+       -d '{"customer_id":"3","contact":"jamison.palmer@example.com"}'
+...
+> PUT /v1/customers/contacts HTTP/1.1
+...
+> content-type: application/json
+> Content-Length: 58
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 3. **List customers**
 
 ```
-$ curl -v http://localhost:8765
+$ curl -v http://localhost:8765/v1/customers
+...
+> GET /v1/customers HTTP/1.1
+...
+< HTTP/1.1 204 No Content
 ...
 ```
 
-**TBD** :cd:
-
 4. **Retrieve customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3
+...
+> GET /v1/customers/3 HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 5. **List contacts for a given customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts
+...
+> GET /v1/customers/3/contacts HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
 
 6. **List contacts of a given type for a given customer**
 
-**TBD** :cd:
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts/phone
+...
+> GET /v1/customers/3/contacts/phone HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+Or list **email** contacts:
+
+```
+$ curl -v http://localhost:8765/v1/customers/3/contacts/email
+...
+> GET /v1/customers/3/contacts/email HTTP/1.1
+...
+< HTTP/1.1 204 No Content
+...
+```
+
+> ^ The given names in customer accounts and in email contacts (in samples above) are for demonstrational purposes only. They have nothing common WRT any actual, ever really encountered names elsewhere.
 
 ### Logging
 
