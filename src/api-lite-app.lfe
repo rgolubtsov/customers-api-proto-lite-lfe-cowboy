@@ -76,12 +76,27 @@
 
     ; Starting up the Cowboy web server.
     (application:ensure_all_started 'cowboy)
-    (let ((dispatch (compile `(#(_ (#(
-        ,(SLASH) api-lite-handler (,dbg ,s ,cnx)
-;       ,(...  ) api-lite-handler (,dbg ,s ,cnx)
-;       ,( ... ) api-lite-handler (,dbg ,s ,cnx)
-;       ,(  ...) api-lite-handler (,dbg ,s ,cnx)
-    )))))))
+
+    ; Compiling routes to allow Cowboy to dispatch them:
+    ; /v1/customers
+    ; /v1/customers/contacts
+    ; /v1/customers/:customer_id
+    ; /v1/customers/:customer_id/contacts
+    ; /v1/customers/:customer_id/contacts/:contact_type
+    (let ((dispatch (compile `(#(_ (
+        #(    ,(REST-CONTEXT) api-lite-handler (,dbg ,s ,cnx))
+        #(,(++ (REST-CONTEXT) (SLASH)          (REST-CONTACTS))
+                              api-lite-handler (,dbg ,s ,cnx))
+        #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID))
+                              api-lite-handler (,dbg ,s ,cnx))
+        #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID)
+                              (SLASH)          (REST-CONTACTS))
+                              api-lite-handler (,dbg ,s ,cnx))
+        #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID)
+                              (SLASH)          (REST-CONTACTS)
+                              (SLASH)  (COLON) (REST-CONT-TYPE))
+                              api-lite-handler (,dbg ,s ,cnx))
+    ))))))
     (let ((status (start_clear 'api-lite-listener
         `(#(port ,server-port))
         `#M(env #M(dispatch ,dispatch))

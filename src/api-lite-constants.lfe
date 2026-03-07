@@ -16,6 +16,7 @@
 (defmacro EXIT-FAILURE _   1) ;    Failing exit status.
 (defmacro EXIT-SUCCESS _   0) ; Successful exit status.
 (defmacro SLASH        _ "/")
+(defmacro COLON        _ ":")
 (defmacro O-BRACKET    _ "[")
 (defmacro C-BRACKET    _ "]")
 
@@ -40,5 +41,14 @@
 (defmacro MIN-PORT _ 1024 ) ; The minimum port number allowed.
 (defmacro MAX-PORT _ 49151) ; The maximum port number allowed.
 (defmacro DEF-PORT _ 8080 ) ; The default server port number.
+
+; REST URI path-related constants.
+(defmacro REST-VERSION   _ "v1"          )
+(defmacro REST-PREFIX    _ "customers"   )
+(defmacro REST-CUST-ID   _ "customer_id" )
+(defmacro REST-CONTACTS  _ "contacts"    )
+(defmacro REST-CONT-TYPE _ "contact_type")
+(defmacro REST-CONTEXT   _ (++
+    (SLASH) (REST-VERSION) (SLASH) (REST-PREFIX)))
 
 ; vim:set nu et ts=4 sw=4:
