@@ -39,7 +39,7 @@
 
 ;   (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))
 
-    `#(ok ,req ,state)
+    `#(cowboy_rest ,req ,state)
 )
 
 ; vim:set nu et ts=4 sw=4:
