@@ -11,14 +11,17 @@
 ;
 
 (defmodule api-lite-handler "The request handler module of the daemon."
-    (export (init 2)) ; (req state) -> {ok, Req, State}
+    (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
+         (content_types_provided 2)  ; (req state) -> {Result, Req, State}
+            (to-json             2)) ; (req state) -> {Result, Req, State}
     (import (from logger (debug 1))
             (from api-lite-helper (-dbg 3))))
 
 (include-file "api-lite-constants.lfe")
 
 (defun init (req state)
-    "The request handler callback. Gets called on each incoming HTTP request.
+    "The REST handler initialization callback.
+    Gets called on each incoming HTTP request.
 
     Args:
         req:   A map representing the incoming HTTP request object.
@@ -26,7 +29,7 @@
                with dispatch rules of the `cowboy_router` middleware).
 
     Returns:
-        The `ok` tuple containing a new request object and its state."
+        The `cowboy_rest` tuple containing a new request object and its state."
 
 ;   (debug req)
 
@@ -40,6 +43,25 @@
 ;   (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))
 
     `#(cowboy_rest ,req ,state)
+)
+
+(defun content_types_provided (req state)
+    "The REST handler callback that returns a list of media types
+    the daemon provides.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               with dispatch rules of the `cowboy_router` middleware).
+
+    Returns:
+        ... ."
+
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
+)
+
+(defun to-json (req state)
+    `#((,(O-BRACKET) ,(C-BRACKET)) ,req ,state)
 )
 
 ; vim:set nu et ts=4 sw=4:
