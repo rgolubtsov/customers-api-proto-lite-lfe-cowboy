@@ -51,4 +51,8 @@
 (defmacro REST-CONTEXT   _ (++
     (SLASH) (REST-VERSION) (SLASH) (REST-PREFIX)))
 
+; HTTP response-related constants.
+(defmacro MIME-TYPE    [] #"application")
+(defmacro MIME-SUBTYPE [] #"json"       )
+
 ; vim:set nu et ts=4 sw=4:
