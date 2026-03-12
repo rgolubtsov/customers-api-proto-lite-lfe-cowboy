@@ -12,8 +12,8 @@
 
 (defmodule api-lite-handler "The request handler module of the daemon."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
-         (content_types_provided 2)  ; (req state) -> {Result, Req, State}
-            (to-json             2)) ; (req state) -> {Result, Req, State}
+         (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
+            (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
             (from api-lite-helper (-dbg 3))))
 
@@ -29,7 +29,8 @@
                with dispatch rules of the `cowboy_router` middleware).
 
     Returns:
-        The `cowboy_rest` tuple containing a new request object and its state."
+        The `cowboy_rest` tuple containing the incoming request object
+        and its initial state."
 
 ;   (debug req)
 
@@ -55,12 +56,25 @@
                with dispatch rules of the `cowboy_router` middleware).
 
     Returns:
-        ... ."
+        A tuple containing a list of media types the daemon provides
+        along with the incoming request object and its initial state."
 
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
 )
 
 (defun to-json (req state)
+    "The REST handler callback that returns the response body
+    in JSON representation.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               with dispatch rules of the `cowboy_router` middleware).
+
+    Returns:
+        A tuple containing the response body in JSON representation
+        along with the incoming request object and its initial state."
+
     `#((,(O-BRACKET) ,(C-BRACKET)) ,req ,state)
 )
 
