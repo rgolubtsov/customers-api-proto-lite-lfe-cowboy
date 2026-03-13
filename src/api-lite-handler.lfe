@@ -53,7 +53,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the request (arbitrary data passed
-               with dispatch rules of the `cowboy_router` middleware).
+               from the `init/2` callback).
 
     Returns:
         A tuple containing a list of media types the daemon provides
@@ -69,7 +69,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the request (arbitrary data passed
-               with dispatch rules of the `cowboy_router` middleware).
+               from the `content_types_provided/2` callback).
 
     Returns:
         A tuple containing the response body in JSON representation
