@@ -12,6 +12,7 @@
 
 (defmodule api-lite-handler "The request handler module of the daemon."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
+            (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
@@ -44,6 +45,21 @@
 ;   (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))
 
     `#(cowboy_rest ,req ,state)
+)
+
+(defun allowed_methods (req state)
+    "The REST handler callback that returns a list of allowed methods.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `init/2` callback).
+
+    Returns:
+        A tuple containing a list of allowed methods the daemon accepts
+        along with the incoming request object and its initial state."
+
+    `#((,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD) ,(HTTP-OPTIONS)) ,req ,state)
 )
 
 (defun content_types_provided (req state)
