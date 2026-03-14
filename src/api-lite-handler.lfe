@@ -13,7 +13,9 @@
 (defmodule api-lite-handler "The request handler module of the daemon."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
+         (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
+            (from-json           2)  ; (req state) -> {{created,?}, Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
             (from api-lite-helper (-dbg 3))))
@@ -60,6 +62,26 @@
         along with the incoming request object and its initial state."
 
     `#((,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD) ,(HTTP-OPTIONS)) ,req ,state)
+)
+
+(defun content_types_accepted (req state)
+    "The REST handler callback that returns a list of media types
+    the daemon accepts.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `init/2` callback).
+
+    Returns:
+        A tuple containing a list of media types the daemon accepts
+        along with the incoming request object and its initial state."
+
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json)) ,req ,state)
+)
+
+(defun from-json (req state)
+    `#(#(created ,(REST-CONTEXT)) ,req ,state)
 )
 
 (defun content_types_provided (req state)
