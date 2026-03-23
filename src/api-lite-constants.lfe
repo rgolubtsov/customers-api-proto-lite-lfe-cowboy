@@ -51,4 +51,14 @@
 (defmacro REST-CONTEXT   _ (++
     (SLASH) (REST-VERSION) (SLASH) (REST-PREFIX)))
 
+; Allowed HTTP methods.
+(defmacro HTTP-PUT     _ #"PUT"    )
+(defmacro HTTP-GET     _ #"GET"    )
+(defmacro HTTP-HEAD    _ #"HEAD"   )
+(defmacro HTTP-OPTIONS _ #"OPTIONS")
+
+; HTTP response-related constants.
+(defmacro MIME-TYPE    _ #"application")
+(defmacro MIME-SUBTYPE _ #"json"       )
+
 ; vim:set nu et ts=4 sw=4:

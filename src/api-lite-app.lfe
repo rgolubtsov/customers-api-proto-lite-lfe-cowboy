@@ -97,6 +97,7 @@
                               (SLASH)  (COLON) (REST-CONT-TYPE))
                               api-lite-handler (,dbg ,s ,cnx))
     ))))))
+
     (let ((status (start_clear 'api-lite-listener
         `(#(port ,server-port))
         `#M(env #M(dispatch ,dispatch))
