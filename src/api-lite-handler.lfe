@@ -15,9 +15,10 @@
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
-            (from-json           2)  ; (req state) -> {{created,?}, Req, State}
+            (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
+;           (from unicode (characters_to_binary 1))
             (from api-lite-helper (-dbg 3))))
 
 (include-file "api-lite-constants.lfe")
@@ -81,7 +82,11 @@
 )
 
 (defun from-json (req state)
-    `#(#(created ,(REST-CONTEXT)) ,req ,state)
+    ; FIXME: The `created` tuple is for `POST` requests only,
+    ;        but they are not allowed. :-) For `PUT` requests
+    ;        simply return `true`.
+;   `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
+    `#(true ,req ,state)
 )
 
 (defun content_types_provided (req state)
