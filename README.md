@@ -110,11 +110,11 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ```
 $ rebar3 lfe clean
 ===> Cleaning out api-lite...
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-helper.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-handler.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite.app
-===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
-===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
 $
 $ rebar3 lfe compile
 ===> Verifying dependencies...
@@ -122,9 +122,9 @@ $ rebar3 lfe compile
 ===> Linking $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/sqlite3/priv/sqlite3_drv.so
 ===> Analyzing applications...
 ===> Compiling sqlite3
-===> Compiling cowlib
 ===> Compiling syslog
 ===> Compiling ranch
+===> Compiling cowlib
 ===> Compiling cowboy
 ===> Compiling c_src/syslog_drv.c
 ===> Linking priv/syslog_drv.so
