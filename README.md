@@ -253,6 +253,9 @@ $ curl -vXPUT http://localhost:8765/v1/customers \
 > Content-Length: 25
 ...
 < HTTP/1.1 204 No Content
+< allow: PUT, GET, HEAD, OPTIONS
+...
+< server: Cowboy
 ...
 ```
 
@@ -269,6 +272,9 @@ $ curl -vXPUT http://localhost:8765/v1/customers/contacts \
 > Content-Length: 44
 ...
 < HTTP/1.1 204 No Content
+< allow: PUT, GET, HEAD, OPTIONS
+...
+< server: Cowboy
 ...
 ```
 
@@ -285,6 +291,9 @@ $ curl -vXPUT http://localhost:8765/v1/customers/contacts \
 > Content-Length: 58
 ...
 < HTTP/1.1 204 No Content
+< allow: PUT, GET, HEAD, OPTIONS
+...
+< server: Cowboy
 ...
 ```
 
@@ -295,8 +304,14 @@ $ curl -v http://localhost:8765/v1/customers
 ...
 > GET /v1/customers HTTP/1.1
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 200 OK
+< allow: PUT, GET, HEAD, OPTIONS
+< content-length: 2
+< content-type: application/json
 ...
+< server: Cowboy
+...
+[]
 ```
 
 4. **Retrieve customer**
@@ -306,8 +321,14 @@ $ curl -v http://localhost:8765/v1/customers/3
 ...
 > GET /v1/customers/3 HTTP/1.1
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 200 OK
+< allow: PUT, GET, HEAD, OPTIONS
+< content-length: 2
+< content-type: application/json
 ...
+< server: Cowboy
+...
+[]
 ```
 
 5. **List contacts for a given customer**
@@ -317,8 +338,14 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts
 ...
 > GET /v1/customers/3/contacts HTTP/1.1
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 200 OK
+< allow: PUT, GET, HEAD, OPTIONS
+< content-length: 2
+< content-type: application/json
 ...
+< server: Cowboy
+...
+[]
 ```
 
 6. **List contacts of a given type for a given customer**
@@ -328,8 +355,14 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts/phone
 ...
 > GET /v1/customers/3/contacts/phone HTTP/1.1
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 200 OK
+< allow: PUT, GET, HEAD, OPTIONS
+< content-length: 2
+< content-type: application/json
 ...
+< server: Cowboy
+...
+[]
 ```
 
 Or list **email** contacts:
@@ -339,8 +372,14 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts/email
 ...
 > GET /v1/customers/3/contacts/email HTTP/1.1
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 200 OK
+< allow: PUT, GET, HEAD, OPTIONS
+< content-length: 2
+< content-type: application/json
 ...
+< server: Cowboy
+...
+[]
 ```
 
 > ^ The given names in customer accounts and in email contacts (in samples above) are for demonstrational purposes only. They have nothing common WRT any actual, ever really encountered names elsewhere.
