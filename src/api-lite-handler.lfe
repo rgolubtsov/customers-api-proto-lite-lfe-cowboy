@@ -82,10 +82,25 @@
 )
 
 (defun from-json (req state)
-    ; NOTE: The `created` tuple is for `POST` requests only,
-    ;       but they are not allowed. :-) For `PUT` requests
-    ;       simply return `true`.
-;   `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
+    "The REST handler callback that expects to get and then processes
+    the request  body in JSON representation. Finally, it sends
+    the response body in JSON representation.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `content_types_accepted/2` callback).
+
+    Returns:
+        The `true` tuple containing the incoming request object
+        and its initial state."
+
+    #|
+     | NOTE: The `created` tuple is for `POST` requests only,
+     |       but they are not allowed. :-) For `PUT` requests
+     |       simply return `true`.
+     | `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
+     |#
     `#(true ,req ,state)
 )
 
