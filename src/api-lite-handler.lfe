@@ -82,9 +82,9 @@
 )
 
 (defun from-json (req state)
-    ; FIXME: The `created` tuple is for `POST` requests only,
-    ;        but they are not allowed. :-) For `PUT` requests
-    ;        simply return `true`.
+    ; NOTE: The `created` tuple is for `POST` requests only,
+    ;       but they are not allowed. :-) For `PUT` requests
+    ;       simply return `true`.
 ;   `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
     `#(true ,req ,state)
 )
