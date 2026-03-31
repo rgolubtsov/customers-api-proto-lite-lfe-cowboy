@@ -18,7 +18,6 @@
             (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
-;           (from unicode (characters_to_binary 1))
             (from api-lite-helper (-dbg 3))))
 
 (include-file "api-lite-constants.lfe")
