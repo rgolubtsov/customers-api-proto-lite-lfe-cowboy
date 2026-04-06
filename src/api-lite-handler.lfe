@@ -132,7 +132,27 @@
         A tuple containing the response body in JSON representation
         along with the incoming request object and its initial state."
 
+    (-list-customers req state)
+
     `#(,(json:encode `()) ,req ,state)
+)
+
+(defun -list-customers (req state)
+    "The `GET /v1/customers` endpoint.
+
+    Retrieves from the database and lists all customer profiles.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+    Returns:
+        TODO: Describe the return value."
+
+    (let (((cons dbg t) state))
+    (let (((cons s cnx) t))
+
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))))
 )
 
 ; vim:set nu et ts=4 sw=4:
