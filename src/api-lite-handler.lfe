@@ -35,16 +35,11 @@
         The `cowboy_rest` tuple containing the incoming request object
         and its initial state."
 
-;   (debug req)
-
-    (let (((cons dbg t) state))
-    (let (((cons s cnx) t))
+    (let (((cons dbg (cons s _)) state))
 
     (let ((method- (maps:get 'method req)))
     (let ((method  (binary:bin_to_list method-)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))))))
-
-;   (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET))))))
 
     `#(cowboy_rest ,req ,state)
 )
@@ -154,6 +149,8 @@
 
     Returns:
         The `ok` atom."
+
+;   (debug req)
 
     (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET)))
 
