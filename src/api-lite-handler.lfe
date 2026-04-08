@@ -132,27 +132,32 @@
         A tuple containing the response body in JSON representation
         along with the incoming request object and its initial state."
 
-    (-list-customers req state)
+    (let (((cons dbg (cons s (cons cnx _))) state))
+
+    (list-customers req dbg s cnx))
 
     `#(,(json:encode `()) ,req ,state)
 )
 
-(defun -list-customers (req state)
+; REST API endpoints ----------------------------------------------------------
+
+(defun list-customers (req dbg s cnx)
     "The `GET /v1/customers` endpoint.
 
     Retrieves from the database and lists all customer profiles.
 
     Args:
-        req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
-               from the `to-json/2` callback).
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
     Returns:
-        TODO: Describe the return value."
+        The `ok` atom."
 
-    (let (((cons dbg t) state))
-    (let (((cons s cnx) t))
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET)))
 
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list (lists:last cnx)) (C-BRACKET)))))
+    'ok
 )
 
 ; vim:set nu et ts=4 sw=4:
