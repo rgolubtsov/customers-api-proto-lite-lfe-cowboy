@@ -84,18 +84,18 @@
     ; /v1/customers/:customer_id/contacts
     ; /v1/customers/:customer_id/contacts/:contact_type
     (let ((dispatch (compile `(#(_ (
-        #(    ,(REST-CONTEXT) api-lite-handler (,dbg ,s ,cnx))
+        #(    ,(REST-CONTEXT) api-lite-handler (,dbg ,s ,cnx r-put-get-cust))
         #(,(++ (REST-CONTEXT) (SLASH)          (REST-CONTACTS))
-                              api-lite-handler (,dbg ,s ,cnx))
+                              api-lite-handler (,dbg ,s ,cnx r-put-cont))
         #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID))
-                              api-lite-handler (,dbg ,s ,cnx))
+                              api-lite-handler (,dbg ,s ,cnx r-get-cust))
         #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID)
                               (SLASH)          (REST-CONTACTS))
-                              api-lite-handler (,dbg ,s ,cnx))
+                              api-lite-handler (,dbg ,s ,cnx r-get-cont))
         #(,(++ (REST-CONTEXT) (SLASH)  (COLON) (REST-CUST-ID)
                               (SLASH)          (REST-CONTACTS)
                               (SLASH)  (COLON) (REST-CONT-TYPE))
-                              api-lite-handler (,dbg ,s ,cnx))
+                              api-lite-handler (,dbg ,s ,cnx r-get-cont-type))
     ))))))
 
     (let ((status (start_clear 'api-lite-listener
