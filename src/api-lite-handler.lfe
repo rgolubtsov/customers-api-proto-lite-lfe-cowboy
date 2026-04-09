@@ -33,15 +33,17 @@
 
     Returns:
         The `cowboy_rest` tuple containing the incoming request object
-        and its initial state."
+        and its new (or modified) state."
 
     (let (((cons dbg (cons s _)) state))
 
     (let ((method- (maps:get 'method req)))
     (let ((method  (binary:bin_to_list method-)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET))))))
+    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    `#(cowboy_rest ,req ,state)
+    (let ((state- (++ state method)))
+
+    `#(cowboy_rest ,req ,state-)))))
 )
 
 (defun allowed_methods (req state)
@@ -89,6 +91,16 @@
         The `true` tuple containing the incoming request object
         and its initial state."
 
+    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+
+    (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
+
+    (case route
+        ('r-put-get-cust (add-customer req dbg s cnx))
+        ('r-put-cont     (add-contact  req dbg s cnx))
+    ))
+
     #|
      | NOTE: The `created` tuple is for `POST` requests only,
      |       but they are not allowed. :-) For `PUT` requests
@@ -127,7 +139,10 @@
         A tuple containing the response body in JSON representation
         along with the incoming request object and its initial state."
 
-    (let (((cons dbg (cons s (cons cnx _))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+
+    (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
     (list-customers req dbg s cnx))
 
@@ -135,6 +150,67 @@
 )
 
 ; REST API endpoints ----------------------------------------------------------
+
+(defun add-customer (req dbg s cnx)
+    "The `PUT /v1/customers` endpoint.
+
+    Creates a new customer (puts customer data to the database).
+
+    The request body is defined exactly in the form
+    as `{\"name\":\"{customer_name}\"}`. It should be passed
+    with the accompanied request header `content-type` just like the following:
+
+    ```
+    -H 'content-type: application/json' -d '{\"name\":\"{customer_name}\"}'
+    ```
+
+    `{customer_name}` is a name assigned to a newly created customer.
+
+    Args:
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
+    Returns:
+        The `ok` atom."
+
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
+
+    'ok
+)
+
+(defun add-contact (req dbg s cnx)
+    "The `PUT /v1/customers/contacts` endpoint.
+
+    Creates a new contact for a given customer (puts a contact
+    regarding a given customer to the database).
+
+    The request body is defined exactly in the form
+    as `{\"customer_id\":\"{customer_id}\",\"contact\":\"{customer_contact}\"}`
+    It should be passed with the accompanied request header `content-type`
+    just like the following:
+
+    ```
+    -H 'content-type: application/json' -d '{\"customer_id\":\"{customer_id}\",\"contact\":\"{customer_contact}\"}'
+    ```
+
+    `{customer_id}` is the customer ID used to associate a newly created
+    contact with this customer.
+
+    Args:
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
+    Returns:
+        The `ok` atom."
+
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
+
+    'ok
+)
 
 (defun list-customers (req dbg s cnx)
     "The `GET /v1/customers` endpoint.
@@ -150,9 +226,7 @@
     Returns:
         The `ok` atom."
 
-;   (debug req)
-
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
 
     'ok
 )
