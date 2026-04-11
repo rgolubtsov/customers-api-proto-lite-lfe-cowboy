@@ -68,14 +68,14 @@
     Used by the `GET /v1/customers/{customer_id}/contacts/{contact_type}`
     REST endpoint."
 
-  `((++ "select phones.contact" ; as 'Phone(s)'
+ `(,(++ "select phones.contact" ; as 'Phone(s)'
         " from"
         "       contact_phones phones,"
         "       customers      cust"
         " where"
         "      (cust.id = phones.customer_id) and"
         "      (cust.id =                  ?)")
-    (++ "select emails.contact" ; as 'Email(s)'
+   ,(++ "select emails.contact" ; as 'Email(s)'
         " from"
         "       contact_emails emails,"
         "       customers      cust"
@@ -88,8 +88,8 @@
     "Returns a list of intermediate parts of SQL queries,
     used to order contact records by ID."
 
-  `(" order by phones.id"
-    " order by emails.id")
+ `(," order by phones.id"
+   ," order by emails.id")
 )
 
 (defun SQL-DESC-LIMIT-1 ()
