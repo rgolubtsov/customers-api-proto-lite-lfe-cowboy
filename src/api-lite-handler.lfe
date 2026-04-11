@@ -17,11 +17,11 @@
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
-    (import (from logger (debug 1))
+    (import (from logger  (debug 1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from api-lite-helper (-dbg 3)))
-    (module-alias (api-lite-model model)))
+    (module-alias (api-lite-model m)))
 
 (include-file "api-lite-constants.lfe")
 
@@ -237,7 +237,7 @@
     (debug req)
 
     ; Retrieving all customer profiles from the database.
-    (let ((customers (sql_exec cnx (model:SQL-GET-ALL-CUSTOMERS))))
+    (let ((customers (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))))
 
     (debug customers))
 
@@ -263,7 +263,7 @@
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving profile details for a given customer from the database.
-    (let ((customer (sql_exec cnx (model:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
+    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
 
     (debug customer)))
 
@@ -291,7 +291,7 @@
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
-    (let ((contacts (sql_exec cnx (model:SQL-GET-ALL-CONTACTS) `(
+    (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
         ,cust-id ; <== For retrieving phones.
         ,cust-id ; <== For retrieving emails.
     ))))
@@ -320,7 +320,7 @@
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
-    (let (((cons sql-query _) (model:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO:...
+    (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
