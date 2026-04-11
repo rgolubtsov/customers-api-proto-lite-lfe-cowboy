@@ -17,6 +17,7 @@
 (defmacro EXIT-SUCCESS _   0) ; Successful exit status.
 (defmacro SLASH        _ "/")
 (defmacro COLON        _ ":")
+(defmacro V-BAR        _ "|")
 (defmacro O-BRACKET    _ "[")
 (defmacro C-BRACKET    _ "]")
 

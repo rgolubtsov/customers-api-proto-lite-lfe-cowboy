@@ -147,14 +147,18 @@
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    (case route
+    (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
         ('r-get-cust      (get-customer          req dbg s cnx))
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
-    ))
+    )))
 
-    `#(,(json:encode `()) ,req ,state)
+    (debug entities)
+
+    `#(,(json:encode_key_value_list entities (lambda (entity encoder)
+        entity
+    )) ,req ,state)))
 )
 
 ; REST API endpoints ----------------------------------------------------------
@@ -238,10 +242,24 @@
 
     ; Retrieving all customer profiles from the database.
     (let ((customers (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))))
+    (debug customers)
 
-    (debug customers))
+    (let (((cons _ (cons customers- _)) customers))
+    (let ((custs-  (tref customers- 2)))
+    (debug custs-)
 
-    'ok
+    (let ((custs (lists:keymap (lambda (cust)
+        (binary:bin_to_list cust)
+    ) 2 custs-)))
+    (debug custs)
+
+    (let (((cons cust0 _) custs))
+
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (tref cust0 1)) ; getId()
+                    (V-BAR)                      (tref cust0 2)  ; getName()
+                    (C-BRACKET)))
+
+    custs)))))
 )
 
 (defun get-customer (req dbg s cnx)
