@@ -18,7 +18,10 @@
             (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from logger (debug 1))
-            (from api-lite-helper (-dbg 3))))
+            (from sqlite3 (sql_exec 2)
+                          (sql_exec 3))
+            (from api-lite-helper (-dbg 3)))
+    (module-alias (api-lite-model model)))
 
 (include-file "api-lite-constants.lfe")
 
@@ -144,7 +147,12 @@
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    (list-customers req dbg s cnx))
+    (case route
+        ('r-put-get-cust  (list-customers        req dbg s cnx))
+        ('r-get-cust      (get-customer          req dbg s cnx))
+        ('r-get-cont      (list-contacts         req dbg s cnx))
+        ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
+    ))
 
     `#(,(json:encode `()) ,req ,state)
 )
@@ -226,7 +234,99 @@
     Returns:
         The `ok` atom."
 
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
+    (debug req)
+
+    ; Retrieving all customer profiles from the database.
+    (let ((customers (sql_exec cnx (model:SQL-GET-ALL-CUSTOMERS))))
+
+    (debug customers))
+
+    'ok
+)
+
+(defun get-customer (req dbg s cnx)
+    "The `GET /v1/customers/{customer_id}` endpoint.
+
+    Retrieves profile details for a given customer from the database.
+
+    Args:
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
+    Returns:
+        The `ok` atom."
+
+    (debug req)
+
+    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+
+    ; Retrieving profile details for a given customer from the database.
+    (let ((customer (sql_exec cnx (model:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
+
+    (debug customer)))
+
+    'ok
+)
+
+(defun list-contacts (req dbg s cnx)
+    "The `GET /v1/customers/{customer_id}/contacts` endpoint.
+
+    Retrieves from the database and lists all contacts
+    associated with a given customer.
+
+    Args:
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
+    Returns:
+        The `ok` atom."
+
+    (debug req)
+
+    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+
+    ; Retrieving all contacts associated with a given customer
+    ; from the database.
+    (let ((contacts (sql_exec cnx (model:SQL-GET-ALL-CONTACTS) `(
+        ,cust-id ; <== For retrieving phones.
+        ,cust-id ; <== For retrieving emails.
+    ))))
+
+    (debug contacts)))
+
+    'ok
+)
+
+(defun list-contacts-by-type (req dbg s cnx)
+    "The `GET /v1/customers/{customer_id}/contacts/{contact_type}` endpoint.
+
+    Retrieves from the database and lists all contacts of a given type
+    associated with a given customer.
+
+    Args:
+        req: A map representing the incoming HTTP request object.
+        dbg: The debug logging enabler.
+        s:   The Unix system logger handle (a Port).
+        cnx: The database connection (a Pid).
+
+    Returns:
+        The `ok` atom."
+
+    (debug req)
+
+    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+
+    (let (((cons sql-query _) (model:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO:...
+
+    ; Retrieving all contacts of a given type associated with a given customer
+    ; from the database.
+    (let ((contacts (sql_exec cnx sql-query `(,cust-id))))
+
+    (debug contacts))))
 
     'ok
 )
