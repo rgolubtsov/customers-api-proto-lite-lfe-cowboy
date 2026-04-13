@@ -153,12 +153,9 @@
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
     )))
-
     (debug entities)
 
-    `#(,(json:encode_key_value_list entities (lambda (entity encoder)
-        entity
-    )) ,req ,state)))
+    `#(,(json:encode entities) ,req ,state)))
 )
 
 ; REST API endpoints ----------------------------------------------------------
@@ -244,20 +241,23 @@
     (let ((customers (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))))
     (debug customers)
 
-    (let (((cons _ (cons customers- _)) customers))
-    (let ((custs-  (tref customers- 2)))
-    (debug custs-)
+    ; FIXME: Bring out all these transforms to a dedicated helper function. ==>
+    (let (((cons cols _) (proplists:get_all_values 'columns customers)))
+    (let (((cons rows _) (proplists:get_all_values 'rows    customers)))
 
-    (let ((custs (lists:keymap (lambda (cust)
-        (binary:bin_to_list cust)
-    ) 2 custs-)))
+    (let (((cons id (cons name _)) cols))
+
+    (let ((custs (lists:map (lambda (row) `#M(
+        ,(list_to_atom id  ) ,(tref row 1)
+        ,(list_to_atom name) ,(tref row 2)
+    )) rows)))
     (debug custs)
+    ; <== !))
 
     (let (((cons cust0 _) custs))
-
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (tref cust0 1)) ; getId()
-                    (V-BAR)                      (tref cust0 2)  ; getName()
-                    (C-BRACKET)))
+    (-dbg dbg s (++ (O-BRACKET)(integer_to_list(mref cust0(list_to_atom id  )))
+                    (V-BAR)    ( binary_to_list(mref cust0(list_to_atom name)))
+                    (C-BRACKET))))
 
     custs)))))
 )
@@ -282,10 +282,9 @@
 
     ; Retrieving profile details for a given customer from the database.
     (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
-
     (debug customer)))
 
-    'ok
+    `#M()
 )
 
 (defun list-contacts (req dbg s cnx)
@@ -313,10 +312,9 @@
         ,cust-id ; <== For retrieving phones.
         ,cust-id ; <== For retrieving emails.
     ))))
-
     (debug contacts)))
 
-    'ok
+    `#M()
 )
 
 (defun list-contacts-by-type (req dbg s cnx)
@@ -343,10 +341,9 @@
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx sql-query `(,cust-id))))
-
     (debug contacts))))
 
-    'ok
+    `#M()
 )
 
 ; vim:set nu et ts=4 sw=4:
