@@ -233,33 +233,19 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
 
     (debug req)
 
     ; Retrieving all customer profiles from the database.
-    (let ((customers (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))))
-    (debug customers)
+    (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
 
-    ; FIXME: Bring out all these transforms to a dedicated helper function. ==>
-    (let (((cons cols _) (proplists:get_all_values 'columns customers)))
-    (let (((cons rows _) (proplists:get_all_values 'rows    customers)))
-
-    (let (((cons id (cons name _)) cols))
-
-    (let ((custs (lists:map (lambda (row) `#M(
-        ,(list_to_atom id  ) ,(tref row 1)
-        ,(list_to_atom name) ,(tref row 2)
-    )) rows)))
-    (debug custs)
-    ; <== !))
-
-    (let (((cons cust0 _) custs))
-    (-dbg dbg s (++ (O-BRACKET)(integer_to_list(mref cust0(list_to_atom id  )))
-                    (V-BAR)    ( binary_to_list(mref cust0(list_to_atom name)))
+    (let (((cons customer0 _) customers))
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
+                    (V-BAR)     ( binary_to_list (mref customer0 'name))
                     (C-BRACKET))))
 
-    custs)))))
+    customers)
 )
 
 (defun get-customer (req dbg s cnx)
@@ -344,6 +330,22 @@
     (debug contacts))))
 
     `#M()
+)
+
+; -----------------------------------------------------------------------------
+
+; Helper function. Used to preprocess an entity structure that is taken
+;                  from the database, to make it suitable for JSON marshalling.
+(defun -entity-prep (entity)
+    (let (((cons cols _) (proplists:get_all_values 'columns entity)))
+    (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
+
+    (let (((cons id (cons name _)) cols))
+
+    (lists:map (lambda (row) `#M(
+        ,(list_to_atom id  ) ,(tref row 1)
+        ,(list_to_atom name) ,(tref row 2)
+    )) rows))))
 )
 
 ; vim:set nu et ts=4 sw=4:
