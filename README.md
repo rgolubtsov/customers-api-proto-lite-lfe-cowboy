@@ -35,7 +35,7 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker-buildx`):
+The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 26.04.1 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker-buildx`):
 
 * In Ubuntu Server:
 
