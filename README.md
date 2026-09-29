@@ -35,13 +35,13 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`erlang-nox`, `erlang-dev`, `rebar3`, `make`, `docker-buildx`):
+The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker-buildx`):
 
 * In Ubuntu Server:
 
 ```
 $ sudo apt-get update && \
-  sudo apt-get install erlang-nox erlang-dev make docker-buildx -y
+  sudo apt-get install rebar3 make docker-buildx -y
 ...
 ```
 
@@ -52,9 +52,9 @@ $ sudo pacman -Syu rebar3 make docker docker-buildx
 ...
 ```
 
-Rebar3. Whilst in Arch Linux it is regularly updated and hence can be normally installed from its official repositories, in Ubuntu Server LTS it is quite outdated in stock Ubuntu repositories. Therefore, the preferred method of installing a fresh Rebar3 version is [as described](https://rebar3.org/docs/getting-started/#installing-from-the-rebar3-escript) on its official website.
+~~Rebar3. Whilst in Arch Linux it is regularly updated and hence can be normally installed from its official repositories, in Ubuntu Server LTS it is quite outdated in stock Ubuntu repositories. Therefore, the preferred method of installing a fresh Rebar3 version is [as described](https://rebar3.org/docs/getting-started/#installing-from-the-rebar3-escript) on its official website.~~
 
-But prior to that the Erlang/OTP installation in Ubuntu Server LTS *must be* upgraded to one of modern releases (26, 27, 28) because the latest Rebar3 is not compatible with OTP packages installed from stock Ubuntu repositories (25) and will most likely crash during install. To achieve this, one can use a third-party PPA like [this one](https://launchpad.net/~rabbitmq/+archive/ubuntu/rabbitmq-erlang-27 "Recent Erlang 27.x packages for Ubuntu : Team RabbitMQ") and upgrade currently installed OTP packages:
+~~But prior to that the Erlang/OTP installation in Ubuntu Server LTS *must be* upgraded to one of modern releases (26, 27, 28) because the latest Rebar3 is not compatible with OTP packages installed from stock Ubuntu repositories (25) and will most likely crash during install. To achieve this, one can use a third-party PPA like [this one](https://launchpad.net/~rabbitmq/+archive/ubuntu/rabbitmq-erlang-27 "Recent Erlang 27.x packages for Ubuntu : Team RabbitMQ") and upgrade currently installed OTP packages:~~
 
 ```
 $ sudo add-apt-repository ppa:rabbitmq/rabbitmq-erlang-27 && \
@@ -63,7 +63,7 @@ $ sudo add-apt-repository ppa:rabbitmq/rabbitmq-erlang-27 && \
 ...
 ```
 
-Now Rebar3 can simply be installed by executing the following compound command:
+~~Now Rebar3 can simply be installed by executing the following compound command:~~
 
 ```
 $ curl -sO https://s3.amazonaws.com/rebar3/rebar3 && \
