@@ -35,20 +35,20 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`erlang-nox`, `erlang-dev`, `rebar3`, `make`, `docker.io`):
+The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 24.04.4 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`erlang-nox`, `erlang-dev`, `rebar3`, `make`, `docker-buildx`):
 
 * In Ubuntu Server:
 
 ```
 $ sudo apt-get update && \
-  sudo apt-get install erlang-nox erlang-dev make docker.io -y
+  sudo apt-get install erlang-nox erlang-dev make docker-buildx -y
 ...
 ```
 
 * In Arch Linux:
 
 ```
-$ sudo pacman -Syu rebar3 make docker
+$ sudo pacman -Syu rebar3 make docker docker-buildx
 ...
 ```
 
