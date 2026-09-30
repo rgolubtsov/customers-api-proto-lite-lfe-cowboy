@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-handler.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.8
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.9
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -17,11 +17,11 @@
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
-    (import (from logger (debug 1))
+    (import (from logger  (debug 1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from api-lite-helper (-dbg 3)))
-    (module-alias (api-lite-model model)))
+    (module-alias (api-lite-model m)))
 
 (include-file "api-lite-constants.lfe")
 
@@ -147,14 +147,15 @@
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    (case route
+    (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
         ('r-get-cust      (get-customer          req dbg s cnx))
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
-    ))
+    )))
+    (debug entities)
 
-    `#(,(json:encode `()) ,req ,state)
+    `#(,(json:encode entities) ,req ,state)))
 )
 
 ; REST API endpoints ----------------------------------------------------------
@@ -232,16 +233,19 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
 
     (debug req)
 
     ; Retrieving all customer profiles from the database.
-    (let ((customers (sql_exec cnx (model:SQL-GET-ALL-CUSTOMERS))))
+    (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
 
-    (debug customers))
+    (let (((cons customer0 _) customers))
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
+                    (V-BAR)     ( binary_to_list (mref customer0 'name))
+                    (C-BRACKET))))
 
-    'ok
+    customers)
 )
 
 (defun get-customer (req dbg s cnx)
@@ -263,11 +267,10 @@
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving profile details for a given customer from the database.
-    (let ((customer (sql_exec cnx (model:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
-
+    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
     (debug customer)))
 
-    'ok
+    `#M()
 )
 
 (defun list-contacts (req dbg s cnx)
@@ -291,14 +294,13 @@
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
-    (let ((contacts (sql_exec cnx (model:SQL-GET-ALL-CONTACTS) `(
+    (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
         ,cust-id ; <== For retrieving phones.
         ,cust-id ; <== For retrieving emails.
     ))))
-
     (debug contacts)))
 
-    'ok
+    `#M()
 )
 
 (defun list-contacts-by-type (req dbg s cnx)
@@ -320,15 +322,30 @@
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
-    (let (((cons sql-query _) (model:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO:...
+    (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx sql-query `(,cust-id))))
-
     (debug contacts))))
 
-    'ok
+    `#M()
+)
+
+; -----------------------------------------------------------------------------
+
+; Helper function. Used to preprocess an entity structure that is taken
+;                  from the database, to make it suitable for JSON marshalling.
+(defun -entity-prep (entity)
+    (let (((cons cols _) (proplists:get_all_values 'columns entity)))
+    (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
+
+    (let (((cons id (cons name _)) cols))
+
+    (lists:map (lambda (row) `#M(
+        ,(list_to_atom id  ) ,(tref row 1)
+        ,(list_to_atom name) ,(tref row 2)
+    )) rows))))
 )
 
 ; vim:set nu et ts=4 sw=4:
