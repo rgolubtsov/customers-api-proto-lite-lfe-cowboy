@@ -306,12 +306,12 @@ $ curl -v http://localhost:8765/v1/customers
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD, OPTIONS
-< content-length: 2
+< content-length: 66
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-[]
+[{"id":1,"name":"Jammy Jellyfish"},{"id":2,"name":"Noble Numbat"}]
 ```
 
 4. **Retrieve customer**
