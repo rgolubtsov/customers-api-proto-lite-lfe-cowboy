@@ -318,9 +318,9 @@ $ curl -v http://localhost:8765/v1/customers
 4. **Retrieve customer**
 
 ```
-$ curl -v http://localhost:8765/v1/customers/3
+$ curl -v http://localhost:8765/v1/customers/2
 ...
-> GET /v1/customers/3 HTTP/1.1
+> GET /v1/customers/2 HTTP/1.1
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD, OPTIONS
@@ -329,15 +329,15 @@ $ curl -v http://localhost:8765/v1/customers/3
 ...
 < server: Cowboy
 ...
-[]
+{}
 ```
 
 5. **List contacts for a given customer**
 
 ```
-$ curl -v http://localhost:8765/v1/customers/3/contacts
+$ curl -v http://localhost:8765/v1/customers/2/contacts
 ...
-> GET /v1/customers/3/contacts HTTP/1.1
+> GET /v1/customers/2/contacts HTTP/1.1
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD, OPTIONS
@@ -346,15 +346,15 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts
 ...
 < server: Cowboy
 ...
-[]
+{}
 ```
 
 6. **List contacts of a given type for a given customer**
 
 ```
-$ curl -v http://localhost:8765/v1/customers/3/contacts/phone
+$ curl -v http://localhost:8765/v1/customers/2/contacts/phone
 ...
-> GET /v1/customers/3/contacts/phone HTTP/1.1
+> GET /v1/customers/2/contacts/phone HTTP/1.1
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD, OPTIONS
@@ -363,15 +363,15 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts/phone
 ...
 < server: Cowboy
 ...
-[]
+{}
 ```
 
 Or list **email** contacts:
 
 ```
-$ curl -v http://localhost:8765/v1/customers/3/contacts/email
+$ curl -v http://localhost:8765/v1/customers/2/contacts/email
 ...
-> GET /v1/customers/3/contacts/email HTTP/1.1
+> GET /v1/customers/2/contacts/email HTTP/1.1
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD, OPTIONS
@@ -380,7 +380,7 @@ $ curl -v http://localhost:8765/v1/customers/3/contacts/email
 ...
 < server: Cowboy
 ...
-[]
+{}
 ```
 
 > ^ The given names in customer accounts and in email contacts (in samples above) are for demonstrational purposes only. They have nothing common WRT any actual, ever really encountered names elsewhere.
@@ -391,18 +391,55 @@ The microservice has the ability to log messages to a logfile and to the Unix sy
 
 ```
 $ tail -f log/customers-api-lite.log
-[2026-03-07|23:10:30.463233+03:00] [debug] [Customers API Lite]
-[2026-03-07|23:10:30.464462+03:00] [debug] [<0.535.0>]
-[2026-03-07|23:10:30.465942+03:00] [info] Server started on port 8765
-[2026-03-07|23:10:40.750431+03:00] [debug] [PUT]
-[2026-03-07|23:10:50.820568+03:00] [debug] [PUT]
-[2026-03-07|23:11:10.972327+03:00] [debug] [PUT]
-[2026-03-07|23:11:20.931319+03:00] [debug] [GET]
-[2026-03-07|23:11:30.815741+03:00] [debug] [GET]
-[2026-03-07|23:11:40.364391+03:00] [debug] [GET]
-[2026-03-07|23:11:50.833794+03:00] [debug] [GET]
-[2026-03-07|23:12:10.700103+03:00] [debug] [GET]
-[2026-03-07|23:12:20.441257+03:00] [info] Server stopped
+[2026-10-02|22:40:00.332650+02:00] [debug] [Customers API Lite]
+[2026-10-02|22:40:00.335669+02:00] [debug] [<0.501.0>]
+[2026-10-02|22:40:00.337619+02:00] [info] Server started on port 8765
+[2026-10-02|22:40:20.889817+02:00] [debug] [PUT]
+[2026-10-02|22:40:20.893443+02:00] [debug] [r-put-get-cust]
+[2026-10-02|22:40:20.894418+02:00] [debug] [PUT]
+[2026-10-02|22:40:20.894912+02:00] [debug] [<0.501.0>]
+[2026-10-02|22:40:20.895486+02:00] [debug] pid: <0.541.0>, port: 8765, ...
+[2026-10-02|22:40:40.294704+02:00] [debug] [PUT]
+[2026-10-02|22:40:40.297251+02:00] [debug] [r-put-cont]
+[2026-10-02|22:40:40.297822+02:00] [debug] [PUT]
+[2026-10-02|22:40:40.298347+02:00] [debug] [<0.501.0>]
+[2026-10-02|22:40:40.298794+02:00] [debug] pid: <0.543.0>, port: 8765, ...
+[2026-10-02|22:45:10.642925+02:00] [debug] [PUT]
+[2026-10-02|22:45:10.646668+02:00] [debug] [r-put-cont]
+[2026-10-02|22:45:10.649824+02:00] [debug] [PUT]
+[2026-10-02|22:45:10.650582+02:00] [debug] [<0.501.0>]
+[2026-10-02|22:45:10.651030+02:00] [debug] pid: <0.546.0>, port: 8765, ...
+[2026-10-02|22:45:30.090516+02:00] [debug] [GET]
+[2026-10-02|22:45:30.093622+02:00] [debug] [r-put-get-cust]
+[2026-10-02|22:45:30.094445+02:00] [debug] [GET]
+[2026-10-02|22:45:30.094948+02:00] [debug] pid: <0.548.0>, port: 8765, ...
+[2026-10-02|22:45:30.108794+02:00] [debug] [1|Jammy Jellyfish]
+[2026-10-02|22:45:30.109439+02:00] [debug] [[#{id => 1,name => <<"Jammy Jellyfish">>},#{id => 2,name => <<"Noble Numbat">>}]]
+[2026-10-02|22:45:50.716747+02:00] [debug] [GET]
+[2026-10-02|22:45:50.717441+02:00] [debug] [r-get-cust]
+[2026-10-02|22:45:50.717873+02:00] [debug] [GET]
+[2026-10-02|22:45:50.720619+02:00] [debug] pid: <0.550.0>, port: 8765, ...
+[2026-10-02|22:45:50.724827+02:00] [debug] columns: idname, rows: [{2,<<"Noble Numbat">>}]
+[2026-10-02|22:45:50.725512+02:00] [debug] []
+[2026-10-02|22:50:00.698736+02:00] [debug] [GET]
+[2026-10-02|22:50:00.700158+02:00] [debug] [r-get-cont]
+[2026-10-02|22:50:00.703714+02:00] [debug] [GET]
+[2026-10-02|22:50:00.704272+02:00] [debug] pid: <0.552.0>, port: 8765, ...
+[2026-10-02|22:50:00.709579+02:00] [debug] columns: contact, rows: [{<<"+35760X123456">>},{<<"+35760Y1234578">>},{<<"+35790Z12345890">>},{<<"nn@example.org">>},{<<"nnumbat@example.com">>},{<<"noble.numbat@example.com">>}]
+[2026-10-02|22:50:00.710676+02:00] [debug] []
+[2026-10-02|22:50:20.418515+02:00] [debug] [GET]
+[2026-10-02|22:50:20.419331+02:00] [debug] [r-get-cont-type]
+[2026-10-02|22:50:20.420456+02:00] [debug] [GET]
+[2026-10-02|22:50:20.421298+02:00] [debug] pid: <0.554.0>, port: 8765, ...
+[2026-10-02|22:50:20.427301+02:00] [debug] columns: contact, rows: [{<<"+35760X123456">>},{<<"+35760Y1234578">>},{<<"+35790Z12345890">>}]
+[2026-10-02|22:50:20.428114+02:00] [debug] []
+[2026-10-02|22:50:40.586627+02:00] [debug] [GET]
+[2026-10-02|22:50:40.587454+02:00] [debug] [r-get-cont-type]
+[2026-10-02|22:50:40.590438+02:00] [debug] [GET]
+[2026-10-02|22:50:40.592706+02:00] [debug] pid: <0.556.0>, port: 8765, ...
+[2026-10-02|22:50:40.596998+02:00] [debug] columns: contact, rows: [{<<"+35760X123456">>},{<<"+35760Y1234578">>},{<<"+35790Z12345890">>}]
+[2026-10-02|22:50:40.597898+02:00] [debug] []
+[2026-10-02|22:55:00.473664+02:00] [info] Server stopped
 ```
 
 Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
@@ -410,18 +447,38 @@ Messages registered by the Unix system logger can be seen and analyzed using the
 ```
 $ journalctl -f
 ...
-Mar 07 23:10:30 <hostname> api-lited[<pid>]: [Customers API Lite]
-Mar 07 23:10:30 <hostname> api-lited[<pid>]: [<0.535.0>]
-Mar 07 23:10:30 <hostname> api-lited[<pid>]: Server started on port 8765
-Mar 07 23:10:40 <hostname> api-lited[<pid>]: [PUT]
-Mar 07 23:10:50 <hostname> api-lited[<pid>]: [PUT]
-Mar 07 23:11:10 <hostname> api-lited[<pid>]: [PUT]
-Mar 07 23:11:20 <hostname> api-lited[<pid>]: [GET]
-Mar 07 23:11:30 <hostname> api-lited[<pid>]: [GET]
-Mar 07 23:11:40 <hostname> api-lited[<pid>]: [GET]
-Mar 07 23:11:50 <hostname> api-lited[<pid>]: [GET]
-Mar 07 23:12:10 <hostname> api-lited[<pid>]: [GET]
-Mar 07 23:12:20 <hostname> api-lited[<pid>]: Server stopped
+Oct 02 22:40:00 <hostname> api-lited[<pid>]: [Customers API Lite]
+Oct 02 22:40:00 <hostname> api-lited[<pid>]: [<0.501.0>]
+Oct 02 22:40:00 <hostname> api-lited[<pid>]: Server started on port 8765
+Oct 02 22:40:20 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:40:20 <hostname> api-lited[<pid>]: [r-put-get-cust]
+Oct 02 22:40:20 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:40:20 <hostname> api-lited[<pid>]: [<0.501.0>]
+Oct 02 22:40:40 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:40:40 <hostname> api-lited[<pid>]: [r-put-cont]
+Oct 02 22:40:40 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:40:40 <hostname> api-lited[<pid>]: [<0.501.0>]
+Oct 02 22:45:10 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:45:10 <hostname> api-lited[<pid>]: [r-put-cont]
+Oct 02 22:45:10 <hostname> api-lited[<pid>]: [PUT]
+Oct 02 22:45:10 <hostname> api-lited[<pid>]: [<0.501.0>]
+Oct 02 22:45:30 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:45:30 <hostname> api-lited[<pid>]: [r-put-get-cust]
+Oct 02 22:45:30 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:45:30 <hostname> api-lited[<pid>]: [1|Jammy Jellyfish]
+Oct 02 22:45:50 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:45:50 <hostname> api-lited[<pid>]: [r-get-cust]
+Oct 02 22:45:50 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:00 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:00 <hostname> api-lited[<pid>]: [r-get-cont]
+Oct 02 22:50:00 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:20 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:20 <hostname> api-lited[<pid>]: [r-get-cont-type]
+Oct 02 22:50:20 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:40 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:50:40 <hostname> api-lited[<pid>]: [r-get-cont-type]
+Oct 02 22:50:40 <hostname> api-lited[<pid>]: [GET]
+Oct 02 22:55:00 <hostname> api-lited[<pid>]: Server stopped
 ```
 
 **TBD** :cd:
