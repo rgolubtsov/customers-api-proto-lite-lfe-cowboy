@@ -80,25 +80,25 @@ Then pull and install all the necessary plugins and third-party libraries:
 ```
 $ rebar3 tree
 ===> Fetching rebar3_lfe v0.4.12
-===> Fetching lfe v2.2.0
+===> Fetching lfe v2.2.2
 ===> Analyzing applications...
 ===> Compiling lfe
 ===> Compiling rebar3_lfe
 src/cl.lfe:472: Warning: redefining core function car/1
 src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Verifying dependencies...
-===> Fetching cowboy v2.14.2
+===> Fetching cowboy v2.19.0
 ===> Fetching sqlite3 v1.1.15
 ===> Fetching pc v1.15.0
 ===> Analyzing applications...
 ===> Compiling pc
 ===> Fetching syslog v1.1.0
-===> Fetching cowlib v2.16.0
-===> Fetching ranch v2.2.0
+===> Fetching cowlib v2.20.0
+===> Fetching ranch v2.3.0
 └─ api-lite─0.1.9 (project app)
-   ├─ cowboy─2.14.2 (hex package)
-   │  ├─ cowlib─2.16.0 (hex package)
-   │  └─ ranch─2.2.0 (hex package)
+   ├─ cowboy─2.19.0 (hex package)
+   │  ├─ cowlib─2.20.0 (hex package)
+   │  └─ ranch─2.3.0 (hex package)
    ├─ sqlite3─1.1.15 (hex package)
    └─ syslog─1.1.0 (hex package)
 ```
