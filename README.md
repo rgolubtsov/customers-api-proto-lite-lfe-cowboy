@@ -163,21 +163,23 @@ $ make all  # <== Building the daemon (OTP release).
 **Run** the microservice using **Rebar3**/LFE plugin (recompiling sources on-the-fly, if required):
 
 ```
-$ rebar3 lfe run-release daemon
+$ rebar3 lfe run-release daemon; echo $?
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
 <empty_line>
+0
 ```
 
 It will be launched in the background as a daemon but also can be started up as a regular app: `$ rebar3 lfe run-release foreground`. The daemonized microservice then can be stopped at any time by issuing the following command:
 
 ```
-$ rebar3 lfe run-release stop
+$ rebar3 lfe run-release stop; echo $?
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
 <empty_line>
+0
 ```
 
 **Run** the microservice using its startup script along with the `foreground` command, that is meant "*Start release with output to stdout*":
@@ -223,7 +225,7 @@ Note that the startup script will become available and might be used only after 
 
 ## Consuming
 
-The microservice *should* expose **six REST API endpoints** to web clients... They are all intended to deal with customer entities and/or contact entities that belong to customer profiles. The following table displays their syntax:
+The microservice should expose **six REST API endpoints** to web clients. They are all intended to deal with customer entities and/or contact entities that belong to customer profiles. The following table displays their syntax:
 
 No. | Endpoint name                                      | Request method and REST URI                                   | Request body
 --: | -------------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------
