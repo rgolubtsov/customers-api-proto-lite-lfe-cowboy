@@ -152,7 +152,6 @@
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
     )))
-    (debug entities)
 
     `#(,(json:encode entities) ,req ,state)))
 )
@@ -253,20 +252,27 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        A map containing profile details for a given customer."
+        A map containing profile details for a given customer,
+        or an empty map if no such customer exists."
 
-    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     ; Retrieving profile details for a given customer from the database.
-    (let (((cons customer _)
-        (-entity-prep
-            (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id)))))
+    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id))))
 
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
-                    (V-BAR)     ( binary_to_list (mref customer 'name))
-                    (C-BRACKET)))
+    (cond
+        ((== (length (proplists:get_value 'rows customer)) 0)
+            #M())
+        (else
+            (let (((cons customer- _) (-entity-prep customer)))
 
-    customer))
+            (-dbg dbg s (++ (O-BRACKET)(integer_to_list (mref customer- 'id  ))
+                            (V-BAR)    ( binary_to_list (mref customer- 'name))
+                            (C-BRACKET)))
+
+            customer-))
+    )))
 )
 
 (defun list-contacts (req dbg s cnx)
