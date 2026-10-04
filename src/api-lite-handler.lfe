@@ -144,6 +144,7 @@
     (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
+    (debug req)
 
     (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
@@ -229,8 +230,6 @@
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
 
-    (debug req)
-
     ; Retrieving all customer profiles from the database.
     (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
 
@@ -254,9 +253,7 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
-
-    (debug req)
+        An empty map."
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
@@ -280,9 +277,7 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
-
-    (debug req)
+        An empty map."
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
@@ -310,9 +305,7 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
-
-    (debug req)
+        An empty map."
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
