@@ -97,7 +97,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
     (case route
         ('r-put-get-cust (add-customer req dbg s cnx))
@@ -145,7 +144,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
     (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
@@ -184,8 +182,6 @@
     Returns:
         The `ok` atom."
 
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
-
     'ok
 )
 
@@ -215,8 +211,6 @@
 
     Returns:
         The `ok` atom."
-
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
 
     'ok
 )
