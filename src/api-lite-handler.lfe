@@ -148,7 +148,7 @@
 
     (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
-        ('r-get-cust      (get-customer          req dbg s cnx))
+        ('r-get-cust      ( get-customer         req dbg s cnx))
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
     )))
@@ -253,15 +253,19 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        An empty map."
+        A map containing profile details for a given customer."
 
     (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving profile details for a given customer from the database.
-    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
-    (debug customer)))
+    (let (((cons customer _)
+        (-entity-prep (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id)))))
 
-    `#M()
+    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
+                    (V-BAR)     ( binary_to_list (mref customer 'name))
+                    (C-BRACKET)))
+
+    customer))
 )
 
 (defun list-contacts (req dbg s cnx)
