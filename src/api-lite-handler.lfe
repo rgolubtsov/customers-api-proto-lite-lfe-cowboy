@@ -255,11 +255,12 @@
     Returns:
         A map containing profile details for a given customer."
 
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving profile details for a given customer from the database.
     (let (((cons customer _)
-        (-entity-prep (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id)))))
+        (-entity-prep
+            (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id)))))
 
     (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
                     (V-BAR)     ( binary_to_list (mref customer 'name))
@@ -283,13 +284,13 @@
     Returns:
         An empty map."
 
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
-        ,cust-id ; <== For retrieving phones.
-        ,cust-id ; <== For retrieving emails.
+        ,customer-id ; <== For retrieving phones.
+        ,customer-id ; <== For retrieving emails.
     ))))
     (debug contacts)))
 
@@ -311,13 +312,13 @@
     Returns:
         An empty map."
 
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
 
     (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
-    (let ((contacts (sql_exec cnx sql-query `(,cust-id))))
+    (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
     (debug contacts))))
 
     `#M()
