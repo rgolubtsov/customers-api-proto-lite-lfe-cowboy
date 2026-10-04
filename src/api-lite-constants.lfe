@@ -10,8 +10,6 @@
 ; (See the LICENSE file at the top of the source tree.)
 ;
 
-; (defmodule api-lite-constants "The pseudo-module containing only constants.")
-
 ; Helper constants.
 (defmacro EXIT-FAILURE _   1) ;    Failing exit status.
 (defmacro EXIT-SUCCESS _   0) ; Successful exit status.
@@ -20,10 +18,6 @@
 (defmacro V-BAR        _ "|")
 (defmacro O-BRACKET    _ "[")
 (defmacro C-BRACKET    _ "]")
-
-; Common notification messages.
-(defmacro MSG-SERVER-STARTED _ "Server started on port ")
-(defmacro MSG-SERVER-STOPPED _ "Server stopped")
 
 ; Common error messages.
 (defmacro ERR-PORT-VALID-MUST-BE-POSITIVE-INT _ (++
@@ -35,6 +29,10 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+
+; Common notification messages.
+(defmacro MSG-SERVER-STARTED _ "Server started on port ")
+(defmacro MSG-SERVER-STOPPED _ "Server stopped")
 
 ; The filename of the daemon settings (as a series of Erlang terms).
 (defmacro SETTINGS _ "../../../../etc/settings.conf")
@@ -49,8 +47,8 @@
 (defmacro REST-CUST-ID   _ "customer_id" )
 (defmacro REST-CONTACTS  _ "contacts"    )
 (defmacro REST-CONT-TYPE _ "contact_type")
-(defmacro REST-CONTEXT   _ (++
-    (SLASH) (REST-VERSION) (SLASH) (REST-PREFIX)))
+(defmacro REST-CONTEXT   _ (++ (SLASH) (REST-VERSION)
+                               (SLASH) (REST-PREFIX)))
 
 ; Allowed HTTP methods.
 (defmacro HTTP-PUT     _ #"PUT"    )
