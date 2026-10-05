@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-handler.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.9
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.10
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -44,7 +44,7 @@
     (let ((method  (binary:bin_to_list method-)))
     (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    (let ((state- (++ state method)))
+    (let ((state- (++ state method-)))
 
     `#(cowboy_rest ,req ,state-)))))
 )
@@ -61,7 +61,20 @@
         A tuple containing a list of allowed methods the daemon accepts
         along with the incoming request object and its initial state."
 
-    `#((,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD) ,(HTTP-OPTIONS)) ,req ,state)
+    (let (((cons _ (cons _ (cons _ (cons route _)))) state))
+
+    (let ((methods (case route
+        ('r-put-get-cust  `(,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-put-cont      `(,(HTTP-PUT)                         ))
+        ('r-get-cust      `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-get-cont      `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-get-cont-type `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+    )))
+
+    ; For any other route Cowboy will automatically respond
+    ; with the HTTP 404 Not Found, 405 Method Not Allowed,
+    ; or 501 Not Implemented status code.
+    `#(,methods ,req ,state)))
 )
 
 (defun content_types_accepted (req state)
@@ -81,9 +94,9 @@
 )
 
 (defun from-json (req state)
-    "The REST handler callback that expects to get and then processes
-    the request  body in JSON representation. Finally, it sends
-    the response body in JSON representation.
+    "The REST handler callback that expects getting the request body
+    in JSON representation. It then processes this request body.
+    Finally, it sends the response body in JSON representation.
 
     Args:
         req:   A map representing the incoming HTTP request object.
@@ -94,10 +107,10 @@
         The `true` tuple containing the incoming request object
         and its initial state."
 
-    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
+    (debug req)
 
     (case route
         ('r-put-get-cust (add-customer req dbg s cnx))
@@ -105,7 +118,7 @@
     ))
 
     #|
-     | NOTE: The `created` tuple is for `POST` requests only,
+     | Note: The `created` tuple is for `POST` requests only,
      |       but they are not allowed. :-) For `PUT` requests
      |       simply return `true`.
      | `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
@@ -142,18 +155,17 @@
         A tuple containing the response body in JSON representation
         along with the incoming request object and its initial state."
 
-    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
+    (debug req)
 
     (let ((entities (case route
         ('r-put-get-cust  (list-customers        req dbg s cnx))
-        ('r-get-cust      (get-customer          req dbg s cnx))
+        ('r-get-cust      ( get-customer         req dbg s cnx))
         ('r-get-cont      (list-contacts         req dbg s cnx))
         ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
     )))
-    (debug entities)
 
     `#(,(json:encode entities) ,req ,state)))
 )
@@ -183,8 +195,6 @@
 
     Returns:
         The `ok` atom."
-
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
 
     'ok
 )
@@ -216,8 +226,6 @@
     Returns:
         The `ok` atom."
 
-    (-dbg dbg s (++ (O-BRACKET) (pid_to_list cnx) (C-BRACKET))) (debug req)
-
     'ok
 )
 
@@ -234,8 +242,6 @@
 
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
-
-    (debug req)
 
     ; Retrieving all customer profiles from the database.
     (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
@@ -260,17 +266,27 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        A map containing profile details for a given customer,
+        or an empty map if no such customer exists."
 
-    (debug req)
-
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     ; Retrieving profile details for a given customer from the database.
-    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,cust-id))))
-    (debug customer)))
+    (let ((customer- (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID)`(,customer-id))))
 
-    `#M()
+    (cond
+        ((== (length (proplists:get_value 'rows customer-)) 0)
+            `#M())
+        (else
+            (let (((cons customer _) (-entity-prep customer-)))
+
+            (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
+                            (V-BAR)     ( binary_to_list (mref customer 'name))
+                            (C-BRACKET)))
+
+            customer))
+    )))
 )
 
 (defun list-contacts (req dbg s cnx)
@@ -286,17 +302,15 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        An empty map."
 
-    (debug req)
-
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
-        ,cust-id ; <== For retrieving phones.
-        ,cust-id ; <== For retrieving emails.
+        ,customer-id ; <== For retrieving phones.
+        ,customer-id ; <== For retrieving emails.
     ))))
     (debug contacts)))
 
@@ -316,17 +330,15 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        An empty map."
 
-    (debug req)
-
-    (let ((cust-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
 
     (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
-    (let ((contacts (sql_exec cnx sql-query `(,cust-id))))
+    (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
     (debug contacts))))
 
     `#M()
