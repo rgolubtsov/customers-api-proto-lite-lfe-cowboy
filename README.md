@@ -256,7 +256,7 @@ $ curl -vXPUT http://localhost:8765/v1/customers \
 > Content-Length: 25
 ...
 < HTTP/1.1 204 No Content
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: PUT, GET, HEAD
 ...
 < server: Cowboy
 ...
@@ -275,7 +275,7 @@ $ curl -vXPUT http://localhost:8765/v1/customers/contacts \
 > Content-Length: 44
 ...
 < HTTP/1.1 204 No Content
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: PUT
 ...
 < server: Cowboy
 ...
@@ -294,7 +294,7 @@ $ curl -vXPUT http://localhost:8765/v1/customers/contacts \
 > Content-Length: 58
 ...
 < HTTP/1.1 204 No Content
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: PUT
 ...
 < server: Cowboy
 ...
@@ -308,7 +308,7 @@ $ curl -v http://localhost:8765/v1/customers
 > GET /v1/customers HTTP/1.1
 ...
 < HTTP/1.1 200 OK
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: PUT, GET, HEAD
 < content-length: 66
 < content-type: application/json
 ...
@@ -325,13 +325,13 @@ $ curl -v http://localhost:8765/v1/customers/2
 > GET /v1/customers/2 HTTP/1.1
 ...
 < HTTP/1.1 200 OK
-< allow: PUT, GET, HEAD, OPTIONS
-< content-length: 2
+< allow: GET, HEAD
+< content-length: 30
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-{}
+{"id":2,"name":"Noble Numbat"}
 ```
 
 5. **List contacts for a given customer**
@@ -342,7 +342,7 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts
 > GET /v1/customers/2/contacts HTTP/1.1
 ...
 < HTTP/1.1 200 OK
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: GET, HEAD
 < content-length: 2
 < content-type: application/json
 ...
@@ -359,7 +359,7 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts/phone
 > GET /v1/customers/2/contacts/phone HTTP/1.1
 ...
 < HTTP/1.1 200 OK
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: GET, HEAD
 < content-length: 2
 < content-type: application/json
 ...
@@ -376,7 +376,7 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts/email
 > GET /v1/customers/2/contacts/email HTTP/1.1
 ...
 < HTTP/1.1 200 OK
-< allow: PUT, GET, HEAD, OPTIONS
+< allow: GET, HEAD
 < content-length: 2
 < content-type: application/json
 ...
