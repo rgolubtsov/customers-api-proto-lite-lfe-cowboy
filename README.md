@@ -18,7 +18,7 @@ The data scheme chosen is very simplified and consisted of only three SQL databa
 
 As it is clearly seen, there are no *mutating*, usually expected operations like *update* or *delete* an entity and that's made intentionally.
 
-The microservice incorporates the **[SQLite](https://sqlite.org "A small, fast, self-contained, high-reliability, full-featured, SQL database engine")** database as its persistent store. It is located in the `data/db/` directory as an XZ-compressed database file with minimal initial data &mdash; actually having two Customers and by six Contacts for each Customer. The database file is automatically decompressed during build process of the microservice and ready to use as is even when containerized with Docker.
+The microservice incorporates the **[SQLite](https://sqlite.org "A small, fast, self-contained, high-reliability, full-featured, SQL database engine")** database as its persistent store. It is located in the `data/db/` directory as an XZ-compressed database file with minimal initial data&mdash;actually having two Customers and by six Contacts for each Customer. The database file is automatically decompressed during build process of the microservice and ready to use as is even when containerized with Docker.
 
 Generally speaking, this project might be explored as a PoC (proof of concept) on how to amalgamate LFE/OTP REST API service backed by SQLite database, running standalone as a conventional daemon in host or VM environment, or in a containerized form as usually widely adopted nowadays.
 
@@ -35,7 +35,7 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 
 ## Building
 
-The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 26.04.1 LTS x86-64)** and **Arch Linux** (both proven). &mdash; First install the necessary dependencies (`rebar3`, `make`, `docker-buildx`):
+The microservice might be built and run successfully under **Ubuntu Server (Ubuntu 26.04.1 LTS x86-64)** and **Arch Linux** (both proven).&mdash;First install the necessary dependencies (`rebar3`, `make`, `docker-buildx`):
 
 * In Ubuntu Server:
 
@@ -147,7 +147,7 @@ $ rebar3 lfe release && \
 
 **Beware:** Executing the `lfe clean` task for the first time (when there is no subdirectory `_build/default/lib/api-lite/ebin/` yet exist) will probably lead to the error from Rebar3: `===> Uncaught error in rebar_core. Run with DIAGNOSTIC=1 to see stacktrace or consult rebar3.crashdump` and the appropriate crash report `rebar3.crashdump` will be generated in the current working directory. This can simply be ignored because after executing either `lfe compile` or `lfe release` tasks, any consequent `lfe clean` task will succeed.
 
-One can also **build** the microservice using **GNU Make** (optional, but for convenience &mdash; it covers the same **Rebar3** build workflow under the hood):
+One can also **build** the microservice using **GNU Make** (optional, but for convenience&mdash;it covers the same **Rebar3** build workflow under the hood):
 
 ```
 $ make clean
@@ -236,9 +236,9 @@ No. | Endpoint name                                      | Request method and RE
 5   | List contacts for a given customer                 | **GET** `/v1/customers/{customer_id}/contacts`                | &ndash;
 6   | List contacts of a given type for a given customer | **GET** `/v1/customers/{customer_id}/contacts/{contact_type}` | &ndash;
 
-* The `{customer_name}` placeholder is a string &mdash; it usually means the full name given to a newly created customer.
+* The `{customer_name}` placeholder is a string&mdash;it usually means the full name given to a newly created customer.
 * The `{customer_id}` placeholder is a decimal positive integer number, greater than `0`.
-* The `{customer_contact}` placeholder is a string &mdash; it denotes a newly created customer contact (phone or email).
+* The `{customer_contact}` placeholder is a string&mdash;it denotes a newly created customer contact (phone or email).
 * The `{contact_type}` placeholder is a string and can take one of two possible values, case-insensitive: `phone` or `email`.
 
 The following command-line snippets display the exact usage for these endpoints (the **cURL** utility is used as an example to access them)^:
