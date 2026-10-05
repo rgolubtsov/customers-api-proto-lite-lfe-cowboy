@@ -61,7 +61,20 @@
         A tuple containing a list of allowed methods the daemon accepts
         along with the incoming request object and its initial state."
 
-    `#((,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD) ,(HTTP-OPTIONS)) ,req ,state)
+    (let (((cons _ (cons _ (cons _ (cons route _)))) state))
+
+    (let ((methods (case route
+        ('r-put-get-cust  `(,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-put-cont      `(,(HTTP-PUT)                         ))
+        ('r-get-cust      `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-get-cont      `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+        ('r-get-cont-type `(            ,(HTTP-GET) ,(HTTP-HEAD)))
+    )))
+
+    ; For any other route Cowboy will automatically respond
+    ; with the HTTP 404 Not Found, 405 Method Not Allowed,
+    ; or 501 Not Implemented status code.
+    `#(,methods ,req ,state)))
 )
 
 (defun content_types_accepted (req state)
@@ -94,15 +107,15 @@
         The `true` tuple containing the incoming request object
         and its initial state."
 
-    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
 
-    (if (== method (HTTP-PUT)) (case route
+    (case route
         ('r-put-get-cust (add-customer req dbg s cnx))
         ('r-put-cont     (add-contact  req dbg s cnx))
-    )))
+    ))
 
     #|
      | Note: The `created` tuple is for `POST` requests only,
@@ -142,22 +155,16 @@
         A tuple containing the response body in JSON representation
         along with the incoming request object and its initial state."
 
-    (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
 
-    (let ((entities (cond
-        ((or (== method (HTTP-GET)) (== method (HTTP-HEAD)))
-            (case route
-                ('r-put-get-cust  (list-customers        req dbg s cnx))
-                ('r-get-cust      ( get-customer         req dbg s cnx))
-                ('r-get-cont      (list-contacts         req dbg s cnx))
-                ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
-                ('r-put-cont `#M()) ; <== FIXME: Temp return an empty map.
-            ))
-        (else
-            `#M())
+    (let ((entities (case route
+        ('r-put-get-cust  (list-customers        req dbg s cnx))
+        ('r-get-cust      ( get-customer         req dbg s cnx))
+        ('r-get-cont      (list-contacts         req dbg s cnx))
+        ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
     )))
 
     `#(,(json:encode entities) ,req ,state)))
