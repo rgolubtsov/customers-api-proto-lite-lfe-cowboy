@@ -259,19 +259,19 @@
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     ; Retrieving profile details for a given customer from the database.
-    (let ((customer (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id))))
+    (let ((customer- (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID)`(,customer-id))))
 
     (cond
-        ((== (length (proplists:get_value 'rows customer)) 0)
-            #M())
+        ((== (length (proplists:get_value 'rows customer-)) 0)
+            `#M())
         (else
-            (let (((cons customer- _) (-entity-prep customer)))
+            (let (((cons customer _) (-entity-prep customer-)))
 
-            (-dbg dbg s (++ (O-BRACKET)(integer_to_list (mref customer- 'id  ))
-                            (V-BAR)    ( binary_to_list (mref customer- 'name))
+            (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
+                            (V-BAR)     ( binary_to_list (mref customer 'name))
                             (C-BRACKET)))
 
-            customer-))
+            customer))
     )))
 )
 
