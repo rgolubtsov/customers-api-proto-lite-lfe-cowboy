@@ -44,7 +44,7 @@
     (let ((method  (binary:bin_to_list method-)))
     (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
 
-    (let ((state- (++ state method)))
+    (let ((state- (++ state method-)))
 
     `#(cowboy_rest ,req ,state-)))))
 )
@@ -97,11 +97,12 @@
     (let (((cons dbg (cons s (cons cnx (cons route method)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
+    (debug req)
 
-    (case route
+    (if (== method (HTTP-PUT)) (case route
         ('r-put-get-cust (add-customer req dbg s cnx))
         ('r-put-cont     (add-contact  req dbg s cnx))
-    ))
+    )))
 
     #|
      | Note: The `created` tuple is for `POST` requests only,
@@ -146,11 +147,17 @@
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
 
-    (let ((entities (case route
-        ('r-put-get-cust  (list-customers        req dbg s cnx))
-        ('r-get-cust      ( get-customer         req dbg s cnx))
-        ('r-get-cont      (list-contacts         req dbg s cnx))
-        ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
+    (let ((entities (cond
+        ((or (== method (HTTP-GET)) (== method (HTTP-HEAD)))
+            (case route
+                ('r-put-get-cust  (list-customers        req dbg s cnx))
+                ('r-get-cust      ( get-customer         req dbg s cnx))
+                ('r-get-cont      (list-contacts         req dbg s cnx))
+                ('r-get-cont-type (list-contacts-by-type req dbg s cnx))
+                ('r-put-cont `#M()) ; <== FIXME: Temp return an empty map.
+            ))
+        (else
+            `#M())
     )))
 
     `#(,(json:encode entities) ,req ,state)))
