@@ -17,15 +17,11 @@ REL_DIR = _build/$(PROF)/rel/$(PREF)d/lib
 BIN_DIR = _build/$(PROF)/lib/$(PREF)/ebin
 SRC_DIR = src
 
-BEAM = $(BIN_DIR)/$(PREF)-app.beam \
-       $(BIN_DIR)/$(PREF)-sup.beam \
-       $(BIN_DIR)/$(PREF)-helper.beam \
-       $(BIN_DIR)/$(PREF).app
+BEAM = $(BIN_DIR)/$(PREF)-app.beam
+#      ....beam
 
-DEPS = $(SRC_DIR)/$(PREF)-app.lfe \
-       $(SRC_DIR)/$(PREF)-sup.lfe \
-       $(SRC_DIR)/$(PREF)-helper.lfe \
-       $(SRC_DIR)/$(PREF).app.src
+DEPS = $(SRC_DIR)/$(PREF)-app.lfe
+#      ....lfe
 
 DB_PATH = data/db
 DB_FILE = customers-api-lite.db.xz
