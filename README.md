@@ -95,7 +95,7 @@ src/cl.lfe:479: Warning: redefining core function cdr/1
 ===> Fetching syslog v1.1.0
 ===> Fetching cowlib v2.20.0
 ===> Fetching ranch v2.3.0
-└─ api-lite─0.1.10 (project app)
+└─ api-lite─0.1.11 (project app)
    ├─ cowboy─2.19.0 (hex package)
    │  ├─ cowlib─2.20.0 (hex package)
    │  └─ ranch─2.3.0 (hex package)
@@ -114,6 +114,7 @@ $ rebar3 lfe clean
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-handler.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite.app
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-model.beam
+===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-controller.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-app.beam
 ===> Deleted $HOME/customers-api-proto-lite-lfe-cowboy/_build/default/lib/api-lite/ebin/api-lite-sup.beam
 $
@@ -141,7 +142,7 @@ $ rebar3 lfe release && \
 ===> Verifying dependencies...
 ===> Analyzing applications...
 ===> Compiling api-lite
-===> Assembling release 'api-lited'-0.1.10...
+===> Assembling release 'api-lited'-0.1.11...
 ===> Release successfully assembled: _build/default/rel/api-lited
 ```
 

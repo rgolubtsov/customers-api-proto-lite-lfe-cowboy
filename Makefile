@@ -1,7 +1,7 @@
 #
 # Makefile
 # =============================================================================
-# Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.10
+# Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.11
 # =============================================================================
 # A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 # to be run as a microservice, implementing a special Customers API prototype
@@ -17,15 +17,11 @@ REL_DIR = _build/$(PROF)/rel/$(PREF)d/lib
 BIN_DIR = _build/$(PROF)/lib/$(PREF)/ebin
 SRC_DIR = src
 
-BEAM = $(BIN_DIR)/$(PREF)-app.beam \
-       $(BIN_DIR)/$(PREF)-sup.beam \
-       $(BIN_DIR)/$(PREF)-helper.beam \
-       $(BIN_DIR)/$(PREF).app
+BEAM = $(BIN_DIR)/$(PREF)-app.beam
+#      ....beam
 
-DEPS = $(SRC_DIR)/$(PREF)-app.lfe \
-       $(SRC_DIR)/$(PREF)-sup.lfe \
-       $(SRC_DIR)/$(PREF)-helper.lfe \
-       $(SRC_DIR)/$(PREF).app.src
+DEPS = $(SRC_DIR)/$(PREF)-app.lfe
+#      ....lfe
 
 DB_PATH = data/db
 DB_FILE = customers-api-lite.db.xz
