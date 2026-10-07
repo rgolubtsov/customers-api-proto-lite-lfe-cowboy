@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-controller.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.10
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.11
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -100,6 +100,12 @@
 
     ; Retrieving all customer profiles from the database.
     (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
+
+#|  (let ((customers (-entity-prep (try
+        (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))
+    (catch (`#('error () ,_)
+        ())
+    )))))|#
 
     (let (((cons customer0 _) customers))
     (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
