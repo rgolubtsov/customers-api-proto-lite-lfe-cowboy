@@ -11,12 +11,12 @@
 ;
 
 (defmodule api-lite-controller "The controller module of the daemon."
-    (export ( add-customer          4)  ; (req dbg s cnx) -> ok
-            ( add-contact           4)  ; (req dbg s cnx) -> ok
-            (list-customers         4)  ; (req dbg s cnx) -> [#{=>,=>}, ...]
-            ( get-customer          4)  ; (req dbg s cnx) ->  #{=>,=>}
-            (list-contacts          4)  ; (req dbg s cnx) ->  #{}
-            (list-contacts-by-type  4)) ; (req dbg s cnx) ->  #{}
+    (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
+            ( add-contact           4)  ; (req       dbg s cnx) -> ok
+            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
+            ( get-customer          4)  ; (req       dbg s cnx) ->  #{=>,=>}
+            (list-contacts          4)  ; (req       dbg s cnx) ->  #{}
+            (list-contacts-by-type  4)) ; (req       dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
@@ -84,16 +84,18 @@
     'ok
 )
 
-(defun list-customers (req dbg s cnx)
+(defun list-customers (req state dbg s cnx)
     "The `GET /v1/customers` endpoint.
 
     Retrieves from the database and lists all customer profiles.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
@@ -109,7 +111,11 @@
 
         customers))
     (catch (`#(error function_clause ,_)
-        `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR))))
+        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
+            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
+        ) req))
+
+        `#(stop ,req ,state))
     ))
 )
 

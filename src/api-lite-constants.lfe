@@ -63,4 +63,7 @@
 (defmacro MIME-TYPE    _ #"application")
 (defmacro MIME-SUBTYPE _ #"json"       )
 
+; HTTP response status codes.
+(defmacro HTTP-500 _ 500)
+
 ; vim:set nu et ts=4 sw=4:
