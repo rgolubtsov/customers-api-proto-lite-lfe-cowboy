@@ -98,21 +98,19 @@
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
 
-    ; Retrieving all customer profiles from the database.
-    (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
+    (try (progn
+        ; Retrieving all customer profiles from the database.
+        (let ((customers(-entity-prep(sql_exec cnx(m:SQL-GET-ALL-CUSTOMERS)))))
 
-#|  (let ((customers (-entity-prep (try
-        (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))
-    (catch (`#('error () ,_)
-        ())
-    )))))|#
+        (let (((cons customer0 _) customers))
+        (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
+                        (V-BAR)     ( binary_to_list (mref customer0 'name))
+                        (C-BRACKET))))
 
-    (let (((cons customer0 _) customers))
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
-                    (V-BAR)     ( binary_to_list (mref customer0 'name))
-                    (C-BRACKET))))
-
-    customers)
+        customers))
+    (catch (`#(error function_clause ,_)
+        `#M(error ,(ERR-SRV-INTERNAL-ERROR)))
+    ))
 )
 
 (defun get-customer (req dbg s cnx)
@@ -210,6 +208,7 @@
 ; Helper function. Used to preprocess an entity structure that is taken
 ;                  from the database, to make it suitable for JSON marshalling.
 (defun -entity-prep (entity)
+;   (debug (tuple_to_list entity))
     (let (((cons cols _) (proplists:get_all_values 'columns entity)))
     (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
 

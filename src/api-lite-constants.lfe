@@ -30,6 +30,9 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+(defmacro ERR-SRV-INTERNAL-ERROR _ (++
+    "HTTP 500 Internal Server Error: Something went wrong. "
+    "Please try again later."))
 
 ; Common notification messages.
 (defmacro MSG-SERVER-STARTED _ "Server started on port ")
