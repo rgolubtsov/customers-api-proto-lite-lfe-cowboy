@@ -109,7 +109,7 @@
 
         customers))
     (catch (`#(error function_clause ,_)
-        `#M(error ,(ERR-SRV-INTERNAL-ERROR)))
+        `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR))))
     ))
 )
 
