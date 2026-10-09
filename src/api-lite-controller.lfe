@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-controller.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.11
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.12
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -11,12 +11,12 @@
 ;
 
 (defmodule api-lite-controller "The controller module of the daemon."
-    (export ( add-customer          4)  ; (req dbg s cnx) -> ok
-            ( add-contact           4)  ; (req dbg s cnx) -> ok
-            (list-customers         4)  ; (req dbg s cnx) -> [#{=>,=>}, ...]
-            ( get-customer          4)  ; (req dbg s cnx) ->  #{=>,=>}
-            (list-contacts          4)  ; (req dbg s cnx) ->  #{}
-            (list-contacts-by-type  4)) ; (req dbg s cnx) ->  #{}
+    (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
+            ( add-contact           4)  ; (req       dbg s cnx) -> ok
+            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
+            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>} | #{}
+            (list-contacts          4)  ; (req       dbg s cnx) ->  #{}
+            (list-contacts-by-type  4)) ; (req       dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
@@ -84,47 +84,47 @@
     'ok
 )
 
-(defun list-customers (req dbg s cnx)
+(defun list-customers (req state dbg s cnx)
     "The `GET /v1/customers` endpoint.
 
     Retrieves from the database and lists all customer profiles.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
 
-    ; Retrieving all customer profiles from the database.
-    (let ((customers (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)))))
+    (try (progn
+        ; Retrieving all customer profiles from the database.
+        (let ((customers(-entity-prep(sql_exec cnx(m:SQL-GET-ALL-CUSTOMERS)))))
 
-#|  (let ((customers (-entity-prep (try
-        (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS))
-    (catch (`#('error () ,_)
-        ())
-    )))))|#
+        (let (((cons customer0 _) customers))
+        (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
+                        (V-BAR)     ( binary_to_list (mref customer0 'name))
+                        (C-BRACKET))))
 
-    (let (((cons customer0 _) customers))
-    (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
-                    (V-BAR)     ( binary_to_list (mref customer0 'name))
-                    (C-BRACKET))))
-
-    customers)
+        customers))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state))))
 )
 
-(defun get-customer (req dbg s cnx)
+(defun get-customer (req state dbg s cnx)
     "The `GET /v1/customers/{customer_id}` endpoint.
 
     Retrieves profile details for a given customer from the database.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         A map containing profile details for a given customer,
@@ -133,21 +133,24 @@
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
-    ; Retrieving profile details for a given customer from the database.
-    (let ((customer- (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID)`(,customer-id))))
+    (try (progn
+        ; Retrieving profile details for a given customer from the database.
+        (let ((customer-
+            (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id))))
 
-    (cond
-        ((== (length (proplists:get_value 'rows customer-)) 0)
-            `#M())
-        (else
-            (let (((cons customer _) (-entity-prep customer-)))
+        (cond
+            ((== (length (proplists:get_value 'rows customer-)) 0)
+                `#M())
+            (else
+                (let (((cons customer _) (-entity-prep customer-)))
 
             (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
                             (V-BAR)     ( binary_to_list (mref customer 'name))
                             (C-BRACKET)))
 
-            customer))
-    )))
+                customer))
+        )))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
 )
 
 (defun list-contacts (req dbg s cnx)
@@ -165,7 +168,8 @@
     Returns:
         An empty map."
 
-    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
@@ -193,14 +197,18 @@
     Returns:
         An empty map."
 
-    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((bindings (maps:get 'bindings req)))
+    (let ((customer-id   (mref bindings 'customer_id )))
+    (let ((contact-type  (mref bindings 'contact_type)))
+    (-dbg dbg s (++      (REST-CUST-ID)  (EQUALS)(binary_to_list customer-id)
+    (SPACE)(V-BAR)(SPACE)(REST-CONT-TYPE)(EQUALS)                contact-type))
 
     (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
-    (debug contacts))))
+    (debug contacts))))))
 
     `#M()
 )
@@ -210,6 +218,7 @@
 ; Helper function. Used to preprocess an entity structure that is taken
 ;                  from the database, to make it suitable for JSON marshalling.
 (defun -entity-prep (entity)
+;   (debug (tuple_to_list entity))
     (let (((cons cols _) (proplists:get_all_values 'columns entity)))
     (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
 
@@ -219,6 +228,16 @@
         ,(list_to_atom id  ) ,(tref row 1)
         ,(list_to_atom name) ,(tref row 2)
     )) rows))))
+)
+
+; Helper function. Used to send the HTTP 500 Internal Server Error response.
+(defun -http-500-resp (req state)
+    (let ((req-
+        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
+            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
+        ) req))))
+
+    `#(stop ,req- ,state))
 )
 
 ; vim:set nu et ts=4 sw=4:

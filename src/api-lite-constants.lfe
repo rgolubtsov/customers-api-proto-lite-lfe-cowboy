@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-constants.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.11
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.12
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -13,6 +13,7 @@
 ; Helper constants.
 (defmacro EXIT-FAILURE _   1) ;    Failing exit status.
 (defmacro EXIT-SUCCESS _   0) ; Successful exit status.
+(defmacro SPACE        _ " ")
 (defmacro SLASH        _ "/")
 (defmacro COLON        _ ":")
 (defmacro V-BAR        _ "|")
@@ -30,6 +31,9 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+(defmacro ERR-SRV-INTERNAL-ERROR _ (++
+    "HTTP 500 Internal Server Error: Something went wrong. "
+    "Please try again later."))
 
 ; Common notification messages.
 (defmacro MSG-SERVER-STARTED _ "Server started on port ")
@@ -59,5 +63,8 @@
 ; HTTP response-related constants.
 (defmacro MIME-TYPE    _ #"application")
 (defmacro MIME-SUBTYPE _ #"json"       )
+
+; HTTP response status codes.
+(defmacro HTTP-500 _ 500)
 
 ; vim:set nu et ts=4 sw=4:
