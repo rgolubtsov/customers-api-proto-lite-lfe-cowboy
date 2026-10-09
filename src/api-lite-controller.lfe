@@ -110,13 +110,7 @@
                         (C-BRACKET))))
 
         customers))
-    (catch (`#(error function_clause ,_)
-        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
-        ) req))
-
-        `#(stop ,req ,state))
-    ))
+    (catch (`#(error function_clause ,_) (-http-500-resp req state))))
 )
 
 (defun get-customer (req state dbg s cnx)
@@ -156,13 +150,7 @@
 
                 customer))
         )))
-    (catch (`#(error function_clause ,_)
-        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
-        ) req))
-
-        `#(stop ,req ,state))
-    )))
+    (catch (`#(error function_clause ,_) (-http-500-resp req state)))))
 )
 
 (defun list-contacts (req dbg s cnx)
@@ -235,6 +223,16 @@
         ,(list_to_atom id  ) ,(tref row 1)
         ,(list_to_atom name) ,(tref row 2)
     )) rows))))
+)
+
+; Helper function. Used to send the HTTP 500 Internal Server Error response.
+(defun -http-500-resp (req state)
+    (let ((req-
+        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
+            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
+        ) req))))
+
+    `#(stop ,req- ,state))
 )
 
 ; vim:set nu et ts=4 sw=4:
