@@ -13,6 +13,7 @@
 ; Helper constants.
 (defmacro EXIT-FAILURE _   1) ;    Failing exit status.
 (defmacro EXIT-SUCCESS _   0) ; Successful exit status.
+(defmacro SPACE        _ " ")
 (defmacro SLASH        _ "/")
 (defmacro COLON        _ ":")
 (defmacro V-BAR        _ "|")

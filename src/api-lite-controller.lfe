@@ -168,7 +168,8 @@
     Returns:
         An empty map."
 
-    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     ; Retrieving all contacts associated with a given customer
     ; from the database.
@@ -196,14 +197,18 @@
     Returns:
         An empty map."
 
-    (let ((customer-id 2)) ; <== TODO: Replace with the actual one.
+    (let ((bindings (maps:get 'bindings req)))
+    (let ((customer-id   (mref bindings 'customer_id )))
+    (let ((contact-type  (mref bindings 'contact_type)))
+    (-dbg dbg s (++      (REST-CUST-ID)  (EQUALS)(binary_to_list customer-id)
+    (SPACE)(V-BAR)(SPACE)(REST-CONT-TYPE)(EQUALS)                contact-type))
 
     (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
     ; Retrieving all contacts of a given type associated with a given customer
     ; from the database.
     (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
-    (debug contacts))))
+    (debug contacts))))))
 
     `#M()
 )
