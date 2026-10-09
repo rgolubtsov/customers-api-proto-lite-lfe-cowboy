@@ -160,7 +160,7 @@
 
     (let ((entities (case route
         ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
-        ('r-get-cust      ( c:get-customer         req       dbg s cnx))
+        ('r-get-cust      ( c:get-customer         req state dbg s cnx))
         ('r-get-cont      (c:list-contacts         req       dbg s cnx))
         ('r-get-cont-type (c:list-contacts-by-type req       dbg s cnx))
     )))

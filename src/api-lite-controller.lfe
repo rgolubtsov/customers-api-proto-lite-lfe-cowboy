@@ -14,7 +14,7 @@
     (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
-            ( get-customer          4)  ; (req       dbg s cnx) ->  #{=>,=>}
+            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>} | #{}
             (list-contacts          4)  ; (req       dbg s cnx) ->  #{}
             (list-contacts-by-type  4)) ; (req       dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
@@ -119,16 +119,18 @@
     ))
 )
 
-(defun get-customer (req dbg s cnx)
+(defun get-customer (req state dbg s cnx)
     "The `GET /v1/customers/{customer_id}` endpoint.
 
     Retrieves profile details for a given customer from the database.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         A map containing profile details for a given customer,
@@ -137,20 +139,29 @@
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
-    ; Retrieving profile details for a given customer from the database.
-    (let ((customer- (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID)`(,customer-id))))
+    (try (progn
+        ; Retrieving profile details for a given customer from the database.
+        (let ((customer-
+            (sql_exec cnx (m:SQL-GET-CUSTOMER-BY-ID) `(,customer-id))))
 
-    (cond
-        ((== (length (proplists:get_value 'rows customer-)) 0)
-            `#M())
-        (else
-            (let (((cons customer _) (-entity-prep customer-)))
+        (cond
+            ((== (length (proplists:get_value 'rows customer-)) 0)
+                `#M())
+            (else
+                (let (((cons customer _) (-entity-prep customer-)))
 
             (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
                             (V-BAR)     ( binary_to_list (mref customer 'name))
                             (C-BRACKET)))
 
-            customer))
+                customer))
+        )))
+    (catch (`#(error function_clause ,_)
+        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
+            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
+        ) req))
+
+        `#(stop ,req ,state))
     )))
 )
 
