@@ -110,7 +110,7 @@
                         (C-BRACKET))))
 
         customers))
-    (catch (`#(error function_clause ,_) (-http-500-resp req state))))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state))))
 )
 
 (defun get-customer (req state dbg s cnx)
@@ -150,7 +150,7 @@
 
                 customer))
         )))
-    (catch (`#(error function_clause ,_) (-http-500-resp req state)))))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
 )
 
 (defun list-contacts (req dbg s cnx)
