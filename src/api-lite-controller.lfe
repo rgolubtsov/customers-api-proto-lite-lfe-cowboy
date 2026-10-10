@@ -15,8 +15,8 @@
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>} | #{}
-            (list-contacts          4)  ; (req       dbg s cnx) ->  #{}
-            (list-contacts-by-type  4)) ; (req       dbg s cnx) ->  #{}
+            (list-contacts          5)  ; (req state dbg s cnx) ->  #{}
+            (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
@@ -153,17 +153,19 @@
     (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
 )
 
-(defun list-contacts (req dbg s cnx)
+(defun list-contacts (req state dbg s cnx)
     "The `GET /v1/customers/{customer_id}/contacts` endpoint.
 
     Retrieves from the database and lists all contacts
     associated with a given customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         An empty map."
@@ -171,28 +173,32 @@
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
-    ; Retrieving all contacts associated with a given customer
-    ; from the database.
-    (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
-        ,customer-id ; <== For retrieving phones.
-        ,customer-id ; <== For retrieving emails.
-    ))))
-    (debug contacts)))
+    (try (progn
+        ; Retrieving all contacts associated with a given customer
+        ; from the database.
+        (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
+            ,customer-id ; <== For retrieving phones.
+            ,customer-id ; <== For retrieving emails.
+        ))))
+        (debug contacts))
 
-    `#M()
+        `#M())
+    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
 )
 
-(defun list-contacts-by-type (req dbg s cnx)
+(defun list-contacts-by-type (req state dbg s cnx)
     "The `GET /v1/customers/{customer_id}/contacts/{contact_type}` endpoint.
 
     Retrieves from the database and lists all contacts of a given type
     associated with a given customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the request (arbitrary data passed
+               from the `to-json/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         An empty map."
@@ -205,12 +211,14 @@
 
     (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
 
-    ; Retrieving all contacts of a given type associated with a given customer
-    ; from the database.
-    (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
-    (debug contacts))))))
+    (try (progn
+        ; Retrieving all contacts of a given type associated
+        ; with a given customer from the database.
+        (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
+        (debug contacts))
 
-    `#M()
+        `#M())
+    (catch (`#(error ,_ ,_) (-http-500-resp req state))))))))
 )
 
 ; -----------------------------------------------------------------------------
