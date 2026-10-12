@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-handler.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.12
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.13
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -161,8 +161,8 @@
     (let ((entities (case route
         ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
         ('r-get-cust      ( c:get-customer         req state dbg s cnx))
-        ('r-get-cont      (c:list-contacts         req       dbg s cnx))
-        ('r-get-cont-type (c:list-contacts-by-type req       dbg s cnx))
+        ('r-get-cont      (c:list-contacts         req state dbg s cnx))
+        ('r-get-cont-type (c:list-contacts-by-type req state dbg s cnx))
     )))
 
     `#(,(json:encode entities) ,req ,state)))
