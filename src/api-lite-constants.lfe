@@ -31,6 +31,13 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+(defmacro ERR-REQ-NOT-FOUND-1 _
+    "HTTP 404 Not Found: No customers exist yet.")
+(defmacro ERR-REQ-NOT-FOUND-2 _
+    "HTTP 404 Not Found: No such customer exists.")
+(defmacro ERR-REQ-NOT-FOUND-3 _ (++
+    "HTTP 404 Not Found: No contacts belonging to a given customer exist, "
+    "or no such customer exists."))
 (defmacro ERR-SRV-INTERNAL-ERROR _ (++
     "HTTP 500 Internal Server Error: Something went wrong. "
     "Please try again later."))
@@ -65,6 +72,7 @@
 (defmacro MIME-SUBTYPE _ #"json"       )
 
 ; HTTP response status codes.
+(defmacro HTTP-404 _ 404)
 (defmacro HTTP-500 _ 500)
 
 ; vim:set nu et ts=4 sw=4:

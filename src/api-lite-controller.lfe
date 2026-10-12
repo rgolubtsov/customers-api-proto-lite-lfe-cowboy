@@ -13,9 +13,9 @@
 (defmodule api-lite-controller "The controller module of the daemon."
     (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
-            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] |  []
-            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | #{}
-            (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] |  []
+            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | #{=>}
+            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | #{=>}
+            (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | #{=>}
             (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
@@ -99,7 +99,7 @@
 
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`,
-        or an empty list if no customers exist yet."
+        or a special `error` map if no customers exist yet."
 
     (try (progn
         ; Retrieving all customer profiles from the database.
@@ -108,7 +108,7 @@
 
         (cond
             ((== (length customers) 0)
-                `())
+                (-http-404-resp (ERR-REQ-NOT-FOUND-1) req state))
             (else
                 (let (((cons customer0 _) customers))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -136,7 +136,7 @@
 
     Returns:
         A map containing profile details for a given customer,
-        or an empty map if no such customer exists."
+        or a special `error` map if no such customer exists."
 
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
@@ -148,7 +148,7 @@
 
         (cond
             ((== (length (proplists:get_value 'rows customer-)) 0)
-                `#M())
+                (-http-404-resp (ERR-REQ-NOT-FOUND-2) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
 
@@ -178,8 +178,8 @@
 
     Returns:
         A list of all contacts associated with a given customer as individual
-        maps: `[#{=>}, ...]`, or an empty list if no contacts
-        belonging to a given customer exist."
+        maps: `[#{=>}, ...]`, or a special `error` map if no contacts
+        belonging to a given customer exist or no such customer exists."
 
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
@@ -194,7 +194,7 @@
 
         (cond
             ((== (length contacts) 0)
-                `())
+                (-http-404-resp (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -269,6 +269,16 @@
                 ,(list_to_atom contact) ,(tref row 1)
             )) rows)))
     )))
+)
+
+; Helper function. Used to send the HTTP 404 Not Found response.
+(defun -http-404-resp (msg req state)
+    (let ((req-
+        (cowboy_req:reply (HTTP-404) (cowboy_req:set_resp_body (json:encode
+            `#M(error ,(unicode:characters_to_binary msg))
+        ) req))))
+
+    `#(stop ,req- ,state))
 )
 
 ; Helper function. Used to send the HTTP 500 Internal Server Error response.
