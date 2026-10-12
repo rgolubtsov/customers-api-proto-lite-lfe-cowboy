@@ -13,9 +13,9 @@
 (defmodule api-lite-controller "The controller module of the daemon."
     (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
-            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
-            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>} | #{}
-            (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>}, ...] | []
+            (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] |  []
+            ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | #{}
+            (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] |  []
             (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
@@ -98,19 +98,26 @@
         cnx:   The database connection (a Pid).
 
     Returns:
-        A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`."
+        A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`,
+        or an empty list if no customers exist yet."
 
     (try (progn
         ; Retrieving all customer profiles from the database.
         (let ((customers
             (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)) 'true)))
 
-        (let (((cons customer0 _) customers))
-        (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
-                        (V-BAR)     ( binary_to_list (mref customer0 'name))
-                        (C-BRACKET))))
+        (cond
+            ((== (length customers) 0)
+                `())
+            (else
+                (let (((cons customer0 _) customers))
+                (-dbg dbg s (++ (O-BRACKET)
+                                (integer_to_list (mref customer0 'id  ))(V-BAR)
+                                ( binary_to_list (mref customer0 'name))
+                                (C-BRACKET))))
 
-        customers))
+                customers)
+        )))
     (catch (`#(error ,_ ,_) (-http-500-resp req state))))
 )
 
