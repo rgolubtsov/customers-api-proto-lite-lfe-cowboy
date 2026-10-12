@@ -15,7 +15,7 @@
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...]
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>} | #{}
-            (list-contacts          5)  ; (req state dbg s cnx) ->  #{}
+            (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>}, ...] | []
             (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
@@ -102,7 +102,8 @@
 
     (try (progn
         ; Retrieving all customer profiles from the database.
-        (let ((customers(-entity-prep(sql_exec cnx(m:SQL-GET-ALL-CUSTOMERS)))))
+        (let ((customers
+            (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CUSTOMERS)) 'true)))
 
         (let (((cons customer0 _) customers))
         (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer0 'id  ))
@@ -142,11 +143,12 @@
             ((== (length (proplists:get_value 'rows customer-)) 0)
                 `#M())
             (else
-                (let (((cons customer _) (-entity-prep customer-)))
+                (let (((cons customer _) (-entity-prep customer- 'true)))
 
-            (-dbg dbg s (++ (O-BRACKET) (integer_to_list (mref customer 'id  ))
-                            (V-BAR)     ( binary_to_list (mref customer 'name))
-                            (C-BRACKET)))
+                (-dbg dbg s (++ (O-BRACKET)
+                                (integer_to_list (mref customer 'id  )) (V-BAR)
+                                ( binary_to_list (mref customer 'name))
+                                (C-BRACKET)))
 
                 customer))
         )))
@@ -168,7 +170,9 @@
         cnx:   The database connection (a Pid).
 
     Returns:
-        An empty map."
+        A list of all contacts associated with a given customer as individual
+        maps: `[#{=>}, ...]`, or an empty list if no contacts
+        belonging to a given customer exist."
 
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
@@ -176,13 +180,22 @@
     (try (progn
         ; Retrieving all contacts associated with a given customer
         ; from the database.
-        (let ((contacts (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
+        (let ((contacts (-entity-prep (sql_exec cnx (m:SQL-GET-ALL-CONTACTS) `(
             ,customer-id ; <== For retrieving phones.
             ,customer-id ; <== For retrieving emails.
-        ))))
-        (debug contacts))
+        )) 'false)))
 
-        `#M())
+        (cond
+            ((== (length contacts) 0)
+                `())
+            (else
+                (let (((cons contact0 _) contacts))
+                (-dbg dbg s (++ (O-BRACKET)
+                                (binary_to_list (mref contact0 'contact))
+                                (C-BRACKET))))
+
+                contacts)
+        )))
     (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
 )
 
@@ -221,21 +234,34 @@
     (catch (`#(error ,_ ,_) (-http-500-resp req state))))))))
 )
 
-; -----------------------------------------------------------------------------
+; Helpers and others ----------------------------------------------------------
 
-; Helper function. Used to preprocess an entity structure that is taken
-;                  from the database, to make it suitable for JSON marshalling.
-(defun -entity-prep (entity)
-;   (debug (tuple_to_list entity))
+; Helper function. Used to preprocess a property list of entity structures
+;                  that is taken from the database, to make it suitable
+;                  for JSON marshalling.
+;
+;   `is-customer`: true  => `entity` is a property list of Customer entities,
+;                : false => `entity` is a property list of Contact  entities.
+;
+(defun -entity-prep (entity is-customer)
     (let (((cons cols _) (proplists:get_all_values 'columns entity)))
     (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
 
-    (let (((cons id (cons name _)) cols))
+    (cond
+        (is-customer
+            (let (((cons id (cons name _)) cols))
 
-    (lists:map (lambda (row) `#M(
-        ,(list_to_atom id  ) ,(tref row 1)
-        ,(list_to_atom name) ,(tref row 2)
-    )) rows))))
+            (lists:map (lambda (row) `#M(
+                ,(list_to_atom id  ) ,(tref row 1)
+                ,(list_to_atom name) ,(tref row 2)
+            )) rows)))
+        (else
+            (let (((cons contact _) cols))
+
+            (lists:map (lambda (row) `#M(
+                ,(list_to_atom contact) ,(tref row 1)
+            )) rows)))
+    )))
 )
 
 ; Helper function. Used to send the HTTP 500 Internal Server Error response.
