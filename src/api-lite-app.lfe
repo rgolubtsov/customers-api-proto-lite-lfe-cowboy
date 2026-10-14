@@ -96,6 +96,7 @@
                               (SLASH)          (REST-CONTACTS)
                               (SLASH)  (COLON) (REST-CONT-TYPE))
                               api-lite-handler (,dbg ,s ,cnx r-get-cont-type))
+        #(_                   api-lite-404dler (,dbg ,s)) ; <== 404 Not Found.
     ))))))
 
     (let ((status (start_clear 'api-lite-listener
