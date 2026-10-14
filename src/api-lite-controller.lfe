@@ -109,7 +109,7 @@
 
         (cond
             ((== (length customers) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-1) req state))
+                (-http-404-resp (ERR-REQ-NOT-FOUND-2) req state))
             (else
                 (let (((cons customer0 _) customers))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -150,7 +150,7 @@
 
         (cond
             ((== (length (proplists:get_value 'rows customer-)) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-2) req state))
+                (-http-404-resp (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
 
@@ -197,7 +197,7 @@
 
         (cond
             ((== (length contacts) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-3) req state))
+                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
