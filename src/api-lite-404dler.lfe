@@ -40,12 +40,12 @@
 
     (debug req)
 
-    (let ((req-
-        (cowboy_req:reply (HTTP-404) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(unicode:characters_to_binary (SPACE)))
-        ) req))))
-
-    `#(ok ,req- ,state))
+    `#(ok ,(cowboy_req:reply (HTTP-404) `#M(,(CONTENT-TYPE) ,(++
+        (binary_to_list (MIME-TYPE   )) (SLASH)
+        (binary_to_list (MIME-SUBTYPE))
+    )) (cowboy_req:set_resp_body (json:encode
+        `#M(error ,(unicode:characters_to_binary (ERR-REQ-NOT-FOUND-1)))
+    ) req)) ,state)
 )
 
 ; vim:set nu et ts=4 sw=4:
