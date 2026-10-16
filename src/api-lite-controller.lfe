@@ -91,7 +91,7 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `to-json/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
@@ -100,7 +100,8 @@
     Returns:
         A list of all customer profiles as individual maps: `[#{=>,=>}, ...]`,
         or - if no customers exist yet - the `stop` tuple containing
-        the modified incoming request object and its initial state."
+        the modified incoming request object and an initial state
+        of the handler."
 
     (try (progn
         ; Retrieving all customer profiles from the database.
@@ -129,7 +130,7 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `to-json/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
@@ -138,7 +139,8 @@
     Returns:
         A map containing profile details for a given customer,
         or - if no such customer exists - the `stop` tuple containing
-        the modified incoming request object and its initial state."
+        the modified incoming request object and an initial state
+        of the handler."
 
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
@@ -172,7 +174,7 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `to-json/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
@@ -182,7 +184,8 @@
         A list of all contacts associated with a given customer as individual
         maps: `[#{=>}, ...]`, or - if no contacts belonging to a given customer
         exist or no such customer exists - the `stop` tuple containing
-        the modified incoming request object and its initial state."
+        the modified incoming request object and an initial state
+        of the handler."
 
     (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
@@ -217,7 +220,7 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `to-json/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).

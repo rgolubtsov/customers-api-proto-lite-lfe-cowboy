@@ -10,7 +10,10 @@
 ; (See the LICENSE file at the top of the source tree.)
 ;
 
-(defmodule api-lite-handler "The request handler module of the daemon."
+(defmodule api-lite-handler
+    "The main request handler module of the daemon. Contains callbacks
+    to deal with REST API HTTP requests and is responsible for handling
+    requests to predefined routes only."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
@@ -24,17 +27,17 @@
 (include-file "api-lite-constants.lfe")
 
 (defun init (req state)
-    "The REST handler initialization callback.
-    Gets called on each incoming HTTP request.
+    "The handler initialization callback. Gets called on each incoming
+    HTTP request that matches any of predefined routes.
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                with dispatch rules of the `cowboy_router` middleware).
 
     Returns:
         The `cowboy_rest` tuple containing the incoming request object
-        and its new (or modified) state."
+        and a modified initial state of the handler."
 
     (let (((cons dbg (cons s _)) state))
 
@@ -52,12 +55,13 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `init/2` callback).
 
     Returns:
         A tuple containing a list of allowed methods the daemon accepts
-        along with the incoming request object and its initial state."
+        along with the incoming request object and an initial state
+        of the handler."
 
     (let (((cons _ (cons _ (cons _ (cons route _)))) state))
 
@@ -81,12 +85,13 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `init/2` callback).
 
     Returns:
         A tuple containing a list of media types the daemon accepts
-        along with the incoming request object and its initial state."
+        along with the incoming request object and an initial state
+        of the handler."
 
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json)) ,req ,state)
 )
@@ -98,12 +103,12 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `content_types_accepted/2` callback).
 
     Returns:
         The `true` tuple containing the incoming request object
-        and its initial state."
+        and an initial state of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
@@ -130,12 +135,13 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `init/2` callback).
 
     Returns:
         A tuple containing a list of media types the daemon provides
-        along with the incoming request object and its initial state."
+        along with the incoming request object and an initial state
+        of the handler."
 
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
 )
@@ -146,12 +152,13 @@
 
     Args:
         req:   A map representing the incoming HTTP request object.
-        state: An initial state of the request (arbitrary data passed
+        state: An initial state of the handler (arbitrary data passed
                from the `content_types_provided/2` callback).
 
     Returns:
         A tuple containing the response body in JSON representation
-        along with the incoming request object and its initial state."
+        along with the incoming request object and an initial state
+        of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
