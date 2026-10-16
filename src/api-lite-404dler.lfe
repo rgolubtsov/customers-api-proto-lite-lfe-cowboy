@@ -11,7 +11,7 @@
 ;
 
 (defmodule api-lite-404dler
-    "The request handler module of the daemon that dedicated
+    "The request handler module of the daemon that is dedicated
     to handle solely requests against undefined routes."
     (export (init 2)) ; (req state) -> {ok, Req, State}
     (import (from logger (debug 1))
