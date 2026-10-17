@@ -59,7 +59,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    (let (((cons _ (cons _ (cons _ route))) state))
+    (let (((cons _ (cons _ (cons _ (cons route _)))) state))
 
     (let ((methods (case route
         ('r-put-get-cust  `(,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD)))
@@ -123,7 +123,7 @@
         The `true` tuple containing the incoming request object
         and an initial state of the handler."
 
-    (let (((cons dbg (cons s (cons cnx route))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
@@ -156,7 +156,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    (let (((cons dbg (cons s (cons cnx route))) state))
+    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
