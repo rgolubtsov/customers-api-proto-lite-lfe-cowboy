@@ -62,6 +62,8 @@
 (defmacro REST-CUST-ID   _ "customer_id" )
 (defmacro REST-CONTACTS  _ "contacts"    )
 (defmacro REST-CONT-TYPE _ "contact_type")
+(defmacro PHONE          _ "phone"       )
+(defmacro EMAIL          _ "email"       )
 (defmacro REST-CONTEXT   _ (++ (SLASH) (REST-VERSION)
                                (SLASH) (REST-PREFIX)))
 

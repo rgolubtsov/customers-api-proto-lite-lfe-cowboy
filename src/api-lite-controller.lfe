@@ -21,7 +21,8 @@
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from cowboy_req (reply 2)
-                     (set_resp_body 2))
+                     (set_resp_body 2)
+                           (binding 3))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-model m)))
 
@@ -144,7 +145,7 @@
         the modified incoming request object and an initial state
         of the handler."
 
-    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (let ((customer-id (binding 'customer_id req 1)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     (try (progn
@@ -189,7 +190,7 @@
         the modified incoming request object and an initial state
         of the handler."
 
-    (let ((customer-id (mref (maps:get 'bindings req) 'customer_id)))
+    (let ((customer-id (binding 'customer_id req 1)))
     (-dbg dbg s (++ (REST-CUST-ID) (EQUALS) customer-id))
 
     (try (progn
@@ -231,9 +232,8 @@
     Returns:
         An empty map."
 
-    (let ((bindings (maps:get 'bindings req)))
-    (let ((customer-id   (mref bindings 'customer_id )))
-    (let ((contact-type  (mref bindings 'contact_type)))
+    (let ((customer-id  (binding 'customer_id  req 1)))
+    (let ((contact-type (binding 'contact_type req (binary (PHONE)))))
     (-dbg dbg s (++      (REST-CUST-ID)  (EQUALS)(binary_to_list customer-id)
     (SPACE)(V-BAR)(SPACE)(REST-CONT-TYPE)(EQUALS)                contact-type))
 
@@ -246,7 +246,7 @@
         (debug contacts))
 
         `#M())
-    (catch (`#(error ,_ ,_) (-http-500-resp req state))))))))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))))
 )
 
 ; Helpers and others ----------------------------------------------------------
