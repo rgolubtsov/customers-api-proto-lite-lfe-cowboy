@@ -44,7 +44,7 @@
         (binary_to_list (MIME-TYPE   )) (SLASH)
         (binary_to_list (MIME-SUBTYPE))
     )) (cowboy_req:set_resp_body (json:encode
-        `#M(error ,(unicode:characters_to_binary (ERR-REQ-NOT-FOUND-1)))
+        `#M(error ,(ERR-REQ-NOT-FOUND-1))
     ) req)) ,state)
 )
 

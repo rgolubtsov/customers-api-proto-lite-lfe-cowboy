@@ -281,7 +281,7 @@
 (defun -http-404-resp (msg req state)
     (let ((req-
         (cowboy_req:reply (HTTP-404) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(unicode:characters_to_binary msg))
+            `#M(error ,msg)
         ) req))))
 
     `#(stop ,req- ,state))
@@ -291,7 +291,7 @@
 (defun -http-500-resp (req state)
     (let ((req-
         (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(unicode:characters_to_binary (ERR-SRV-INTERNAL-ERROR)))
+            `#M(error ,(ERR-SRV-INTERNAL-ERROR))
         ) req))))
 
     `#(stop ,req- ,state))

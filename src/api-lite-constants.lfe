@@ -31,17 +31,17 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
-(defmacro ERR-REQ-NOT-FOUND-1 _ (++
+(defmacro ERR-REQ-NOT-FOUND-1 _ (binary
     "HTTP 404 Not Found: No such REST URI path exists. "
     "Please check your inputs."))
 (defmacro ERR-REQ-NOT-FOUND-2 _
-    "HTTP 404 Not Found: No customers exist yet.")
+   #"HTTP 404 Not Found: No customers exist yet.")
 (defmacro ERR-REQ-NOT-FOUND-3 _
-    "HTTP 404 Not Found: No such customer exists.")
-(defmacro ERR-REQ-NOT-FOUND-4 _ (++
+   #"HTTP 404 Not Found: No such customer exists.")
+(defmacro ERR-REQ-NOT-FOUND-4 _ (binary
     "HTTP 404 Not Found: No contacts belonging to a given customer exist, "
     "or no such customer exists."))
-(defmacro ERR-SRV-INTERNAL-ERROR _ (++
+(defmacro ERR-SRV-INTERNAL-ERROR _ (binary
     "HTTP 500 Internal Server Error: Something went wrong. "
     "Please try again later."))
 
