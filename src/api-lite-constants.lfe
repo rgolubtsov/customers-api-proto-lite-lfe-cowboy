@@ -74,6 +74,8 @@
 (defmacro CONTENT-TYPE _ #"content-type")
 (defmacro MIME-TYPE    _ #"application" )
 (defmacro MIME-SUBTYPE _ #"json"        )
+(defmacro MIME-TYPE-S  _  "application" )
+(defmacro MIME-STYPE-S _  "json"        )
 
 ; HTTP response status codes.
 (defmacro HTTP-404 _ 404)

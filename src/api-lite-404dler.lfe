@@ -40,10 +40,9 @@
 
     (debug req)
 
-    `#(ok ,(cowboy_req:reply (HTTP-404) `#M(,(CONTENT-TYPE) ,(++
-        (binary_to_list (MIME-TYPE   )) (SLASH)
-        (binary_to_list (MIME-SUBTYPE))
-    )) (cowboy_req:set_resp_body (json:encode
+    `#(ok ,(cowboy_req:reply (HTTP-404)
+        `#M(,(CONTENT-TYPE) ,(++ (MIME-TYPE-S) (SLASH) (MIME-STYPE-S)))
+    (cowboy_req:set_resp_body (json:encode
         `#M(error ,(ERR-REQ-NOT-FOUND-1))
     ) req)) ,state)
 )
