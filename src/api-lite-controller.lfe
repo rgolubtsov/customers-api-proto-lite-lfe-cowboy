@@ -20,6 +20,8 @@
     (import (from logger  (debug    1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
+            (from cowboy_req (reply 2)
+                     (set_resp_body 2))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-model m)))
 
@@ -279,22 +281,16 @@
 
 ; Helper function. Used to send the HTTP 404 Not Found response.
 (defun -http-404-resp (msg req state)
-    (let ((req-
-        (cowboy_req:reply (HTTP-404) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,msg)
-        ) req))))
-
-    `#(stop ,req- ,state))
+    `#(stop ,(reply (HTTP-404) (set_resp_body (json:encode
+        `#M(error ,msg)
+    ) req)) ,state)
 )
 
 ; Helper function. Used to send the HTTP 500 Internal Server Error response.
 (defun -http-500-resp (req state)
-    (let ((req-
-        (cowboy_req:reply (HTTP-500) (cowboy_req:set_resp_body (json:encode
-            `#M(error ,(ERR-SRV-INTERNAL-ERROR))
-        ) req))))
-
-    `#(stop ,req- ,state))
+    `#(stop ,(reply (HTTP-500) (set_resp_body (json:encode
+        `#M(error ,(ERR-SRV-INTERNAL-ERROR))
+    ) req)) ,state)
 )
 
 ; vim:set nu et ts=4 sw=4:

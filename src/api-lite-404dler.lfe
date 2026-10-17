@@ -14,7 +14,10 @@
     "The request handler module of the daemon that is dedicated
     to handle solely requests against undefined routes."
     (export (init 2)) ; (req state) -> {ok, Req, State}
-    (import (from logger (debug 1))
+    (import (from cowboy_req (method 1)
+                             (reply  3)
+                      (set_resp_body 2))
+            (from logger     (debug  1))
             (from api-lite-helper (-dbg 3))))
 
 (include-file "api-lite-constants.lfe")
@@ -33,16 +36,12 @@
         and an initial state of the handler."
 
     (let (((cons dbg (cons s _)) state))
-
-    (let ((method- (maps:get 'method req)))
-    (let ((method  (binary:bin_to_list method-)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET))))))
-
+    (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
     (debug req)
 
-    `#(ok ,(cowboy_req:reply (HTTP-404)
+    `#(ok ,(reply (HTTP-404)
         `#M(,(CONTENT-TYPE) ,(++ (MIME-TYPE-S) (SLASH) (MIME-STYPE-S)))
-    (cowboy_req:set_resp_body (json:encode
+    (set_resp_body (json:encode
         `#M(error ,(ERR-REQ-NOT-FOUND-1))
     ) req)) ,state)
 )

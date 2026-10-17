@@ -20,7 +20,8 @@
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (from-json           2)  ; (req state) -> {true,        Req, State}
             (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
-    (import (from logger  (debug 1))
+    (import (from cowboy_req (method 1))
+            (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-controller c)))
 
@@ -37,17 +38,12 @@
 
     Returns:
         The `cowboy_rest` tuple containing the incoming request object
-        and a modified initial state of the handler."
+        and an initial state of the handler."
 
     (let (((cons dbg (cons s _)) state))
+    (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
 
-    (let ((method- (maps:get 'method req)))
-    (let ((method  (binary:bin_to_list method-)))
-    (-dbg dbg s (++ (O-BRACKET) method (C-BRACKET)))
-
-    (let ((state- (++ state method-)))
-
-    `#(cowboy_rest ,req ,state-)))))
+    `#(cowboy_rest ,req ,state)
 )
 
 (defun allowed_methods (req state)
@@ -63,7 +59,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    (let (((cons _ (cons _ (cons _ (cons route _)))) state))
+    (let (((cons _ (cons _ (cons _ route))) state))
 
     (let ((methods (case route
         ('r-put-get-cust  `(,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD)))
@@ -127,7 +123,7 @@
         The `true` tuple containing the incoming request object
         and an initial state of the handler."
 
-    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
+    (let (((cons dbg (cons s (cons cnx route))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
@@ -160,7 +156,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
+    (let (((cons dbg (cons s (cons cnx route))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
     (debug req)
