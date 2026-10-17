@@ -345,12 +345,12 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts
 ...
 < HTTP/1.1 200 OK
 < allow: GET, HEAD
-< content-length: 2
+< content-length: 190
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-{}
+[{"contact":"+35760X123456"},{"contact":"+35760Y1234578"},{"contact":"+35790Z12345890"},{"contact":"nn@example.org"},{"contact":"nnumbat@example.com"},{"contact":"noble.numbat@example.com"}]
 ```
 
 6. **List contacts of a given type for a given customer**
