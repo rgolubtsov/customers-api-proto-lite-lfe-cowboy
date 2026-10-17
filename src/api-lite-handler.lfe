@@ -96,6 +96,23 @@
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json)) ,req ,state)
 )
 
+(defun content_types_provided (req state)
+    "The REST handler callback that returns a list of media types
+    the daemon provides.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `init/2` callback).
+
+    Returns:
+        A tuple containing a list of media types the daemon provides
+        along with the incoming request object and an initial state
+        of the handler."
+
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
+)
+
 (defun from-json (req state)
     "The REST handler callback that expects getting the request body
     in JSON representation. It then processes this request body.
@@ -127,23 +144,6 @@
      | `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
      |#
     `#(true ,req ,state)
-)
-
-(defun content_types_provided (req state)
-    "The REST handler callback that returns a list of media types
-    the daemon provides.
-
-    Args:
-        req:   A map representing the incoming HTTP request object.
-        state: An initial state of the handler (arbitrary data passed
-               from the `init/2` callback).
-
-    Returns:
-        A tuple containing a list of media types the daemon provides
-        along with the incoming request object and an initial state
-        of the handler."
-
-    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
 )
 
 (defun to-json (req state)
