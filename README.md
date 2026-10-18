@@ -425,12 +425,12 @@ $ tail -f log/customers-api-lite.log
 [2026-10-17|18:45:40.157289+02:00] [debug] [r-get-cont-type]
 [2026-10-17|18:45:40.157848+02:00] [debug] pid: <0.562.0>, port: 8765, ...
 [2026-10-17|18:45:40.163559+02:00] [debug] customer_id=2 | contact_type=phone
-[2026-10-17|18:45:40.166127+02:00] [debug] columns: contact, rows: [{<<"+35760X123456">>},{<<"+35760Y1234578">>},{<<"+35790Z12345890">>}]
+[2026-10-17|18:45:40.166127+02:00] [debug] [+35760X123456]
 [2026-10-17|18:45:50.580667+02:00] [debug] [GET]
 [2026-10-17|18:45:50.584165+02:00] [debug] [r-get-cont-type]
 [2026-10-17|18:45:50.584936+02:00] [debug] pid: <0.565.0>, port: 8765, ...
 [2026-10-17|18:45:50.591628+02:00] [debug] customer_id=2 | contact_type=email
-[2026-10-17|18:45:50.594254+02:00] [debug] columns: contact, rows: [{<<"+35760X123456">>},{<<"+35760Y1234578">>},{<<"+35790Z12345890">>}]
+[2026-10-17|18:45:50.594254+02:00] [debug] [noble.numbat@example.com]
 [2026-10-17|18:50:00.205806+02:00] [info] Server stopped
 ```
 
@@ -462,9 +462,11 @@ Oct 17 18:45:30 <hostname> api-lited[<pid>]: [+35760X123456]
 Oct 17 18:45:40 <hostname> api-lited[<pid>]: [GET]
 Oct 17 18:45:40 <hostname> api-lited[<pid>]: [r-get-cont-type]
 Oct 17 18:45:40 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=phone
+Oct 17 18:45:40 <hostname> api-lited[<pid>]: [+35760X123456]
 Oct 17 18:45:50 <hostname> api-lited[<pid>]: [GET]
 Oct 17 18:45:50 <hostname> api-lited[<pid>]: [r-get-cont-type]
 Oct 17 18:45:50 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=email
+Oct 17 18:45:50 <hostname> api-lited[<pid>]: [noble.numbat@example.com]
 Oct 17 18:50:00 <hostname> api-lited[<pid>]: Server stopped
 ```
 
