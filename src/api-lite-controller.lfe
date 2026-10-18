@@ -18,6 +18,7 @@
             (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
             (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
     (import (from logger  (debug    1))
+            (from string  (casefold 1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from cowboy_req (reply 2)
@@ -230,23 +231,41 @@
         cnx:   The database connection (a Pid).
 
     Returns:
-        An empty map."
+        A list of all contacts of a given type associated with a given customer
+        as individual maps: `[#{=>}, ...]`, or - if no contacts of a given type
+        belonging to a given customer exist or no such customer exists -
+        the `stop` tuple containing the modified incoming request object
+        and an initial state of the handler."
 
     (let ((customer-id  (binding 'customer_id  req 1)))
     (let ((contact-type (binding 'contact_type req (binary (PHONE)))))
     (-dbg dbg s (++      (REST-CUST-ID)  (EQUALS)(binary_to_list customer-id)
     (SPACE)(V-BAR)(SPACE)(REST-CONT-TYPE)(EQUALS)                contact-type))
 
-    (let (((cons sql-query _) (m:SQL-GET-CONTACTS-BY-TYPE))) ; <== TODO: -"- .
+    (let (((cons phones (cons emails _)) (m:SQL-GET-CONTACTS-BY-TYPE)))
+    (let ((contact-type- (casefold contact-type)))
+    (let ((sql-query (cond ((== contact-type- (binary (PHONE))) phones)
+                           ((== contact-type- (binary (EMAIL))) emails)
+    (else emails))))
 
     (try (progn
         ; Retrieving all contacts of a given type associated
         ; with a given customer from the database.
-        (let ((contacts (sql_exec cnx sql-query `(,customer-id))))
-        (debug contacts))
+        (let ((contacts
+            (-entity-prep (sql_exec cnx sql-query `(,customer-id)) 'false)))
 
-        `#M())
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))))
+        (cond
+            ((== (length contacts) 0)
+                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
+            (else
+                (let (((cons contact0 _) contacts))
+                (-dbg dbg s (++ (O-BRACKET)
+                                (binary_to_list (mref contact0 'contact))
+                                (C-BRACKET))))
+
+                contacts)
+        )))
+    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))))))
 )
 
 ; Helpers and others ----------------------------------------------------------
