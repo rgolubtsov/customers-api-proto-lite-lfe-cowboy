@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-constants.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.14
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.15
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -62,6 +62,8 @@
 (defmacro REST-CUST-ID   _ "customer_id" )
 (defmacro REST-CONTACTS  _ "contacts"    )
 (defmacro REST-CONT-TYPE _ "contact_type")
+(defmacro PHONE          _ "phone"       )
+(defmacro EMAIL          _ "email"       )
 (defmacro REST-CONTEXT   _ (++ (SLASH) (REST-VERSION)
                                (SLASH) (REST-PREFIX)))
 
