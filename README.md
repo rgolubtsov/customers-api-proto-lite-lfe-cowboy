@@ -362,12 +362,12 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts/phone
 ...
 < HTTP/1.1 200 OK
 < allow: GET, HEAD
-< content-length: 2
+< content-length: 88
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-{}
+[{"contact":"+35760X123456"},{"contact":"+35760Y1234578"},{"contact":"+35790Z12345890"}]
 ```
 
 Or list **email** contacts:
@@ -379,12 +379,12 @@ $ curl -v http://localhost:8765/v1/customers/2/contacts/email
 ...
 < HTTP/1.1 200 OK
 < allow: GET, HEAD
-< content-length: 2
+< content-length: 103
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-{}
+[{"contact":"noble.numbat@example.com"},{"contact":"nnumbat@example.com"},{"contact":"nn@example.org"}]
 ```
 
 > ^ The given names in customer accounts and in email contacts (in samples above) are for demonstrational purposes only. They have nothing common WRT any actual, ever really encountered names elsewhere.
