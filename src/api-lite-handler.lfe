@@ -21,7 +21,9 @@
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (from-json-callback  2)  ; (req state) -> {true,        Req, State}
             (  to-json-callback  2)) ; (req state) -> {<resp_body>, Req, State}
-    (import (from cowboy_req (method 1))
+    (import (from cowboy_req (method 1)
+                           (bindings 1)
+                           (binding  2))
             (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-controller c)))
@@ -85,12 +87,25 @@
         state: An initial state of the handler (arbitrary data passed
                from the `init/2` callback).
     Returns:
-        The `true` or `false` tuple containing the incoming request object
+        The `true` tuple (if the request is malformed) or the `false` tuple
+        (if everything is good) containing the incoming request object
         and an initial state of the handler."
 
     (debug req)
 
-    `#(false ,req ,state)
+    (let ((bindings (bindings req)))
+    (let ((request-malformed (cond
+        ((== bindings #M())
+            ; TODO: Parse and validate the request body (if any).
+            'false)
+        (else
+            (case (maps:is_key 'customer_id bindings)
+                ('true  (-parse-customer-id (binding 'customer_id req)))
+                ('false 'false)
+            ))
+    )))
+
+    `#(,request-malformed ,req ,state)))
 )
 
 (defun content_types_accepted (req state)
@@ -185,6 +200,16 @@
     )))
 
     `#(,(json:encode entities) ,req ,state)))
+)
+
+; Helper function. Used to parse and validate the request path variable
+;                  {customer_id}.
+(defun -parse-customer-id (customer-id)
+    (let ((customer-id- (try
+        (binary_to_integer customer-id)
+    (catch (`#(error ,_ ,_) 0)))))
+
+    (if (=< customer-id- 0) 'true 'false))
 )
 
 ; vim:set nu et ts=4 sw=4:
