@@ -18,8 +18,8 @@
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
-            (from-json           2)  ; (req state) -> {true,        Req, State}
-            (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
+            (from-json-callback  2)  ; (req state) -> {true,        Req, State}
+            (  to-json-callback  2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from cowboy_req (method 1))
             (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
@@ -89,7 +89,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json)) ,req ,state)
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json-callback)) ,req ,state)
 )
 
 (defun content_types_provided (req state)
@@ -106,10 +106,10 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json-callback)) ,req ,state)
 )
 
-(defun from-json (req state)
+(defun from-json-callback (req state)
     "The REST handler callback that expects getting the request body
     in JSON representation. It then processes this request body.
     Finally, it sends the response body in JSON representation.
@@ -142,7 +142,7 @@
     `#(true ,req ,state)
 )
 
-(defun to-json (req state)
+(defun to-json-callback (req state)
     "The REST handler callback that returns the response body
     in JSON representation.
 

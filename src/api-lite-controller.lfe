@@ -96,7 +96,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -135,7 +135,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -179,7 +179,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -225,7 +225,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
