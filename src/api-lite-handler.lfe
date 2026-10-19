@@ -16,6 +16,7 @@
     requests to predefined routes only."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
+            (malformed_request   2)  ; (req state) -> {true|false,  Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
             (from-json-callback  2)  ; (req state) -> {true,        Req, State}
@@ -75,6 +76,23 @@
     `#(,methods ,req ,state)))
 )
 
+(defun malformed_request (req state)
+    "The REST handler callback that is used to parse and validate
+    request path variables and the request body.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `init/2` callback).
+    Returns:
+        The `true` or `false` tuple containing the incoming request object
+        and an initial state of the handler."
+
+    (debug req)
+
+    `#(false ,req ,state)
+)
+
 (defun content_types_accepted (req state)
     "The REST handler callback that returns a list of media types
     the daemon accepts.
@@ -126,7 +144,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (debug req)
 
     (case route
         ('r-put-get-cust (c:add-customer req dbg s cnx))
@@ -159,7 +176,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (debug req)
 
     (let ((entities (case route
         ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
