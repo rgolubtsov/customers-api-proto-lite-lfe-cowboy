@@ -31,6 +31,9 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+(defmacro ERR-REQ-MALFORMED _ (binary
+    "HTTP 400 Bad Request: Request is malformed. "
+    "Please check your inputs."))
 (defmacro ERR-REQ-NOT-FOUND-1 _ (binary
     "HTTP 404 Not Found: No such REST URI path exists. "
     "Please check your inputs."))

@@ -23,7 +23,9 @@
             (  to-json-callback  2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from cowboy_req (method 1)
                            (bindings 1)
-                           (binding  2))
+                           (binding  2)
+                    (set_resp_header 3)
+                    (set_resp_body   2))
             (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-controller c)))
@@ -105,7 +107,10 @@
             ))
     )))
 
-    `#(,request-malformed ,req ,state)))
+    `#(,request-malformed ,(if request-malformed
+        (set_resp_body (json:encode `#M(error ,(ERR-REQ-MALFORMED)))
+        (set_resp_header (CONTENT-TYPE) (++ (MIME-TYPE-S)(SLASH)(MIME-STYPE-S))
+    req)) req) ,state)))
 )
 
 (defun content_types_accepted (req state)
