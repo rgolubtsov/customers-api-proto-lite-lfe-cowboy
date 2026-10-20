@@ -48,6 +48,8 @@
     (let (((cons dbg (cons s _)) state))
     (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
 
+    (debug req)
+
     `#(cowboy_rest ,req ,state)
 )
 
@@ -82,7 +84,7 @@
 
 (defun malformed_request (req state)
     "The REST handler callback that is used to parse and validate
-    request path variables and the request body.
+    request path variables.
 
     Args:
         req:   A map representing the incoming HTTP request object.
@@ -93,12 +95,9 @@
         (if everything is good) containing the modified/unchanged incoming
         request object and an initial state of the handler."
 
-    (debug req)
-
     (let ((bindings (bindings req)))
     (let ((request-malformed (cond
         ((== bindings #M())
-            ; TODO: Parse and validate the request body (if any).
             'false)
         (else
             (case (maps:is_key 'customer_id bindings)
