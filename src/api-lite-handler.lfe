@@ -90,8 +90,8 @@
                from the `init/2` callback).
     Returns:
         The `true` tuple (if the request is malformed) or the `false` tuple
-        (if everything is good) containing the incoming request object
-        and an initial state of the handler."
+        (if everything is good) containing the modified/unchanged incoming
+        request object and an initial state of the handler."
 
     (debug req)
 
@@ -209,7 +209,12 @@
 
 ; Helper function. Used to parse and validate the request path variable
 ;                  {customer_id}.
-(defun -parse-customer-id (customer-id)
+;
+;                  Returns `true` if the `customer_id` param contains invalid
+;                  data that cannot be converted to a positive integer number,
+;                  `false` otherwise.
+;
+(defun -parse-customer-id (customer-id) ; -> true | false
     (let ((customer-id- (try
         (binary_to_integer customer-id)
     (catch (`#(error ,_ ,_) 0)))))
