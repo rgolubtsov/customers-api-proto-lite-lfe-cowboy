@@ -277,7 +277,7 @@
 ;   `is-customer`: true  => `entity` is a property list of Customer entities,
 ;                : false => `entity` is a property list of Contact  entities.
 ;
-(defun -entity-prep (entity is-customer)
+(defun -entity-prep (entity is-customer) ; -> [#{=>,=>}, ...] | [#{=>}, ...]
     (let (((cons cols _) (proplists:get_all_values 'columns entity)))
     (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
 
@@ -299,14 +299,14 @@
 )
 
 ; Helper function. Used to send the HTTP 404 Not Found response.
-(defun -http-404-resp (msg req state)
+(defun -http-404-resp (msg req state) ; -> {stop, Req, State}
     `#(stop ,(reply (HTTP-404) (set_resp_body (json:encode
         `#M(error ,msg)
     ) req)) ,state)
 )
 
 ; Helper function. Used to send the HTTP 500 Internal Server Error response.
-(defun -http-500-resp (req state)
+(defun -http-500-resp (req state) ; -> {stop, Req, State}
     `#(stop ,(reply (HTTP-500) (set_resp_body (json:encode
         `#M(error ,(ERR-SRV-INTERNAL-ERROR))
     ) req)) ,state)
