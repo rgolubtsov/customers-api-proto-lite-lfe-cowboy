@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-controller.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.15
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.16
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -96,7 +96,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -135,7 +135,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -179,7 +179,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -225,7 +225,7 @@
     Args:
         req:   A map representing the incoming HTTP request object.
         state: An initial state of the handler (arbitrary data passed
-               from the `to-json/2` callback).
+               from the `to-json-callback/2` callback).
         dbg:   The debug logging enabler.
         s:     The Unix system logger handle (a Port).
         cnx:   The database connection (a Pid).
@@ -277,7 +277,7 @@
 ;   `is-customer`: true  => `entity` is a property list of Customer entities,
 ;                : false => `entity` is a property list of Contact  entities.
 ;
-(defun -entity-prep (entity is-customer)
+(defun -entity-prep (entity is-customer) ; -> [#{=>,=>}, ...] | [#{=>}, ...]
     (let (((cons cols _) (proplists:get_all_values 'columns entity)))
     (let (((cons rows _) (proplists:get_all_values 'rows    entity)))
 
@@ -299,14 +299,14 @@
 )
 
 ; Helper function. Used to send the HTTP 404 Not Found response.
-(defun -http-404-resp (msg req state)
+(defun -http-404-resp (msg req state) ; -> {stop, Req, State}
     `#(stop ,(reply (HTTP-404) (set_resp_body (json:encode
         `#M(error ,msg)
     ) req)) ,state)
 )
 
 ; Helper function. Used to send the HTTP 500 Internal Server Error response.
-(defun -http-500-resp (req state)
+(defun -http-500-resp (req state) ; -> {stop, Req, State}
     `#(stop ,(reply (HTTP-500) (set_resp_body (json:encode
         `#M(error ,(ERR-SRV-INTERNAL-ERROR))
     ) req)) ,state)

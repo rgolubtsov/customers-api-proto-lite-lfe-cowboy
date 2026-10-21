@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-constants.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.15
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.16
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -31,6 +31,9 @@
     "due to address requested already in use. Quitting...")
 (defmacro ERR-SERV-UNKNOWN-REASON _
     "for an unknown reason. Quitting...")
+(defmacro ERR-REQ-MALFORMED _ (binary
+    "HTTP 400 Bad Request: Request is malformed. "
+    "Please check your inputs."))
 (defmacro ERR-REQ-NOT-FOUND-1 _ (binary
     "HTTP 404 Not Found: No such REST URI path exists. "
     "Please check your inputs."))

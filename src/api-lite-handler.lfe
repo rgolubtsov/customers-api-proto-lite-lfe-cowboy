@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-handler.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.15
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.16
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -16,11 +16,16 @@
     requests to predefined routes only."
     (export (init                2)  ; (req state) -> {cowboy_rest, Req, State}
             (allowed_methods     2)  ; (req state) -> {[<methods>], Req, State}
+            (malformed_request   2)  ; (req state) -> {true|false,  Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
-            (from-json           2)  ; (req state) -> {true,        Req, State}
-            (to-json             2)) ; (req state) -> {<resp_body>, Req, State}
-    (import (from cowboy_req (method 1))
+            (from-json-callback  2)  ; (req state) -> {true,        Req, State}
+            (  to-json-callback  2)) ; (req state) -> {<resp_body>, Req, State}
+    (import (from cowboy_req (method 1)
+                           (bindings 1)
+                           (binding  2)
+                    (set_resp_header 3)
+                    (set_resp_body   2))
             (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-controller c)))
@@ -42,6 +47,8 @@
 
     (let (((cons dbg (cons s _)) state))
     (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
+
+    (debug req)
 
     `#(cowboy_rest ,req ,state)
 )
@@ -75,6 +82,36 @@
     `#(,methods ,req ,state)))
 )
 
+(defun malformed_request (req state)
+    "The REST handler callback that is used to parse and validate
+    request path variables.
+
+    Args:
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `init/2` callback).
+    Returns:
+        The `true` tuple (if the request is malformed) or the `false` tuple
+        (if everything is good) containing the modified/unchanged incoming
+        request object and an initial state of the handler."
+
+    (let ((bindings (bindings req)))
+    (let ((request-malformed (cond
+        ((== bindings #M())
+            'false)
+        (else
+            (case (maps:is_key 'customer_id bindings)
+                ('true  (-parse-customer-id (binding 'customer_id req)))
+                ('false 'false)
+            ))
+    )))
+
+    `#(,request-malformed ,(if request-malformed
+        (set_resp_body (json:encode `#M(error ,(ERR-REQ-MALFORMED)))
+        (set_resp_header (CONTENT-TYPE) (++ (MIME-TYPE-S)(SLASH)(MIME-STYPE-S))
+    req)) req) ,state)))
+)
+
 (defun content_types_accepted (req state)
     "The REST handler callback that returns a list of media types
     the daemon accepts.
@@ -89,7 +126,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json)) ,req ,state)
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json-callback)) ,req ,state)
 )
 
 (defun content_types_provided (req state)
@@ -106,10 +143,10 @@
         along with the incoming request object and an initial state
         of the handler."
 
-    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json)) ,req ,state)
+    `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json-callback)) ,req ,state)
 )
 
-(defun from-json (req state)
+(defun from-json-callback (req state)
     "The REST handler callback that expects getting the request body
     in JSON representation. It then processes this request body.
     Finally, it sends the response body in JSON representation.
@@ -126,7 +163,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (debug req)
 
     (case route
         ('r-put-get-cust (c:add-customer req dbg s cnx))
@@ -142,7 +178,7 @@
     `#(true ,req ,state)
 )
 
-(defun to-json (req state)
+(defun to-json-callback (req state)
     "The REST handler callback that returns the response body
     in JSON representation.
 
@@ -159,7 +195,6 @@
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-    (debug req)
 
     (let ((entities (case route
         ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
@@ -169,6 +204,21 @@
     )))
 
     `#(,(json:encode entities) ,req ,state)))
+)
+
+; Helper function. Used to parse and validate the request path variable
+;                  {customer_id}.
+;
+;                  Returns `true` if the `customer_id` param contains invalid
+;                  data that cannot be converted to a positive integer number,
+;                  `false` otherwise.
+;
+(defun -parse-customer-id (customer-id) ; -> true | false
+    (let ((customer-id- (try
+        (binary_to_integer customer-id)
+    (catch (`#(error ,_ ,_) 0)))))
+
+    (if (=< customer-id- 0) 'true 'false))
 )
 
 ; vim:set nu et ts=4 sw=4:
