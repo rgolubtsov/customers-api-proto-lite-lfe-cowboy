@@ -83,6 +83,7 @@
 (defmacro MIME-STYPE-S _  "json"        )
 
 ; HTTP response status codes.
+(defmacro HTTP-400 _ 400)
 (defmacro HTTP-404 _ 404)
 (defmacro HTTP-500 _ 500)
 
