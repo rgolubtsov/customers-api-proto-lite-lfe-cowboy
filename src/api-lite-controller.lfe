@@ -11,7 +11,7 @@
 ;
 
 (defmodule api-lite-controller "The controller module of the daemon."
-    (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
+    (export ( add-customer          5)  ; (req state dbg s cnx) -> ok
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
@@ -23,7 +23,9 @@
                           (sql_exec 3))
             (from cowboy_req (reply 2)
                      (set_resp_body 2)
-                           (binding 3))
+                           (binding 3)
+                         (read_body 1)
+                       (body_length 1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-model m)))
 
@@ -31,7 +33,7 @@
 
 ; REST API endpoints ----------------------------------------------------------
 
-(defun add-customer (req dbg s cnx)
+(defun add-customer (req state dbg s cnx)
     "The `PUT /v1/customers` endpoint.
 
     Creates a new customer (puts customer data to the database).
@@ -47,15 +49,28 @@
     `{customer_name}` is a name assigned to a newly created customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `from-json-callback/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        The `ok` atom. <== TODO: Change this."
 
-    'ok
+    (let ((payload- (read_body req)))
+    (let ((req- (tref payload- 3)))
+
+    (cond
+        ((== (body_length req-) 0)
+            (-http-400-resp req- state))
+        (else
+            (let ((payload (tref payload- 2)))
+            (debug payload)
+
+            req-))
+    )))
 )
 
 (defun add-contact (req dbg s cnx)
@@ -83,9 +98,9 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        The `ok` atom. <== TODO: Change this."
 
-    'ok
+    req
 )
 
 (defun list-customers (req state dbg s cnx)
@@ -296,6 +311,13 @@
                 ,(list_to_atom contact) ,(tref row 1)
             )) rows)))
     )))
+)
+
+; Helper function. Used to send the HTTP 400 Bad Request response.
+(defun -http-400-resp (req state) ; -> {stop, Req, State}
+    `#(stop ,(reply (HTTP-400) (set_resp_body (json:encode
+        `#M(error ,(ERR-REQ-MALFORMED))
+    ) req)) ,state)
 )
 
 ; Helper function. Used to send the HTTP 404 Not Found response.

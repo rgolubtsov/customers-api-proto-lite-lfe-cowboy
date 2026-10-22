@@ -164,18 +164,12 @@
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
 
-    (case route
-        ('r-put-get-cust (c:add-customer req dbg s cnx))
-        ('r-put-cont     (c:add-contact  req dbg s cnx))
-    ))
+    (let ((req- (case route
+        ('r-put-get-cust (c:add-customer req state dbg s cnx))
+        ('r-put-cont     (c:add-contact  req       dbg s cnx))
+    )))
 
-    #|
-     | Note: The `created` tuple is for `POST` requests only,
-     |       but they are not allowed. :-) For `PUT` requests
-     |       simply return `true`.
-     | `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
-     |#
-    `#(true ,req ,state)
+    `#(#(created ,(binary (REST-CONTEXT))) ,req- ,state)))
 )
 
 (defun to-json-callback (req state)
