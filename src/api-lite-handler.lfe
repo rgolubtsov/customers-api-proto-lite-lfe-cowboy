@@ -157,7 +157,7 @@
                from the `content_types_accepted/2` callback).
 
     Returns:
-        The `true` tuple containing the incoming request object
+        The `true` tuple containing the modified incoming request object
         and an initial state of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
@@ -169,7 +169,13 @@
         ('r-put-cont     (c:add-contact  req       dbg s cnx))
     )))
 
-    `#(#(created ,(binary (REST-CONTEXT))) ,req- ,state)))
+    #|
+     | Note: The `created` tuple is for `POST` requests only,
+     |       but they are not allowed. :-) For `PUT` requests
+     |       simply return `true`.
+     | `#(#(created ,(binary (REST-CONTEXT))) ,req- ,state)
+     |#
+    `#(true ,req- ,state)))
 )
 
 (defun to-json-callback (req state)
