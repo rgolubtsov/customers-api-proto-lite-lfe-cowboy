@@ -173,7 +173,7 @@
      | Note: The `created` tuple is for `POST` requests only,
      |       but they are not allowed. :-) For `PUT` requests
      |       simply return `true`.
-     | `#(#(created ,(binary (REST-CONTEXT))) ,req- ,state)
+     | `#(#(created ,(binary (REST-CONTEXT) (SLASH) (...))) ,req- ,state)
      |#
     `#(true ,req- ,state)))
 )

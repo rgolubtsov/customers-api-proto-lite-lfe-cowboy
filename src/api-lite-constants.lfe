@@ -81,8 +81,10 @@
 (defmacro MIME-SUBTYPE _ #"json"        )
 (defmacro MIME-TYPE-S  _  "application" )
 (defmacro MIME-STYPE-S _  "json"        )
+(defmacro HDR-LOCATION _ #"location"    )
 
 ; HTTP response status codes.
+(defmacro HTTP-201 _ 201)
 (defmacro HTTP-400 _ 400)
 (defmacro HTTP-404 _ 404)
 (defmacro HTTP-500 _ 500)

@@ -22,7 +22,8 @@
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from cowboy_req (reply 2)
-                     (set_resp_body 2)
+                   (set_resp_header 3)
+                   (set_resp_body   2)
                            (binding 3)
                          (read_body 1)
                        (body_length 1))
@@ -90,7 +91,15 @@
                                         (binary_to_list customer-name)
                                         (C-BRACKET)))
 
-                        req-)
+                        ; Creating a new customer (putting customer data
+                        ; to the database).
+                        ; TODO: Put customer data for a new customer
+                        ;       to the database.
+
+                        (reply (HTTP-201) (set_resp_body (json:encode
+                            `#M(,name ,customer-name)
+                        ) (set_resp_header (HDR-LOCATION)
+                                           (REST-CONTEXT) req-))))
                 )))))
             (catch (`#(error ,_ ,_) (-http-400-resp req- state))))))
     )))
