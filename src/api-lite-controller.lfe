@@ -12,7 +12,7 @@
 
 (defmodule api-lite-controller "The controller module of the daemon."
     (export ( add-customer          5)  ; (req state dbg s cnx) -> Req             | {stop, Req, State}
-            ( add-contact           4)  ; (req       dbg s cnx) -> ok
+            ( add-contact           5)  ; (req state dbg s cnx) -> Req
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
             (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
@@ -96,7 +96,7 @@
     )))
 )
 
-(defun add-contact (req dbg s cnx)
+(defun add-contact (req state dbg s cnx)
     "The `PUT /v1/customers/contacts` endpoint.
 
     Creates a new contact for a given customer (puts a contact
@@ -115,10 +115,12 @@
     contact with this customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `from-json-callback/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
         The incoming request object."
