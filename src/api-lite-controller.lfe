@@ -11,7 +11,7 @@
 ;
 
 (defmodule api-lite-controller "The controller module of the daemon."
-    (export ( add-customer          5)  ; (req state dbg s cnx) -> ok
+    (export ( add-customer          5)  ; (req state dbg s cnx) -> Req             | {stop, Req, State}
             ( add-contact           4)  ; (req       dbg s cnx) -> ok
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
@@ -57,7 +57,9 @@
         cnx:   The database connection (a Pid).
 
     Returns:
-        The `ok` atom. <== TODO: Change this."
+        The modified incoming request object, or - if the request
+        is malformed - the `stop` tuple containing the modified incoming
+        request object and an initial state of the handler."
 
     (let ((payload- (read_body req)))
     (let ((req- (tref payload- 3)))
@@ -69,7 +71,28 @@
             (let ((payload (tref payload- 2)))
             (debug payload)
 
-            req-))
+            (try (progn
+                (let ((customer (json:decode payload)))
+                (debug customer)
+
+                (let ((name (atom_to_binary 'name)))
+                (let ((customer-name (case (maps:is_key name customer)
+                    ('true  (mref customer name))
+                    ('false #B())
+                )))
+                (debug customer-name)
+
+                (cond
+                    ((== (byte_size customer-name) 0)
+                        (-http-400-resp req- state))
+                    (else
+                        (-dbg dbg s (++ (O-BRACKET)
+                                        (binary_to_list customer-name)
+                                        (C-BRACKET)))
+
+                        req-)
+                )))))
+            (catch (`#(error ,_ ,_) (-http-400-resp req- state))))))
     )))
 )
 
@@ -98,7 +121,7 @@
         cnx: The database connection (a Pid).
 
     Returns:
-        The `ok` atom. <== TODO: Change this."
+        The incoming request object."
 
     req
 )
