@@ -126,6 +126,9 @@
         along with the incoming request object and an initial state
         of the handler."
 
+    ; Note: `application/json` is the only media type supported.
+    ; For any other media type Cowboy will automatically respond
+    ; with the HTTP 415 Unsupported Media Type status code.
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json-callback)) ,req ,state)
 )
 
@@ -143,6 +146,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
+    ; Note: `application/json` is the only media type supported.
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json-callback)) ,req ,state)
 )
 
