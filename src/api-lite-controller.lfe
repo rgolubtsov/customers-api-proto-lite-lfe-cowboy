@@ -67,7 +67,7 @@
 
     (cond
         ((== (body_length req-) 0)
-            (-http-400-resp req- state))
+            (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
         (else
             (let ((payload (tref payload- 2)))
             (debug payload)
@@ -85,7 +85,8 @@
 
                 (cond
                     ((== (byte_size customer-name) 0)
-                        (-http-400-resp req- state))
+                        (-http-err-resp
+                            (HTTP-400) (ERR-REQ-MALFORMED) req- state))
                     (else
                         (-dbg dbg s (++ (O-BRACKET)
                                         (binary_to_list customer-name)
@@ -101,7 +102,9 @@
                         ) (set_resp_header (HDR-LOCATION)
                                            (REST-CONTEXT) req-))))
                 )))))
-            (catch (`#(error ,_ ,_) (-http-400-resp req- state))))))
+            (catch (`#(error ,_ ,_)
+                (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+            ))))
     )))
 )
 
@@ -163,7 +166,7 @@
 
         (cond
             ((== (length customers) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-2) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-2) req state))
             (else
                 (let (((cons customer0 _) customers))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -173,7 +176,9 @@
 
                 customers)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    ))
 )
 
 (defun get-customer (req state dbg s cnx)
@@ -205,7 +210,7 @@
 
         (cond
             ((== (length (proplists:get_value 'rows customer-)) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-3) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
 
@@ -216,7 +221,9 @@
 
                 customer))
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))
 )
 
 (defun list-contacts (req state dbg s cnx)
@@ -253,7 +260,7 @@
 
         (cond
             ((== (length contacts) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-4) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -262,7 +269,9 @@
 
                 contacts)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))
 )
 
 (defun list-contacts-by-type (req state dbg s cnx)
@@ -305,7 +314,7 @@
 
         (cond
             ((== (length contacts) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-4) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -314,7 +323,9 @@
 
                 contacts)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))))))
 )
 
 ; Helpers and others ----------------------------------------------------------
@@ -347,24 +358,10 @@
     )))
 )
 
-; Helper function. Used to send the HTTP 400 Bad Request response.
-(defun -http-400-resp (req state) ; -> {stop, Req, State}
-    `#(stop ,(reply (HTTP-400) (set_resp_body (json:encode
-        `#M(error ,(ERR-REQ-MALFORMED))
-    ) req)) ,state)
-)
-
-; Helper function. Used to send the HTTP 404 Not Found response.
-(defun -http-404-resp (msg req state) ; -> {stop, Req, State}
-    `#(stop ,(reply (HTTP-404) (set_resp_body (json:encode
+; Helper function. Used to send HTTP 4xx/5xx responses.
+(defun -http-err-resp (code msg req state) ; -> {stop, Req, State}
+    `#(stop ,(reply code (set_resp_body (json:encode
         `#M(error ,msg)
-    ) req)) ,state)
-)
-
-; Helper function. Used to send the HTTP 500 Internal Server Error response.
-(defun -http-500-resp (req state) ; -> {stop, Req, State}
-    `#(stop ,(reply (HTTP-500) (set_resp_body (json:encode
-        `#M(error ,(ERR-SRV-INTERNAL-ERROR))
     ) req)) ,state)
 )
 
