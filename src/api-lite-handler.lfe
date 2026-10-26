@@ -126,6 +126,9 @@
         along with the incoming request object and an initial state
         of the handler."
 
+    ; Note: `application/json` is the only media type supported.
+    ; For any other media type Cowboy will automatically respond
+    ; with the HTTP 415 Unsupported Media Type status code.
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) from-json-callback)) ,req ,state)
 )
 
@@ -143,6 +146,7 @@
         along with the incoming request object and an initial state
         of the handler."
 
+    ; Note: `application/json` is the only media type supported.
     `#((#(#(,(MIME-TYPE) ,(MIME-SUBTYPE) ()) to-json-callback)) ,req ,state)
 )
 
@@ -157,25 +161,25 @@
                from the `content_types_accepted/2` callback).
 
     Returns:
-        The `true` tuple containing the incoming request object
+        The `true` tuple containing the modified incoming request object
         and an initial state of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
 
     (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
 
-    (case route
-        ('r-put-get-cust (c:add-customer req dbg s cnx))
-        ('r-put-cont     (c:add-contact  req dbg s cnx))
-    ))
+    (let ((req- (case route
+        ('r-put-get-cust (c:add-customer req state dbg s cnx))
+        ('r-put-cont     (c:add-contact  req state dbg s cnx))
+    )))
 
     #|
      | Note: The `created` tuple is for `POST` requests only,
      |       but they are not allowed. :-) For `PUT` requests
      |       simply return `true`.
-     | `#(#(created ,(characters_to_binary (REST-CONTEXT))) ,req ,state)
+     | `#(#(created ,(binary (REST-CONTEXT) (SLASH) (...))) ,req- ,state)
      |#
-    `#(true ,req ,state)
+    `#(true ,req- ,state)))
 )
 
 (defun to-json-callback (req state)

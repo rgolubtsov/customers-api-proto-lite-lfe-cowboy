@@ -11,8 +11,8 @@
 ;
 
 (defmodule api-lite-controller "The controller module of the daemon."
-    (export ( add-customer          4)  ; (req       dbg s cnx) -> ok
-            ( add-contact           4)  ; (req       dbg s cnx) -> ok
+    (export ( add-customer          5)  ; (req state dbg s cnx) -> Req             | {stop, Req, State}
+            ( add-contact           5)  ; (req state dbg s cnx) -> Req
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
             (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
@@ -22,8 +22,11 @@
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from cowboy_req (reply 2)
-                     (set_resp_body 2)
-                           (binding 3))
+                   (set_resp_header 3)
+                   (set_resp_body   2)
+                           (binding 3)
+                         (read_body 1)
+                       (body_length 1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-model m)))
 
@@ -31,7 +34,7 @@
 
 ; REST API endpoints ----------------------------------------------------------
 
-(defun add-customer (req dbg s cnx)
+(defun add-customer (req state dbg s cnx)
     "The `PUT /v1/customers` endpoint.
 
     Creates a new customer (puts customer data to the database).
@@ -47,18 +50,65 @@
     `{customer_name}` is a name assigned to a newly created customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `from-json-callback/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        The modified incoming request object, or - if the request
+        is malformed - the `stop` tuple containing the modified incoming
+        request object and an initial state of the handler."
 
-    'ok
+    (let ((payload- (read_body req)))
+    (let ((req- (tref payload- 3)))
+
+    (cond
+        ((== (body_length req-) 0)
+            (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+        (else
+            (let ((payload (tref payload- 2)))
+            (debug payload)
+
+            (try (progn
+                (let ((customer (json:decode payload)))
+                (debug customer)
+
+                (let ((name (atom_to_binary 'name)))
+                (let ((customer-name (case (maps:is_key name customer)
+                    ('true  (mref customer name))
+                    ('false #B())
+                )))
+                (debug customer-name)
+
+                (cond
+                    ((== (byte_size customer-name) 0)
+                        (-http-err-resp
+                            (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+                    (else
+                        (-dbg dbg s (++ (O-BRACKET)
+                                        (binary_to_list customer-name)
+                                        (C-BRACKET)))
+
+                        ; Creating a new customer (putting customer data
+                        ; to the database).
+                        ; TODO: Put customer data for a new customer
+                        ;       to the database.
+
+                        (reply (HTTP-201) (set_resp_body (json:encode
+                            `#M(,name ,customer-name)
+                        ) (set_resp_header (HDR-LOCATION)
+                                           (REST-CONTEXT) req-))))
+                )))))
+            (catch (`#(error ,_ ,_)
+                (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+            ))))
+    )))
 )
 
-(defun add-contact (req dbg s cnx)
+(defun add-contact (req state dbg s cnx)
     "The `PUT /v1/customers/contacts` endpoint.
 
     Creates a new contact for a given customer (puts a contact
@@ -77,15 +127,17 @@
     contact with this customer.
 
     Args:
-        req: A map representing the incoming HTTP request object.
-        dbg: The debug logging enabler.
-        s:   The Unix system logger handle (a Port).
-        cnx: The database connection (a Pid).
+        req:   A map representing the incoming HTTP request object.
+        state: An initial state of the handler (arbitrary data passed
+               from the `from-json-callback/2` callback).
+        dbg:   The debug logging enabler.
+        s:     The Unix system logger handle (a Port).
+        cnx:   The database connection (a Pid).
 
     Returns:
-        The `ok` atom."
+        The incoming request object."
 
-    'ok
+    req
 )
 
 (defun list-customers (req state dbg s cnx)
@@ -114,7 +166,7 @@
 
         (cond
             ((== (length customers) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-2) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-2) req state))
             (else
                 (let (((cons customer0 _) customers))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -124,7 +176,9 @@
 
                 customers)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    ))
 )
 
 (defun get-customer (req state dbg s cnx)
@@ -156,7 +210,7 @@
 
         (cond
             ((== (length (proplists:get_value 'rows customer-)) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-3) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
 
@@ -167,7 +221,9 @@
 
                 customer))
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))
 )
 
 (defun list-contacts (req state dbg s cnx)
@@ -204,7 +260,7 @@
 
         (cond
             ((== (length contacts) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-4) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -213,7 +269,9 @@
 
                 contacts)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))
 )
 
 (defun list-contacts-by-type (req state dbg s cnx)
@@ -256,7 +314,7 @@
 
         (cond
             ((== (length contacts) 0)
-                (-http-404-resp (ERR-REQ-NOT-FOUND-4) req state))
+                (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-4) req state))
             (else
                 (let (((cons contact0 _) contacts))
                 (-dbg dbg s (++ (O-BRACKET)
@@ -265,7 +323,9 @@
 
                 contacts)
         )))
-    (catch (`#(error ,_ ,_) (-http-500-resp req state)))))))))
+    (catch (`#(error ,_ ,_)
+        (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req state))
+    )))))))
 )
 
 ; Helpers and others ----------------------------------------------------------
@@ -298,17 +358,10 @@
     )))
 )
 
-; Helper function. Used to send the HTTP 404 Not Found response.
-(defun -http-404-resp (msg req state) ; -> {stop, Req, State}
-    `#(stop ,(reply (HTTP-404) (set_resp_body (json:encode
+; Helper function. Used to send HTTP 4xx/5xx responses.
+(defun -http-err-resp (code msg req state) ; -> {stop, Req, State}
+    `#(stop ,(reply code (set_resp_body (json:encode
         `#M(error ,msg)
-    ) req)) ,state)
-)
-
-; Helper function. Used to send the HTTP 500 Internal Server Error response.
-(defun -http-500-resp (req state) ; -> {stop, Req, State}
-    `#(stop ,(reply (HTTP-500) (set_resp_body (json:encode
-        `#M(error ,(ERR-SRV-INTERNAL-ERROR))
     ) req)) ,state)
 )
 
