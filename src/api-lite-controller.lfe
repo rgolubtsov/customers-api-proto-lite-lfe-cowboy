@@ -92,15 +92,32 @@
                                         (binary_to_list customer-name)
                                         (C-BRACKET)))
 
-                        ; Creating a new customer (putting customer data
-                        ; to the database).
-                        ; TODO: Put customer data for a new customer
-                        ;       to the database.
+                        (try (progn
+                            ; Creating a new customer
+                            ; (putting customer data to the database).
+                            (sql_exec cnx(m:SQL-PUT-CUSTOMER)`(,customer-name))
 
-                        (reply (HTTP-201) (set_resp_body (json:encode
-                            `#M(,name ,customer-name)
-                        ) (set_resp_header (HDR-LOCATION)
-                                           (REST-CONTEXT) req-))))
+                            (let (((cons customer _)
+                                (-entity-prep (sql_exec cnx (++
+                                    (m:SQL-GET-ALL-CUSTOMERS)
+                                    (m:SQL-DESC-LIMIT-1)
+                                )) 'true)))
+                            (debug customer)
+                            (-dbg dbg s (++ (O-BRACKET)
+                                        (integer_to_list (mref customer 'id  ))
+                                (V-BAR) ( binary_to_list (mref customer 'name))
+                                        (C-BRACKET)))
+
+                            (reply (HTTP-201) (set_resp_body (json:encode `#M(
+                                id   ,(mref customer 'id  )
+                                name ,(mref customer 'name)
+                            )) (set_resp_header (HDR-LOCATION) (++
+                                                (REST-CONTEXT) (SLASH)
+                               (integer_to_list (mref customer 'id))) req-)))))
+                        (catch (`#(error ,_ ,_)
+                            (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR)
+                                req- state))
+                        )))
                 )))))
             (catch (`#(error ,_ ,_)
                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
@@ -213,7 +230,6 @@
                 (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
-
                 (-dbg dbg s (++ (O-BRACKET)
                                 (integer_to_list (mref customer 'id  )) (V-BAR)
                                 ( binary_to_list (mref customer 'name))
