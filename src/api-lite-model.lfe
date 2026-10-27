@@ -13,6 +13,15 @@
 (defmodule api-lite-model "The model module of the daemon."
     (export all))
 
+(defun SQL-PUT-CUSTOMER ()
+    "Returns an SQL query for creating a new customer
+    (putting customer data to the database).
+
+    Used by the `PUT /v1/customers` REST endpoint."
+
+    "insert into customers (name) values (?)"
+)
+
 (defun SQL-GET-ALL-CUSTOMERS ()
     "Returns an SQL query for retrieving all customer profiles.
 
