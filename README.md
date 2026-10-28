@@ -258,11 +258,15 @@ $ curl -vXPUT http://localhost:8765/v1/customers \
 > content-type: application/json
 > Content-Length: 25
 ...
-< HTTP/1.1 204 No Content
+< HTTP/1.1 201 Created
 < allow: PUT, GET, HEAD
+< content-length: 32
+< content-type: application/json
 ...
+< location: /v1/customers/3
 < server: Cowboy
 ...
+{"id":3,"name":"Jamison Palmer"}
 ```
 
 2. **Create contact**
