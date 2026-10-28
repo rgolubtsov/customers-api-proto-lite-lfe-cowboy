@@ -48,7 +48,7 @@
     (let (((cons dbg (cons s _)) state))
     (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
 
-    (debug req)
+;   (debug req)
 
     `#(cowboy_rest ,req ,state)
 )
