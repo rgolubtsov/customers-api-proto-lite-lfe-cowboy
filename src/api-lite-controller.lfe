@@ -70,18 +70,14 @@
             (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
         (else
             (let ((payload (tref payload- 2)))
-            (debug payload)
 
             (try (progn
                 (let ((customer (json:decode payload)))
-                (debug customer)
-
                 (let ((name (atom_to_binary 'name)))
                 (let ((customer-name (case (maps:is_key name customer)
                     ('true  (mref customer name))
                     ('false #B())
                 )))
-                (debug customer-name)
 
                 (cond
                     ((== (byte_size customer-name) 0)
@@ -102,7 +98,6 @@
                                     (m:SQL-GET-ALL-CUSTOMERS)
                                     (m:SQL-DESC-LIMIT-1)
                                 )) 'true)))
-                            (debug customer)
                             (let (($id   (mref customer 'id  )))
                             (let (($name (mref customer 'name)))
                             (-dbg dbg s (++ (O-BRACKET) (integer_to_list $id  )
