@@ -93,13 +93,13 @@
                             ; (putting customer data to the database).
                             (sql_exec cnx(m:SQL-PUT-CUSTOMER)`(,customer-name))
 
-                            (let (((cons customer _)
+                            (let (((cons $customer _)
                                 (-entity-prep (sql_exec cnx (++
                                     (m:SQL-GET-ALL-CUSTOMERS)
                                     (m:SQL-DESC-LIMIT-1)
                                 )) 'true)))
-                            (let (($id   (mref customer 'id  )))
-                            (let (($name (mref customer 'name)))
+                            (let (($id   (mref $customer 'id  )))
+                            (let (($name (mref $customer 'name)))
                             (-dbg dbg s (++ (O-BRACKET) (integer_to_list $id  )
                                             (V-BAR)     ( binary_to_list $name)
                                             (C-BRACKET)))
