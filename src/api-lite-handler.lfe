@@ -19,7 +19,7 @@
             (malformed_request   2)  ; (req state) -> {true|false,  Req, State}
          (content_types_accepted 2)  ; (req state) -> {[{{,,[]},}], Req, State}
          (content_types_provided 2)  ; (req state) -> {[{{,,[]},}], Req, State}
-            (from-json-callback  2)  ; (req state) -> {true,        Req, State}
+            (from-json-callback  2)  ; (req state) -> Req
             (  to-json-callback  2)) ; (req state) -> {<resp_body>, Req, State}
     (import (from cowboy_req (method 1)
                            (bindings 1)
@@ -67,7 +67,6 @@
         of the handler."
 
     (let (((cons _ (cons _ (cons _ (cons route _)))) state))
-
     (let ((methods (case route
         ('r-put-get-cust  `(,(HTTP-PUT) ,(HTTP-GET) ,(HTTP-HEAD)))
         ('r-put-cont      `(,(HTTP-PUT)                         ))
@@ -161,8 +160,7 @@
                from the `content_types_accepted/2` callback).
 
     Returns:
-        The `true` tuple containing the modified incoming request object
-        and an initial state of the handler."
+        The modified incoming request object."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
     (let ((req- (case route
@@ -172,11 +170,16 @@
 
     #|
      | Note: The `created` tuple is for `POST` requests only,
-     |       but they are not allowed. :-) For `PUT` requests
-     |       simply return `true`.
-     | `#(#(created ,(binary (REST-CONTEXT) (SLASH) (...))) ,req- ,state)
+     |       but they are not allowed... Though, it has to look like:
+     |  ==>  `#(#(created ,(binary (REST-CONTEXT) (SLASH) (...))) ,req- ,state)
+     |       For `PUT` requests it simply needs to return `true` or `false`:
+     |  ==>  `#(true ,req- ,state)
+     |       So since all (successful and erroneous) responses in fact decided
+     |       to be sent explicitly solely in `PUT` endpoints and not implicitly
+     |       by Cowboy itself based on aforementioned returns, it doesn't need
+     |       to return anything here but the modified incoming request object.
      |#
-    `#(true ,req- ,state)))
+    req-))
 )
 
 (defun to-json-callback (req state)
