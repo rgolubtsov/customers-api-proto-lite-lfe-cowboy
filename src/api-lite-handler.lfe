@@ -165,9 +165,6 @@
         and an initial state of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
-
-    (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-
     (let ((req- (case route
         ('r-put-get-cust (c:add-customer req state dbg s cnx))
         ('r-put-cont     (c:add-contact  req state dbg s cnx))
@@ -197,9 +194,6 @@
         of the handler."
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
-
-    (-dbg dbg s (++ (O-BRACKET) (atom_to_list route) (C-BRACKET)))
-
     (let ((entities (case route
         ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
         ('r-get-cust      ( c:get-customer         req state dbg s cnx))
