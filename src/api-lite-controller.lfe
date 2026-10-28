@@ -103,17 +103,17 @@
                                     (m:SQL-DESC-LIMIT-1)
                                 )) 'true)))
                             (debug customer)
-                            (-dbg dbg s (++ (O-BRACKET)
-                                        (integer_to_list (mref customer 'id  ))
-                                (V-BAR) ( binary_to_list (mref customer 'name))
-                                        (C-BRACKET)))
+                            (let (($id   (mref customer 'id  )))
+                            (let (($name (mref customer 'name)))
+                            (-dbg dbg s (++ (O-BRACKET) (integer_to_list $id  )
+                                            (V-BAR)     ( binary_to_list $name)
+                                            (C-BRACKET)))
 
-                            (reply (HTTP-201) (set_resp_body (json:encode `#M(
-                                id   ,(mref customer 'id  )
-                                name ,(mref customer 'name)
-                            )) (set_resp_header (HDR-LOCATION) (++
-                                                (REST-CONTEXT) (SLASH)
-                               (integer_to_list (mref customer 'id))) req-)))))
+                            (reply (HTTP-201) (set_resp_body (json:encode
+                                `#M(id ,$id name ,$name)
+                            ) (set_resp_header (HDR-LOCATION) (++
+                                               (REST-CONTEXT) (SLASH)
+                            (integer_to_list $id)) req-)))))))
                         (catch (`#(error ,_ ,_)
                             (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR)
                                 req- state))
