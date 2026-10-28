@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-model.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.16
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.17
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -12,6 +12,15 @@
 
 (defmodule api-lite-model "The model module of the daemon."
     (export all))
+
+(defun SQL-PUT-CUSTOMER ()
+    "Returns an SQL query for creating a new customer
+    (putting customer data to the database).
+
+    Used by the `PUT /v1/customers` REST endpoint."
+
+    "insert into customers (name) values (?)"
+)
 
 (defun SQL-GET-ALL-CUSTOMERS ()
     "Returns an SQL query for retrieving all customer profiles.

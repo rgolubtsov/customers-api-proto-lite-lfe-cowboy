@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-controller.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.16
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.17
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -70,18 +70,14 @@
             (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
         (else
             (let ((payload (tref payload- 2)))
-            (debug payload)
 
             (try (progn
                 (let ((customer (json:decode payload)))
-                (debug customer)
-
                 (let ((name (atom_to_binary 'name)))
                 (let ((customer-name (case (maps:is_key name customer)
                     ('true  (mref customer name))
                     ('false #B())
                 )))
-                (debug customer-name)
 
                 (cond
                     ((== (byte_size customer-name) 0)
@@ -92,15 +88,31 @@
                                         (binary_to_list customer-name)
                                         (C-BRACKET)))
 
-                        ; Creating a new customer (putting customer data
-                        ; to the database).
-                        ; TODO: Put customer data for a new customer
-                        ;       to the database.
+                        (try (progn
+                            ; Creating a new customer
+                            ; (putting customer data to the database).
+                            (sql_exec cnx(m:SQL-PUT-CUSTOMER)`(,customer-name))
 
-                        (reply (HTTP-201) (set_resp_body (json:encode
-                            `#M(,name ,customer-name)
-                        ) (set_resp_header (HDR-LOCATION)
-                                           (REST-CONTEXT) req-))))
+                            (let (((cons customer _)
+                                (-entity-prep (sql_exec cnx (++
+                                    (m:SQL-GET-ALL-CUSTOMERS)
+                                    (m:SQL-DESC-LIMIT-1)
+                                )) 'true)))
+                            (let (($id   (mref customer 'id  )))
+                            (let (($name (mref customer 'name)))
+                            (-dbg dbg s (++ (O-BRACKET) (integer_to_list $id  )
+                                            (V-BAR)     ( binary_to_list $name)
+                                            (C-BRACKET)))
+
+                            (reply (HTTP-201) (set_resp_body (json:encode
+                                `#M(id ,$id name ,$name)
+                            ) (set_resp_header (HDR-LOCATION) (++
+                                               (REST-CONTEXT) (SLASH)
+                            (integer_to_list $id)) req-)))))))
+                        (catch (`#(error ,_ ,_)
+                            (-http-err-resp (HTTP-500) (ERR-SRV-INTERNAL-ERROR)
+                                req- state))
+                        )))
                 )))))
             (catch (`#(error ,_ ,_)
                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
@@ -213,7 +225,6 @@
                 (-http-err-resp (HTTP-404) (ERR-REQ-NOT-FOUND-3) req state))
             (else
                 (let (((cons customer _) (-entity-prep customer- 'true)))
-
                 (-dbg dbg s (++ (O-BRACKET)
                                 (integer_to_list (mref customer 'id  )) (V-BAR)
                                 ( binary_to_list (mref customer 'name))
