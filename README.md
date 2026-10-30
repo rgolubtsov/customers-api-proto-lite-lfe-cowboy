@@ -316,29 +316,29 @@ $ curl -v http://localhost:8765/v1/customers
 ...
 < HTTP/1.1 200 OK
 < allow: PUT, GET, HEAD
-< content-length: 66
+< content-length: 136
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-[{"id":1,"name":"Jammy Jellyfish"},{"id":2,"name":"Noble Numbat"}]
+[{"id":1,"name":"Jammy Jellyfish"},{"id":2,"name":"Noble Numbat"},{"id":3,"name":"Jamison Palmer"},{"id":4,"name":"Sarah Kitteringham"}]
 ```
 
 4. **Retrieve customer**
 
 ```
-$ curl -v http://localhost:8765/v1/customers/2
+$ curl -v http://localhost:8765/v1/customers/3
 ...
-> GET /v1/customers/2 HTTP/1.1
+> GET /v1/customers/3 HTTP/1.1
 ...
 < HTTP/1.1 200 OK
 < allow: GET, HEAD
-< content-length: 30
+< content-length: 32
 < content-type: application/json
 ...
 < server: Cowboy
 ...
-{"id":2,"name":"Noble Numbat"}
+{"id":3,"name":"Jamison Palmer"}
 ```
 
 5. **List contacts for a given customer**
