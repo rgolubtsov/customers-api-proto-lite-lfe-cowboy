@@ -16,7 +16,7 @@
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
             (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
-            (list-contacts-by-type  5)) ; (req state dbg s cnx) ->  #{}
+            (list-contacts-by-type  5)) ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
     (import (from logger  (debug    1))
             (from string  (casefold 1))
             (from sqlite3 (sql_exec 2)
