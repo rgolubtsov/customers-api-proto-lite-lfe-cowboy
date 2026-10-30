@@ -12,7 +12,7 @@
 
 (defmodule api-lite-controller "The controller module of the daemon."
     (export ( add-customer          5)  ; (req state dbg s cnx) -> Req             | {stop, Req, State}
-            ( add-contact           5)  ; (req state dbg s cnx) -> Req
+            ( add-contact           5)  ; (req state dbg s cnx) -> Req             | {stop, Req, State}
             (list-customers         5)  ; (req state dbg s cnx) -> [#{=>,=>}, ...] | {stop, Req, State}
             ( get-customer          5)  ; (req state dbg s cnx) ->  #{=>,=>}       | {stop, Req, State}
             (list-contacts          5)  ; (req state dbg s cnx) -> [#{=>},    ...] | {stop, Req, State}
@@ -147,9 +147,24 @@
         cnx:   The database connection (a Pid).
 
     Returns:
-        The incoming request object."
+        The modified incoming request object, or - if the request
+        is malformed - the `stop` tuple containing the modified incoming
+        request object and an initial state of the handler."
 
-    req
+    (let ((payload- (read_body req)))
+    (let ((req- (tref payload- 3)))
+
+    (cond
+        ((== (body_length req-) 0)
+            (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+        (else
+            (let ((payload (tref payload- 2)))
+            (debug payload))
+
+            (reply (HTTP-201) (set_resp_body   (json:encode `#M())
+                              (set_resp_header (HDR-LOCATION)
+                                               (REST-CONTEXT) req-))))
+    )))
 )
 
 (defun list-customers (req state dbg s cnx)
