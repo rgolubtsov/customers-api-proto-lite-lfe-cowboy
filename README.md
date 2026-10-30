@@ -476,6 +476,11 @@ $ curl http://localhost:8765/v1/customers/3..,,7/contacts
 $
 $ curl http://localhost:8765/v1/customers/--089asdf../contacts/email
 {"error":"HTTP 400 Bad Request: Request is malformed. Please check your inputs."}
+$
+$ curl -XPUT http://localhost:8765/v1/customers \
+       -H 'content-type: application/json' \
+       -d '{"lame":"12197654320--089asdf../nj524987"}'
+{"error":"HTTP 400 Bad Request: Request is malformed. Please check your inputs."}
 ```
 
 ---
