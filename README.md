@@ -400,43 +400,32 @@ The microservice has the ability to log messages to a logfile and to the Unix sy
 
 ```
 $ tail -f log/customers-api-lite.log
-[2026-10-17|18:40:00.388380+02:00] [debug] [Customers API Lite]
-[2026-10-17|18:40:00.389922+02:00] [debug] [<0.502.0>]
-[2026-10-17|18:40:00.391657+02:00] [info] Server started on port 8765
-[2026-10-17|18:40:30.709129+02:00] [debug] [PUT]
-[2026-10-17|18:40:30.711050+02:00] [debug] [r-put-get-cust]
-[2026-10-17|18:40:30.713400+02:00] [debug] pid: <0.542.0>, port: 8765, ...
-[2026-10-17|18:40:40.688240+02:00] [debug] [PUT]
-[2026-10-17|18:40:40.689209+02:00] [debug] [r-put-cont]
-[2026-10-17|18:40:40.689708+02:00] [debug] pid: <0.544.0>, port: 8765, ...
-[2026-10-17|18:40:50.726582+02:00] [debug] [PUT]
-[2026-10-17|18:40:50.727769+02:00] [debug] [r-put-cont]
-[2026-10-17|18:40:50.730821+02:00] [debug] pid: <0.549.0>, port: 8765, ...
-[2026-10-17|18:45:10.127189+02:00] [debug] [GET]
-[2026-10-17|18:45:10.127683+02:00] [debug] [r-put-get-cust]
-[2026-10-17|18:45:10.127844+02:00] [debug] pid: <0.552.0>, port: 8765, ...
-[2026-10-17|18:45:10.132624+02:00] [debug] [1|Jammy Jellyfish]
-[2026-10-17|18:45:20.425339+02:00] [debug] [GET]
-[2026-10-17|18:45:20.425856+02:00] [debug] [r-get-cust]
-[2026-10-17|18:45:20.428349+02:00] [debug] pid: <0.555.0>, port: 8765, ...
-[2026-10-17|18:45:20.429748+02:00] [debug] customer_id=2
-[2026-10-17|18:45:20.431730+02:00] [debug] [2|Noble Numbat]
-[2026-10-17|18:45:30.411364+02:00] [debug] [GET]
-[2026-10-17|18:45:30.414108+02:00] [debug] [r-get-cont]
-[2026-10-17|18:45:30.414431+02:00] [debug] pid: <0.557.0>, port: 8765, ...
-[2026-10-17|18:45:30.415639+02:00] [debug] customer_id=2
-[2026-10-17|18:45:30.417120+02:00] [debug] [+35760X123456]
-[2026-10-17|18:45:40.154118+02:00] [debug] [GET]
-[2026-10-17|18:45:40.157289+02:00] [debug] [r-get-cont-type]
-[2026-10-17|18:45:40.157848+02:00] [debug] pid: <0.562.0>, port: 8765, ...
-[2026-10-17|18:45:40.163559+02:00] [debug] customer_id=2 | contact_type=phone
-[2026-10-17|18:45:40.166127+02:00] [debug] [+35760X123456]
-[2026-10-17|18:45:50.580667+02:00] [debug] [GET]
-[2026-10-17|18:45:50.584165+02:00] [debug] [r-get-cont-type]
-[2026-10-17|18:45:50.584936+02:00] [debug] pid: <0.565.0>, port: 8765, ...
-[2026-10-17|18:45:50.591628+02:00] [debug] customer_id=2 | contact_type=email
-[2026-10-17|18:45:50.594254+02:00] [debug] [noble.numbat@example.com]
-[2026-10-17|18:50:00.205806+02:00] [info] Server stopped
+[2026-10-30|20:45:00.266826+03:00] [debug] [Customers API Lite]
+[2026-10-30|20:45:00.421509+03:00] [debug] [<0.544.0>]
+[2026-10-30|20:45:00.424835+03:00] [info] Server started on port 8765
+[2026-10-30|20:45:30.934013+03:00] [debug] [PUT]
+[2026-10-30|20:45:30.934765+03:00] [debug] [Jamison Palmer]
+[2026-10-30|20:45:30.150535+03:00] [debug] [3|Jamison Palmer]
+[2026-10-30|20:45:40.895584+03:00] [debug] [PUT]
+[2026-10-30|20:45:40.896280+03:00] [debug] [Sarah Kitteringham]
+[2026-10-30|20:45:40.224979+03:00] [debug] [4|Sarah Kitteringham]
+[2026-10-30|20:45:50.786716+03:00] [debug] [GET]
+[2026-10-30|20:45:50.787660+03:00] [debug] [1|Jammy Jellyfish]
+[2026-10-30|20:50:10.238835+03:00] [debug] [GET]
+[2026-10-30|20:50:10.239347+03:00] [debug] customer_id=3
+[2026-10-30|20:50:10.240005+03:00] [debug] [3|Jamison Palmer]
+[2026-10-30|20:50:20.535536+03:00] [debug] [GET]
+[2026-10-30|20:50:20.536066+03:00] [debug] customer_id=3
+[2026-10-30|20:50:30.558342+03:00] [debug] [GET]
+[2026-10-30|20:50:30.558811+03:00] [debug] customer_id=2
+[2026-10-30|20:50:30.559937+03:00] [debug] [+35760X123456]
+[2026-10-30|20:50:40.660860+03:00] [debug] [GET]
+[2026-10-30|20:50:40.661374+03:00] [debug] customer_id=2 | contact_type=phone
+[2026-10-30|20:50:40.662034+03:00] [debug] [+35760X123456]
+[2026-10-30|20:50:50.355867+03:00] [debug] [GET]
+[2026-10-30|20:50:50.356378+03:00] [debug] customer_id=2 | contact_type=email
+[2026-10-30|20:50:50.357270+03:00] [debug] [noble.numbat@example.com]
+[2026-10-30|20:55:00.122572+03:00] [info] Server stopped
 ```
 
 Messages registered by the Unix system logger can be seen and analyzed using the `journalctl` utility:
@@ -444,35 +433,32 @@ Messages registered by the Unix system logger can be seen and analyzed using the
 ```
 $ journalctl -f
 ...
-Oct 17 18:40:00 <hostname> api-lited[<pid>]: [Customers API Lite]
-Oct 17 18:40:00 <hostname> api-lited[<pid>]: [<0.502.0>]
-Oct 17 18:40:00 <hostname> api-lited[<pid>]: Server started on port 8765
-Oct 17 18:40:30 <hostname> api-lited[<pid>]: [PUT]
-Oct 17 18:40:30 <hostname> api-lited[<pid>]: [r-put-get-cust]
-Oct 17 18:40:40 <hostname> api-lited[<pid>]: [PUT]
-Oct 17 18:40:40 <hostname> api-lited[<pid>]: [r-put-cont]
-Oct 17 18:40:50 <hostname> api-lited[<pid>]: [PUT]
-Oct 17 18:40:50 <hostname> api-lited[<pid>]: [r-put-cont]
-Oct 17 18:45:10 <hostname> api-lited[<pid>]: [GET]
-Oct 17 18:45:10 <hostname> api-lited[<pid>]: [r-put-get-cust]
-Oct 17 18:45:10 <hostname> api-lited[<pid>]: [1|Jammy Jellyfish]
-Oct 17 18:45:20 <hostname> api-lited[<pid>]: [GET]
-Oct 17 18:45:20 <hostname> api-lited[<pid>]: [r-get-cust]
-Oct 17 18:45:20 <hostname> api-lited[<pid>]: customer_id=2
-Oct 17 18:45:20 <hostname> api-lited[<pid>]: [2|Noble Numbat]
-Oct 17 18:45:30 <hostname> api-lited[<pid>]: [GET]
-Oct 17 18:45:30 <hostname> api-lited[<pid>]: [r-get-cont]
-Oct 17 18:45:30 <hostname> api-lited[<pid>]: customer_id=2
-Oct 17 18:45:30 <hostname> api-lited[<pid>]: [+35760X123456]
-Oct 17 18:45:40 <hostname> api-lited[<pid>]: [GET]
-Oct 17 18:45:40 <hostname> api-lited[<pid>]: [r-get-cont-type]
-Oct 17 18:45:40 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=phone
-Oct 17 18:45:40 <hostname> api-lited[<pid>]: [+35760X123456]
-Oct 17 18:45:50 <hostname> api-lited[<pid>]: [GET]
-Oct 17 18:45:50 <hostname> api-lited[<pid>]: [r-get-cont-type]
-Oct 17 18:45:50 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=email
-Oct 17 18:45:50 <hostname> api-lited[<pid>]: [noble.numbat@example.com]
-Oct 17 18:50:00 <hostname> api-lited[<pid>]: Server stopped
+Oct 30 20:45:00 <hostname> api-lited[<pid>]: [Customers API Lite]
+Oct 30 20:45:00 <hostname> api-lited[<pid>]: [<0.544.0>]
+Oct 30 20:45:00 <hostname> api-lited[<pid>]: Server started on port 8765
+Oct 30 20:45:30 <hostname> api-lited[<pid>]: [PUT]
+Oct 30 20:45:30 <hostname> api-lited[<pid>]: [Jamison Palmer]
+Oct 30 20:45:30 <hostname> api-lited[<pid>]: [3|Jamison Palmer]
+Oct 30 20:45:40 <hostname> api-lited[<pid>]: [PUT]
+Oct 30 20:45:40 <hostname> api-lited[<pid>]: [Sarah Kitteringham]
+Oct 30 20:45:40 <hostname> api-lited[<pid>]: [4|Sarah Kitteringham]
+Oct 30 20:45:50 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:45:50 <hostname> api-lited[<pid>]: [1|Jammy Jellyfish]
+Oct 30 20:50:10 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:50:10 <hostname> api-lited[<pid>]: customer_id=3
+Oct 30 20:50:10 <hostname> api-lited[<pid>]: [3|Jamison Palmer]
+Oct 30 20:50:20 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:50:20 <hostname> api-lited[<pid>]: customer_id=3
+Oct 30 20:50:30 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:50:30 <hostname> api-lited[<pid>]: customer_id=2
+Oct 30 20:50:30 <hostname> api-lited[<pid>]: [+35760X123456]
+Oct 30 20:50:40 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:50:40 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=phone
+Oct 30 20:50:40 <hostname> api-lited[<pid>]: [+35760X123456]
+Oct 30 20:50:50 <hostname> api-lited[<pid>]: [GET]
+Oct 30 20:50:50 <hostname> api-lited[<pid>]: customer_id=2 | contact_type=email
+Oct 30 20:50:50 <hostname> api-lited[<pid>]: [noble.numbat@example.com]
+Oct 30 20:55:00 <hostname> api-lited[<pid>]: Server stopped
 ```
 
 **TBD** :cd:
