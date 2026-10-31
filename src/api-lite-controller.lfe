@@ -159,11 +159,32 @@
             (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
         (else
             (let ((payload (tref payload- 2)))
-            (debug payload))
+            (debug payload)
 
-            (reply (HTTP-201) (set_resp_body   (json:encode `#M())
-                              (set_resp_header (HDR-LOCATION)
-                                               (REST-CONTEXT) req-))))
+            (try (progn
+                (let ((contact (json:decode payload)))
+                (debug contact)
+
+                (let ((cust-id- (atom_to_binary 'customer_id)))
+                (let ((contact- (atom_to_binary 'contact    )))
+                (let ((contact-cust-id (case (maps:is_key cust-id- contact)
+                    ('true  (mref contact cust-id-))
+                    ('false #B())
+                )))
+                (let ((contact-contact (case (maps:is_key contact- contact)
+                    ('true  (mref contact contact-))
+                    ('false #B())
+                )))
+                (debug contact-cust-id)
+                (debug contact-contact)
+
+                (reply (HTTP-201) (set_resp_body   (json:encode `#M())
+                                  (set_resp_header (HDR-LOCATION)
+                                                   (REST-CONTEXT) req-)))
+                ))))))
+            (catch (`#(error ,_ ,_)
+                (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+            ))))
     )))
 )
 
