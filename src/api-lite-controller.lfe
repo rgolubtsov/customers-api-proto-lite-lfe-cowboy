@@ -179,9 +179,9 @@
                 (debug contact-contact)
 
                 (reply (HTTP-201) (set_resp_body   (json:encode `#M())
-                                  (set_resp_header (HDR-LOCATION)
-                                                   (REST-CONTEXT) req-)))
-                ))))))
+                                  (set_resp_header (HDR-LOCATION) (++
+                (REST-CONTEXT) (SLASH) (binary_to_list contact-cust-id) (SLASH)
+                (REST-CONTACTS)) req-)))))))))
             (catch (`#(error ,_ ,_)
                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
             ))))
