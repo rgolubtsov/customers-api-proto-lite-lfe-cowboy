@@ -413,6 +413,13 @@
 
 ; Helpers and others ----------------------------------------------------------
 
+; Helper function. Used to send HTTP 4xx/5xx responses.
+(defun -http-err-resp (code msg req state) ; -> {stop, Req, State}
+    `#(stop ,(reply code (set_resp_body (json:encode
+        `#M(error ,msg)
+    ) req)) ,state)
+)
+
 ; Helper function. Used to preprocess a property list of entity structures
 ;                  that is taken from the database, to make it suitable
 ;                  for JSON marshalling.
@@ -448,13 +455,6 @@
     (PHONE)
 ;   (EMAIL)
 ;   `()
-)
-
-; Helper function. Used to send HTTP 4xx/5xx responses.
-(defun -http-err-resp (code msg req state) ; -> {stop, Req, State}
-    `#(stop ,(reply code (set_resp_body (json:encode
-        `#M(error ,msg)
-    ) req)) ,state)
 )
 
 ; vim:set nu et ts=4 sw=4:
