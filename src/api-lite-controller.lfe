@@ -164,7 +164,6 @@
             (try (progn
                 (let ((contact (json:decode payload)))
                 (debug contact)
-
                 (let ((cust-id- (atom_to_binary 'customer_id)))
                 (let ((contact- (atom_to_binary 'contact    )))
                 (let ((contact-cust-id (case (maps:is_key cust-id- contact)
@@ -178,12 +177,47 @@
                 (debug contact-cust-id)
                 (debug contact-contact)
 
-                (reply (HTTP-201) (set_resp_body (json:encode
-                    `#M(mood #"Happy Halloween! <3")
-                ) (set_resp_header (HDR-LOCATION) (++
-                                   (REST-CONTEXT) (SLASH)
-                (binary_to_list  contact-cust-id) (SLASH)
-                (REST-CONTACTS)) req-)))))))))
+                (cond
+                    ((or (== (byte_size contact-cust-id) 0)
+                         (== (byte_size contact-contact) 0))
+
+                        (-http-err-resp
+                            (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+                    (else
+                        (-dbg dbg s (++ (REST-CUST-ID)
+                                        (EQUALS) contact-cust-id))
+                        (-dbg dbg s (++ (O-BRACKET)
+                                        (binary_to_list contact-contact)
+                                        (C-BRACKET)))
+
+                        ; Trying to parse and validate
+                        ; the request payload {customer_id}.
+                        (try (binary_to_integer contact-cust-id)
+                        (catch (`#(error ,_ ,_)
+                            (-http-err-resp
+                                (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+                        ))
+
+                        ; Parsing and validating a customer contact:
+                        ; phone or email.
+                        (let ((contact-type (-parse-contact contact-contact)))
+                        (cond
+                            ((== (length contact-type) 0)
+                                (-http-err-resp
+                                    (HTTP-400) (ERR-REQ-MALFORMED) req- state))
+                            (else
+                                ; TODO: Implement creating a new contact
+                                ;       (i.e. putting a contact regarding
+                                ;       a given customer to the database).
+
+                                (reply (HTTP-201) (set_resp_body (json:encode
+                                    `#M(contact ,contact-contact)
+                                ) (set_resp_header (HDR-LOCATION) (++
+                                                   (REST-CONTEXT) (SLASH)
+                                (binary_to_list  contact-cust-id) (SLASH)
+                                (REST-CONTACTS) (SLASH) contact-type) req-))))
+                        )))
+                )))))))
             (catch (`#(error ,_ ,_)
                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req- state))
             ))))
@@ -405,6 +439,15 @@
                 ,(list_to_atom contact) ,(tref row 1)
             )) rows)))
     )))
+)
+
+; Helper function. Used to parse and validate a customer contact.
+;                  Returns the type of contact: phone or email.
+(defun -parse-contact (contact) ; -> "phone" | "email" | []
+    ; TODO: Implement parsing and validating a customer contact.
+    (PHONE)
+;   (EMAIL)
+;   `()
 )
 
 ; Helper function. Used to send HTTP 4xx/5xx responses.
