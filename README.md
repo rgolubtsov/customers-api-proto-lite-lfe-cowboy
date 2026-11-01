@@ -465,7 +465,7 @@ Oct 30 20:55:00 <hostname> api-lited[<pid>]: Server stopped
 
 ### Error handling
 
-When the URI path of an incoming request contains inappropriate input, the microservice will respond with the HTTP `400 Bad Request` status code, including a specific response body in JSON representation which may describe a possible cause of underlying client error, like the following:
+When the URI path or request body passed in an incoming request contains inappropriate input, the microservice will respond with the HTTP `400 Bad Request` status code, including a specific response body in JSON representation which may describe a possible cause of underlying client error, like the following:
 
 ```
 $ curl http://localhost:8765/v1/customers/=qwerty4838=-i-.--089asdf..nj524987
