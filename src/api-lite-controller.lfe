@@ -213,6 +213,10 @@
                                         ,contact-customer-id
                                     ))
 
+                                    (-dbg dbg s(++ (O-BRACKET) contact-type
+                                        (V-BAR)(binary_to_list contact-contact)
+                                                   (C-BRACKET)))
+
                                     (reply (HTTP-201)(set_resp_body(json:encode
                                         `#M(contact ,contact-contact)
                                     ) (set_resp_header (HDR-LOCATION) (++
