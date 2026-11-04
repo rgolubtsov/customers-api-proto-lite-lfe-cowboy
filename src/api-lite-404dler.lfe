@@ -1,7 +1,7 @@
 ;
 ; src/api-lite-404dler.lfe
 ; =============================================================================
-; Customers API Lite microservice prototype (LFE/OTP port). Version 0.1.17
+; Customers API Lite microservice prototype (LFE/OTP port). Version 0.2.0
 ; =============================================================================
 ; A daemon written in LFE (Lisp Flavoured Erlang), designed and intended
 ; to be run as a microservice, implementing a special Customers API prototype
@@ -17,7 +17,6 @@
     (import (from cowboy_req (method 1)
                              (reply  3)
                       (set_resp_body 2))
-            (from logger     (debug  1))
             (from api-lite-helper (-dbg 3))))
 
 (include-file "api-lite-constants.lfe")
@@ -37,7 +36,6 @@
 
     (let (((cons dbg (cons s _)) state))
     (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
-    (debug req)
 
     `#(ok ,(reply (HTTP-404)
         `#M(,(CONTENT-TYPE) ,(++ (MIME-TYPE-S) (SLASH) (MIME-STYPE-S)))
