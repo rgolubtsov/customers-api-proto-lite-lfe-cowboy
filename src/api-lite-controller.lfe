@@ -200,16 +200,33 @@
                                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED)
                                     req-))
                             (else
-                                ; TODO: Implement creating a new contact
-                                ;       (i.e. putting a contact regarding
-                                ;       a given customer to the database).
+                                (let (((cons phone
+                                       (cons email _)) (m:SQL-PUT-CONTACT)))
+                                (let ((sql-query (cond
+                                    ((== contact-type (PHONE)) phone)
+                                    ((== contact-type (EMAIL)) email)
+                                    (else email)
+                                )))
 
-                                (reply (HTTP-201) (set_resp_body (json:encode
-                                    `#M(contact ,contact-contact)
-                                ) (set_resp_header (HDR-LOCATION) (++
-                                                   (REST-CONTEXT) (SLASH)
-                                (binary_to_list  contact-cust-id) (SLASH)
-                                (REST-CONTACTS) (SLASH) contact-type) req-))))
+                                (try (progn
+                                    ; Creating a new contact (putting a contact
+                                    ; regarding a given customer
+                                    ; to the database).
+                                    (sql_exec cnx sql-query `(
+                                        ,contact-contact
+                                        ,contact-customer-id
+                                    ))
+
+                                    (reply (HTTP-201)(set_resp_body(json:encode
+                                        `#M(contact ,contact-contact)
+                                    ) (set_resp_header (HDR-LOCATION) (++
+                                        (REST-CONTEXT) (SLASH) (integer_to_list
+                                        contact-customer-id) (SLASH)
+                                        (REST-CONTACTS) (SLASH) contact-type
+                                    ) req-))))
+                                (catch (`#(error ,_ ,_) (-http-err-resp
+                                    (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req-))
+                                )))))
                         ))))
                 )))))))
             (catch (`#(error ,_ ,_)
