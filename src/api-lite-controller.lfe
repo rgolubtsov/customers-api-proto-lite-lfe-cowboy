@@ -154,11 +154,9 @@
             (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req-))
         (else
             (let ((payload (tref payload- 2)))
-            (debug payload)
 
             (try (progn
                 (let ((contact (json:decode payload)))
-                (debug contact)
                 (let ((cust-id- (atom_to_binary 'customer_id)))
                 (let ((contact- (atom_to_binary 'contact    )))
                 (let ((contact-cust-id (case (maps:is_key cust-id- contact)
@@ -169,8 +167,6 @@
                     ('true  (mref contact contact-))
                     ('false #B())
                 )))
-                (debug contact-cust-id)
-                (debug contact-contact)
 
                 (cond
                     ((or (== (byte_size contact-cust-id) 0)

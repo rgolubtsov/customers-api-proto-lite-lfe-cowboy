@@ -26,7 +26,6 @@
                            (binding  2)
                     (set_resp_header 3)
                     (set_resp_body   2))
-            (from logger     (debug  1))
             (from api-lite-helper (-dbg 3)))
     (module-alias (api-lite-controller c)))
 
@@ -47,8 +46,6 @@
 
     (let (((cons dbg (cons s _)) state))
     (-dbg dbg s (++ (O-BRACKET) (binary:bin_to_list(method req)) (C-BRACKET))))
-
-;   (debug req)
 
     `#(cowboy_rest ,req ,state)
 )
