@@ -164,8 +164,8 @@
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
     (let ((req- (case route
-        ('r-put-get-cust (c:add-customer req state dbg s cnx))
-        ('r-put-cont     (c:add-contact  req state dbg s cnx))
+        ('r-put-get-cust (c:add-customer req dbg s cnx))
+        ('r-put-cont     (c:add-contact  req dbg s cnx))
     )))
 
     #|
@@ -198,10 +198,10 @@
 
     (let (((cons dbg (cons s (cons cnx (cons route _)))) state))
     (let ((entities (case route
-        ('r-put-get-cust  (c:list-customers        req state dbg s cnx))
-        ('r-get-cust      ( c:get-customer         req state dbg s cnx))
-        ('r-get-cont      (c:list-contacts         req state dbg s cnx))
-        ('r-get-cont-type (c:list-contacts-by-type req state dbg s cnx))
+        ('r-put-get-cust  (c:list-customers        req dbg s cnx))
+        ('r-get-cust      ( c:get-customer         req dbg s cnx))
+        ('r-get-cont      (c:list-contacts         req dbg s cnx))
+        ('r-get-cont-type (c:list-contacts-by-type req dbg s cnx))
     )))
 
     `#(,(json:encode entities) ,req ,state)))
