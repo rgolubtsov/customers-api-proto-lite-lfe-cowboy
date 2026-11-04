@@ -184,19 +184,19 @@
                                         (binary_to_list contact-contact)
                                         (C-BRACKET)))
 
-                        ; Trying to parse and validate
-                        ; the request payload {customer_id}.
-                        (try (binary_to_integer contact-cust-id)
-                        (catch (`#(error ,_ ,_)
-                            (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED)
-                                req-))
-                        ))
+                        ; Trying to parse and validate the request payload
+                        ; {customer_id}.
+                        (let ((contact-customer-id (try
+                            (binary_to_integer contact-cust-id)
+                        (catch (`#(error ,_ ,_) 0)))))
 
                         ; Parsing and validating a customer contact:
                         ; phone or email.
                         (let ((contact-type (-parse-contact contact-contact)))
                         (cond
-                            ((== (length contact-type) 0)
+                            ((or (=<  contact-customer-id  0)
+                                 (== (length contact-type) 0))
+
                                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED)
                                     req-))
                             (else
@@ -210,7 +210,7 @@
                                                    (REST-CONTEXT) (SLASH)
                                 (binary_to_list  contact-cust-id) (SLASH)
                                 (REST-CONTACTS) (SLASH) contact-type) req-))))
-                        )))
+                        ))))
                 )))))))
             (catch (`#(error ,_ ,_)
                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED) req-))
