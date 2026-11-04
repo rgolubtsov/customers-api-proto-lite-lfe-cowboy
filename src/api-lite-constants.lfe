@@ -89,4 +89,8 @@
 (defmacro HTTP-404 _ 404)
 (defmacro HTTP-500 _ 500)
 
+; Regex patterns for contact phones and emails.
+(defmacro PHONE-REGEX _ "^\\+\\d{9,14}"   )
+(defmacro EMAIL-REGEX _ ".{1,63}@.{3,190}")
+
 ; vim:set nu et ts=4 sw=4:

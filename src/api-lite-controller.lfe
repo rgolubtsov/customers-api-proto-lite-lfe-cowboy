@@ -451,10 +451,11 @@
 ; Helper function. Used to parse and validate a customer contact.
 ;                  Returns the type of contact: phone or email.
 (defun -parse-contact (contact) ; -> "phone" | "email" | []
-    ; TODO: Implement parsing and validating a customer contact.
-    (PHONE)
-;   (EMAIL)
-;   `()
+    (cond
+        ((/= (re:run contact (PHONE-REGEX)) 'nomatch) (PHONE))
+        ((/= (re:run contact (EMAIL-REGEX)) 'nomatch) (EMAIL))
+        (else `())
+    )
 )
 
 ; vim:set nu et ts=4 sw=4:
