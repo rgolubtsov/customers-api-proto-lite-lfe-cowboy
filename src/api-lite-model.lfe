@@ -22,6 +22,16 @@
     "insert into customers (name) values (?)"
 )
 
+(defun SQL-PUT-CONTACT ()
+    "Returns a list of SQL queries for creating a new contact for a given
+    customer (putting a contact regarding a given customer to the database).
+
+    Used by the `PUT /v1/customers/contacts` REST endpoint."
+
+ `(,"insert into contact_phones (contact, customer_id) values (?, ?)"
+   ,"insert into contact_emails (contact, customer_id) values (?, ?)")
+)
+
 (defun SQL-GET-ALL-CUSTOMERS ()
     "Returns an SQL query for retrieving all customer profiles.
 
