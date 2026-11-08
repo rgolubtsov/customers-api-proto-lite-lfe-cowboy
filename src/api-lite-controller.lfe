@@ -17,8 +17,7 @@
             ( get-customer          4)  ; (req dbg s cnx) ->  #{=>,=>}       | {stop, Req, _}
             (list-contacts          4)  ; (req dbg s cnx) -> [#{=>},    ...] | {stop, Req, _}
             (list-contacts-by-type  4)) ; (req dbg s cnx) -> [#{=>},    ...] | {stop, Req, _}
-    (import (from logger  (debug    1))
-            (from string  (casefold 1))
+    (import (from string  (casefold 1))
             (from sqlite3 (sql_exec 2)
                           (sql_exec 3))
             (from cowboy_req (reply 2)
@@ -196,34 +195,54 @@
                                 (-http-err-resp (HTTP-400) (ERR-REQ-MALFORMED)
                                     req-))
                             (else
-                                (let (((cons phone
-                                       (cons email _)) (m:SQL-PUT-CONTACT)))
-                                (let ((sql-query (cond
-                                    ((== contact-type (PHONE)) phone)
-                                    ((== contact-type (EMAIL)) email)
-                                    (else email)
+                                (let (((cons put-phone
+                                       (cons put-email _))(m:SQL-PUT-CONTACT)))
+                                (let ((sql-query-put (cond
+                                    ((== contact-type (PHONE)) put-phone)
+                                    ((== contact-type (EMAIL)) put-email)
+                                    (else put-email)
                                 )))
 
                                 (try (progn
                                     ; Creating a new contact (putting a contact
                                     ; regarding a given customer
                                     ; to the database).
-                                    (sql_exec cnx sql-query `(
+                                    (sql_exec cnx sql-query-put `(
                                         ,contact-contact
                                         ,contact-customer-id
                                     ))
 
-                                    (-dbg dbg s(++ (O-BRACKET) contact-type
-                                        (V-BAR)(binary_to_list contact-contact)
-                                                   (C-BRACKET)))
+                                    (let (((cons get-phone (cons get-email _))
+                                        (m:SQL-GET-CONTACTS-BY-TYPE)))
+                                    (let (((cons ord-phone (cons ord-email _))
+                                        (m:SQL-ORDER-CONTACTS-BY-ID)))
+                                    (let ((sql-query-get (cond
+                                        ((== contact-type (PHONE))
+                                            (++ get-phone ord-phone))
+                                        ((== contact-type (EMAIL))
+                                            (++ get-email ord-email))
+                                        (else get-email)
+                                    )))
+
+                                    (let (((cons $contact _)
+                                        (-entity-prep (sql_exec cnx (++
+                                            sql-query-get (m:SQL-DESC-LIMIT-1)
+                                        ) `(,contact-customer-id)) 'false)))
+                                    (let (($contact-contact
+                                        (mref $contact 'contact)))
+
+                                    (-dbg dbg s(++
+                                        (O-BRACKET)      contact-type (V-BAR)
+                                        (binary_to_list $contact-contact)
+                                        (C-BRACKET)))
 
                                     (reply (HTTP-201)(set_resp_body(json:encode
-                                        `#M(contact ,contact-contact)
+                                        `#M(contact ,$contact-contact)
                                     ) (set_resp_header (HDR-LOCATION) (++
                                         (REST-CONTEXT) (SLASH) (integer_to_list
                                         contact-customer-id) (SLASH)
                                         (REST-CONTACTS) (SLASH) contact-type
-                                    ) req-))))
+                                    ) req-)))))))))
                                 (catch (`#(error ,_ ,_) (-http-err-resp
                                     (HTTP-500) (ERR-SRV-INTERNAL-ERROR) req-))
                                 )))))
