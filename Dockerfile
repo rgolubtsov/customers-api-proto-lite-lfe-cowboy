@@ -30,11 +30,13 @@ WORKDIR    api-lite
 USER       root
 RUN        ["chown", "-R", "daemon:daemon", "."]
 USER       daemon
+           # Forcing Rebar3 to create its ".cache/rebar3/hex/" in the CWD
+           # and not in "/sbin/" as by default.
 ENV        HOME=.
 RUN        ["rebar3", "tree"]
 RUN        ["make",   "all" ]
 
 # === Stage 3: Run the microservice ===========================================
-#ENTRYPOINT ["bin/api-lited"]
+ENTRYPOINT ["_build/default/rel/api-lited/bin/api-lited", "foreground"]
 
 # vim:set nu ts=4 sw=4:
