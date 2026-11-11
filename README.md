@@ -32,6 +32,7 @@ Surely, one may consider this project to be suitable for a wide variety of appli
   * **[Creating a Docker image](#creating-a-docker-image)**
 * **[Running](#running)**
   * **[Running a Docker image](#running-a-docker-image)**
+  * **[Exploring a Docker image payload](#exploring-a-docker-image-payload)**
 * **[Consuming](#consuming)**
   * **[Logging](#logging)**
   * **[Error handling](#error-handling)**
@@ -249,6 +250,123 @@ Note that the startup script will become available and might be used only after 
 $ sudo docker rm `sudo docker ps -aq`; \
   export PORT=8765 && sudo docker run -dp${PORT}:${PORT} --name api-lite-lfe customersapi/api-lite-lfe; echo $?
 ...
+```
+
+### Exploring a Docker image payload
+
+The following is not necessary but might be considered somewhat interesting&mdash;to look into the running container and check out that the microservice's OTP release startup script, compiled BEAMs, configs, logfile, and accompanied SQLite database are at their expected places and in effect:
+
+```
+$ sudo docker ps -a
+CONTAINER ID   IMAGE                       COMMAND                    CREATED              STATUS              PORTS                                         NAMES
+<container_id> customersapi/api-lite-lfe   "_build/default/rel/..."   About a minute ago   Up About a minute   0.0.0.0:8765->8765/tcp, [::]:8765->8765/tcp   api-lite-lfe
+$
+$ sudo docker exec -it api-lite-lfe sh; echo $?
+/var/tmp/api-lite $
+/var/tmp/api-lite $ uname -a
+Linux <container_id> 7.0.0-43-generic #43-Ubuntu SMP PREEMPT_DYNAMIC Fri Oct 23 13:25:25 UTC 2026 x86_64 Linux
+/var/tmp/api-lite $
+/var/tmp/api-lite $ cat /etc/os-release /etc/alpine-release
+NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.24.4
+PRETTY_NAME="Alpine Linux v3.24"
+HOME_URL="https://alpinelinux.org/"
+BUG_REPORT_URL="https://gitlab.alpinelinux.org/alpine/aports/-/issues"
+3.24.4
+/var/tmp/api-lite $
+/var/tmp/api-lite $ _build/default/rel/api-lited/erts-17.1.1/bin/erl -version
+Erlang (SMP,ASYNC_THREADS) (BEAM) emulator version 17.1.1
+/var/tmp/api-lite $
+/var/tmp/api-lite $ rebar3 -v
+rebar 3.27.0 on Erlang/OTP 29 Erts 17.1.1
+/var/tmp/api-lite $
+/var/tmp/api-lite $ ls -al
+total 80
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 19:22 .
+drwxrwxrwt    1 root     root          4096 Nov 11 18:30 ..
+-rw-------    1 daemon   daemon         124 Nov 11 19:25 .ash_history
+drwxr-xr-x    3 daemon   daemon        4096 Nov 11 18:31 .cache
+-rw-rw-r--    1 daemon   daemon        1304 Nov 11 18:00 Makefile
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:31 _build
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:30 config
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:31 data
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:30 etc
+drwxr-xr-x    2 daemon   daemon        4096 Nov 11 18:50 log
+-rw-rw-r--    1 daemon   daemon        1397 Nov 11 18:00 rebar.config
+-rw-r--r--    1 daemon   daemon        1191 Nov 11 18:36 rebar.lock
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:30 src
+/var/tmp/api-lite $
+/var/tmp/api-lite $ ls -al _build/default/rel/api-lited/bin/ _build/default/rel/api-lited/lib/api-lite-0.3.0/ebin/ config/ data/db/ etc/ log/
+_build/default/rel/api-lited/bin/:
+total 112
+drwxr-xr-x    2 daemon   daemon        4096 Nov 11 18:39 .
+drwxr-xr-x    6 daemon   daemon        4096 Nov 11 18:39 ..
+-rwxr-xr-x    1 daemon   daemon       36171 Nov 11 18:39 api-lited
+-rwxr-xr-x    1 daemon   daemon       36171 Nov 11 18:39 api-lited-0.3.0
+-rw-r--r--    1 daemon   daemon       14232 Nov 11 18:39 install_upgrade.escript
+-rw-r--r--    1 daemon   daemon        7064 Nov 11 18:39 no_dot_erlang.boot
+-rw-r--r--    1 daemon   daemon        7578 Nov 11 18:39 nodetool
+
+_build/default/rel/api-lited/lib/api-lite-0.3.0/ebin/:
+total 40
+drwxr-xr-x    2 daemon   daemon        4096 Nov 11 18:39 .
+drwxr-xr-x    3 daemon   daemon        4096 Nov 11 18:39 ..
+-rw-r--r--    1 daemon   daemon         803 Nov 11 18:39 api-lite-404dler.beam
+-rw-r--r--    1 daemon   daemon        1675 Nov 11 18:39 api-lite-app.beam
+-rw-r--r--    1 daemon   daemon        3227 Nov 11 18:39 api-lite-controller.beam
+-rw-r--r--    1 daemon   daemon        1576 Nov 11 18:39 api-lite-handler.beam
+-rw-r--r--    1 daemon   daemon        1075 Nov 11 18:39 api-lite-helper.beam
+-rw-r--r--    1 daemon   daemon        1020 Nov 11 18:39 api-lite-model.beam
+-rw-r--r--    1 daemon   daemon         631 Nov 11 18:39 api-lite-sup.beam
+-rw-r--r--    1 daemon   daemon         811 Nov 11 18:39 api-lite.app
+
+config/:
+total 24
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:30 .
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 19:22 ..
+-rw-rw-r--    1 daemon   daemon        2004 Nov 11 18:00 logger.config
+-rw-rw-r--    1 daemon   daemon         648 Nov 11 18:00 sys.config
+
+data/db/:
+total 40
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:39 .
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:31 ..
+-rw-r--r--    1 daemon   daemon       24576 Nov 11 18:39 customers-api-lite.db
+
+etc/:
+total 20
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 18:30 .
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 19:22 ..
+-rw-rw-r--    1 daemon   daemon         835 Nov 11 18:10 settings.conf
+
+log/:
+total 16
+drwxr-xr-x    2 daemon   daemon        4096 Nov 11 18:50 .
+drwxr-xr-x    1 daemon   daemon        4096 Nov 11 19:22 ..
+-rw-r--r--    1 daemon   daemon         189 Nov 11 18:50 customers-api-lite.log
+/var/tmp/api-lite $
+/var/tmp/api-lite $ netstat -plunt
+netstat: showing only processes with your user ID
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+tcp        0      0 0.0.0.0:32899           0.0.0.0:*               LISTEN      1/api-lited
+tcp        0      0 0.0.0.0:4369            0.0.0.0:*               LISTEN      50/epmd
+tcp        0      0 0.0.0.0:8765            0.0.0.0:*               LISTEN      1/api-lited
+tcp        0      0 :::4369                 :::*                    LISTEN      50/epmd
+/var/tmp/api-lite $
+/var/tmp/api-lite $ ps aux
+PID   USER     TIME  COMMAND
+    1 daemon    0:03 {beam.smp} /var/tmp/api-lite/_build/default/rel/api-lited/bin/api-lited -Bd -C multi_time_warp -- -root /var/tmp/api-lite/_build/default/rel/api-lited -bindir /var/tmp/api-lite/_build/default/rel/api-lited/erts-17.1.1/bin -progname default/rel/api-lited/bin/api-lited -- -home . -- -noshell -noinput -boot /var/tmp/api-lite/_build/default/rel/api-lited/releases/0.3.0/start -mode embedded -boot_var SYSTEM_LIB_DIR /var/tmp/api-lite/_build/default/rel/api-lited/lib -config /var/tmp/api-lite/_build/default/rel/api-lited/releases/0.3.0/sys.config -sname api-lited -setcookie api-lited -- -- foreground --
+   50 daemon    0:00 /var/tmp/api-lite/_build/default/rel/api-lited/erts-17.1.1/bin/epmd -daemon
+   78 daemon    0:00 [epmd]
+   79 daemon    0:00 [epmd]
+   83 daemon    0:00 erl_child_setup 1024
+  102 daemon    0:00 sh
+  161 daemon    0:00 ps aux
+/var/tmp/api-lite $
+/var/tmp/api-lite $ exit # Or simply <Ctrl-D>.
+0
 ```
 
 ## Consuming
