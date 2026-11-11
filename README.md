@@ -171,7 +171,7 @@ $ # Pull the Erlang image first (based on Alpine Linux), if not already there:
 $ sudo docker pull erlang:alpine
 ...
 $ # Then build the microservice image:
-$ sudo docker build -tcustomersapi/api-lite-lfe .
+$ sudo docker build --no-cache -tcustomersapi/api-lite-lfe .
 ...
 ```
 
