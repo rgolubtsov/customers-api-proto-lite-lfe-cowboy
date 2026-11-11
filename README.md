@@ -31,6 +31,7 @@ Surely, one may consider this project to be suitable for a wide variety of appli
 * **[Building](#building)**
   * **[Creating a Docker image](#creating-a-docker-image)**
 * **[Running](#running)**
+  * **[Running a Docker image](#running-a-docker-image)**
 * **[Consuming](#consuming)**
   * **[Logging](#logging)**
   * **[Error handling](#error-handling)**
@@ -239,6 +240,16 @@ $ ./_build/default/rel/api-lited/bin/api-lited daemon; echo $?
 ```
 
 Note that the startup script will become available and might be used only after building a complete OTP release of the microservice.
+
+### Running a Docker image
+
+**Run** a Docker image of the microservice, deleting all stopped containers prior to that (if any):
+
+```
+$ sudo docker rm `sudo docker ps -aq`; \
+  export PORT=8765 && sudo docker run -dp${PORT}:${PORT} --name api-lite-lfe customersapi/api-lite-lfe; echo $?
+...
+```
 
 ## Consuming
 
