@@ -594,7 +594,56 @@ Nov 09 11:45:40 <hostname> api-lited[<pid>]: [Saturday.Sunday@example.com]
 Nov 09 11:50:00 <hostname> api-lited[<pid>]: Server stopped
 ```
 
-**TBD** :cd:
+Inside the running container logs might be queried also by `tail`ing the `log/customers-api-lite.log` logfile:
+
+```
+/var/tmp/api-lite $ tail -f log/customers-api-lite.log
+[2026-11-13|09:50:10.423118+00:00] [debug] [Customers API Lite]
+[2026-11-13|09:50:10.667378+00:00] [debug] [<0.541.0>]
+[2026-11-13|09:50:10.673285+00:00] [info] Server started on port 8765
+[2026-11-13|09:50:40.095438+00:00] [debug] [PUT]
+[2026-11-13|09:50:40.097485+00:00] [debug] [Saturday Sunday]
+[2026-11-13|09:50:40.390855+00:00] [debug] [5|Saturday Sunday]
+[2026-11-13|09:55:00.105809+00:00] [debug] [PUT]
+[2026-11-13|09:55:00.107057+00:00] [debug] customer_id=5
+[2026-11-13|09:55:00.107666+00:00] [debug] [Saturday.Sunday@example.com]
+[2026-11-13|09:55:00.345903+00:00] [debug] [email|Saturday.Sunday@example.com]
+[2026-11-13|10:00:30.022739+00:00] [debug] [GET]
+[2026-11-13|10:00:30.024209+00:00] [debug] customer_id=5
+[2026-11-13|10:00:30.026329+00:00] [debug] [5|Saturday Sunday]
+[2026-11-13|10:00:50.913836+00:00] [debug] [GET]
+[2026-11-13|10:00:50.915073+00:00] [debug] customer_id=5 | contact_type=email
+[2026-11-13|10:00:50.919833+00:00] [debug] [Saturday.Sunday@example.com]
+[2026-11-13|10:05:10.045338+00:00] [notice] SIGTERM received - shutting down
+[2026-11-13|10:05:10.067015+00:00] [info] Server stopped
+```
+
+And of course, Docker itself gives the possibility to read log messages by using the corresponding command for that:
+
+```
+$ sudo docker logs -f api-lite-lfe
+Exec: /var/tmp/api-lite/_build/default/rel/api-lited/erts-17.1.1/bin/erlexec -noinput +Bd -boot /var/tmp/api-lite/_build/default/rel/api-lited/releases/0.3.0/start -mode embedded -boot_var SYSTEM_LIB_DIR /var/tmp/api-lite/_build/default/rel/api-lited/lib -config /var/tmp/api-lite/_build/default/rel/api-lited/releases/0.3.0/sys.config -args_file /var/tmp/api-lite/_build/default/rel/api-lited/releases/0.3.0/vm.args -- foreground
+Root: /var/tmp/api-lite/_build/default/rel/api-lited
+/var/tmp/api-lite/_build/default/rel/api-lited
+[2026-11-13|09:50:10.423118+00:00] [debug] [Customers API Lite]
+[2026-11-13|09:50:10.667378+00:00] [debug] [<0.541.0>]
+[2026-11-13|09:50:10.673285+00:00] [info] Server started on port 8765
+[2026-11-13|09:50:40.095438+00:00] [debug] [PUT]
+[2026-11-13|09:50:40.097485+00:00] [debug] [Saturday Sunday]
+[2026-11-13|09:50:40.390855+00:00] [debug] [5|Saturday Sunday]
+[2026-11-13|09:55:00.105809+00:00] [debug] [PUT]
+[2026-11-13|09:55:00.107057+00:00] [debug] customer_id=5
+[2026-11-13|09:55:00.107666+00:00] [debug] [Saturday.Sunday@example.com]
+[2026-11-13|09:55:00.345903+00:00] [debug] [email|Saturday.Sunday@example.com]
+[2026-11-13|10:00:30.022739+00:00] [debug] [GET]
+[2026-11-13|10:00:30.024209+00:00] [debug] customer_id=5
+[2026-11-13|10:00:30.026329+00:00] [debug] [5|Saturday Sunday]
+[2026-11-13|10:00:50.913836+00:00] [debug] [GET]
+[2026-11-13|10:00:50.915073+00:00] [debug] customer_id=5 | contact_type=email
+[2026-11-13|10:00:50.919833+00:00] [debug] [Saturday.Sunday@example.com]
+[2026-11-13|10:05:10.045338+00:00] [notice] SIGTERM received - shutting down
+[2026-11-13|10:05:10.067015+00:00] [info] Server stopped
+```
 
 ### Error handling
 
